@@ -1,0 +1,11 @@
+<div class="disable_text_highlighting">
+        <div class="contextmenu" [ngStyle]="{'left.px': x, 'top.px': y}">
+                <ul class="items">
+                        <div *ngFor='let contextMenuItem of contexMentuItems; first as isFirst'>
+                                <hr *ngIf='!isFirst && (contextMenuItem.needToshow() || contextMenuItem.showAllways)' />
+                                <li class="li" (click)="contextMenuItem.onClick()" *ngIf='(contextMenuItem.needToshow() || contextMenuItem.showAllways)'>{{contextMenuItem.name}}</li>
+
+                        </div>
+                </ul>
+        </div>
+</div>

@@ -1,0 +1,30 @@
+<div class="squareSelection" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
+    <table>
+        <tr *ngFor ='let listOfNames of listOfListsOfNames'>
+            <td *ngFor='let item of listOfNames'>
+                    <select-able 
+                    (RegisterInParent)="addChildComponent($event)" 
+                    (UnSelectAll)="unSelectAllChilds($event)" 
+                    (ApplyIgnoreDisableSelection)="SetIgnoreDisableSelection($event)"
+                    (ApplyParentIgnoreOnRightClick)="SetIgnoreOnRightClick($event)"
+                    (ShowContexMenu) ="showContexMenuOnCoordinates($event)"
+                    [text]='item.Name'
+                    [path]='item.Path'
+                    [type]='item.Type'></select-able>
+            </td>
+        </tr>
+    </table>
+    <div *ngIf = 'showContexMenu'>
+        <app-contextmenu [x] = 'contexMenuX' 
+                         [y] = 'contexMenuY'
+                         [contexMentuItems] = 'contexMenuItems'>
+        </app-contextmenu>
+    </div>
+    <div *ngIf ='showInputBox'>
+        <input-box [placeHolder] = "'Enter folder name...'"
+                   [header] = "'Folder name:'"
+                   [okButtonName] = "'Create'"
+                   [onCancel] = "inputBoxOnCancel.bind(this)"
+                   (onSubmit) = "inputBoxCreateNewFolder($event)"></input-box>
+    </div>
+</div>

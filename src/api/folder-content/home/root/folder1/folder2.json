@@ -1,0 +1,22 @@
+{
+    "name": "folder2",
+    "path": "home/root/folder1",
+    "type": "folder",
+    "content": [
+        {
+            "name": "file3",
+            "path": "home/root/folder1/folder2",
+            "type": 0
+        },
+        {
+            "name": "folder3",
+            "path": "home/root/folder1/folder2",
+            "type": 1
+        },
+        {
+            "name": "folder4",
+            "path": "home/root/folder1/folder2",
+            "type": 1
+        }
+    ]
+}
