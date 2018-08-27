@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { ContextmenuComponent } from './Common/contexMenu.component/contextmenu.component';
 import { FolderContentContainter } from './FolderContent/folder-content-container.component/folder-content-container.component';
 import { SelectableComponent } from './FolderContent/select-able.component/select-able.component';
+import { MessageBox } from './Common/messagebox.component/messagebox.component';
 import { Inputbox } from './Common/inputbox.component/inputbox.component';
 
 
@@ -15,6 +16,7 @@ import { Inputbox } from './Common/inputbox.component/inputbox.component';
     SelectableComponent,
     ContextmenuComponent,
     FolderContentContainter,
+    MessageBox,
     Inputbox
   ],
   imports: [

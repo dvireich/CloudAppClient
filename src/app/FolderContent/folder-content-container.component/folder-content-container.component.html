@@ -8,6 +8,7 @@
                     (ApplyIgnoreDisableSelection)="SetIgnoreDisableSelection($event)"
                     (ApplyParentIgnoreOnRightClick)="SetIgnoreOnRightClick($event)"
                     (ShowContexMenu) ="showContexMenuOnCoordinates($event)"
+                    (EnterFolderByDbClick) ="dbClickEnterFolder($event)"
                     [text]='item.Name'
                     [path]='item.Path'
                     [type]='item.Type'></select-able>
@@ -26,5 +27,12 @@
                    [okButtonName] = "'Create'"
                    [onCancel] = "inputBoxOnCancel.bind(this)"
                    (onSubmit) = "inputBoxCreateNewFolder($event)"></input-box>
+    </div>
+    <div *ngIf = 'needToShowMessageBox'>
+        <message-box [text] = 'messageBoxText'
+                     [buttons] = 'messageBoxButtons'
+                     [messageIcon] = 'messageBoxMessageType'
+                     (onButton1Click) = "messageBoxOnButton1Click($event)"
+                     (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
     </div>
 </div>

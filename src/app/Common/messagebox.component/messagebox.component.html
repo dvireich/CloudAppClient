@@ -1,6 +1,12 @@
-<div class="container">
-    <label for="uname"><b>{{text}}</b></label><br>
-    
-    <button type="button" class="cancelbtn" (click)='onCancel()'>{{cancelButtonName}}</button>
-    <button type="button" (click)='submit(Input.value)'>{{okButtonName}}</button>
-  </div>
+<div class="disable_text_highlighting">
+    <div class="container">
+        <p>
+            <img class="img" draggable="false" [src]='getMessaeImage()'>
+        </p>
+        <p class="lable">
+            <label for="uname"><b>{{text}}</b></label>
+        </p>
+        <button *ngIf ='button1Visible' class="button1" (click)='button1Click()'>{{button1Name}}</button>
+        <button *ngIf ='button2Visible' class="button2" (click)='button2Click()'>{{button2Name}}</button>
+    </div>
+</div>

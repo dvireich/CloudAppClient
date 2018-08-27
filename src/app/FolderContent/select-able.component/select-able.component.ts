@@ -1,6 +1,7 @@
 import { Component, Input, AfterViewInit, EventEmitter, Output } from "@angular/core";
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
 import { folderContentType } from "../folderContentType";
+import { EnterFolderArgs } from "./enterFolderArgs";
 
 @Component({
     templateUrl: "./select-able.Component.html",
@@ -17,6 +18,7 @@ export class SelectableComponent implements AfterViewInit {
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyParentIgnoreOnRightClick: EventEmitter<void> = new EventEmitter<void>();
     @Output() ShowContexMenu : EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
+    @Output() EnterFolderByDbClick : EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
     color: string = "LightGrey";
     private notSelected: boolean = true;
     
@@ -32,6 +34,13 @@ export class SelectableComponent implements AfterViewInit {
         else {
             this.unSelect();
         }
+    }
+
+    onDbClick(){
+        let args = new EnterFolderArgs();
+        args.Name = this.text;
+        args.Path = this.path;
+        this.EnterFolderByDbClick.emit(args);
     }
 
     private select(applyIgnoreDisableSelection : boolean = true) {

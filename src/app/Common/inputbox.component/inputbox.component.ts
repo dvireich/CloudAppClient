@@ -11,7 +11,6 @@ export class Inputbox{
     @Input() header: string = "Input";
     @Input() okButtonName: string = "Ok";
     @Input() cancelButtonName: string = "Cancel";
-    @Input()
     @Input() onCancel: ()=>void;
 
     @Output() onSubmit : EventEmitter<string> = new EventEmitter<string>();

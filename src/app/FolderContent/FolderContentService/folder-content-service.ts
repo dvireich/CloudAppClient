@@ -8,6 +8,7 @@ import { FolderObj } from "../FolderObj";
 import { FileObj } from "../FileObj";
 import { folderContentType } from "../folderContentType";
 import { IFolderContent } from "../IFolderContent";
+import { FolderContent } from "../FolderContent";
 
 @Injectable({
   providedIn: "root"
@@ -17,7 +18,6 @@ export class FolderContnentService {
   constructor(private http: HttpClient) {
   }
 
-  //private FolderContentRepositoryUrl = "api/folder-content/";
   private FolderContentRepositoryUrl = "http://localhost/CloudAppServer/FolderContent";
 
   deleteFolder(name: string, path: string){
@@ -26,12 +26,17 @@ export class FolderContnentService {
   }
 
   getFolder(name: string, path: string): Observable<IFolder> {
-    path = this.fixPath(path);
-    let folderUrl = `${this.FolderContentRepositoryUrl}/name=${name}&path=${path}`;
+    //path = this.fixPath(path);
+    let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"`;
 
     return this.http.get<string>(folderUrl).pipe(
       map(jsonStr => {
         let ifolder = <IFolder>JSON.parse(jsonStr);
+
+        if(ifolder.Content === undefined || ifolder.Content === null){
+          ifolder.Content = new Array<FolderContent>();
+        }
+
         ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
         return ifolder;
       }),

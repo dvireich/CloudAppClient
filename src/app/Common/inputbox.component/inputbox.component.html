@@ -2,6 +2,6 @@
     <label for="uname"><b>{{header}}</b></label><br>
     <input type="text" #Input [placeholder]='placeHolder' name="uname" required><br>
     
-    <button type="button" class="cancelbtn" (click)='onCancel()'>{{cancelButtonName}}</button>
+    <button type="button" (click)='onCancel()'>{{cancelButtonName}}</button>
     <button type="button" (click)='submit(Input.value)'>{{okButtonName}}</button>
   </div>

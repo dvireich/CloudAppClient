@@ -1,13 +1,31 @@
 
-button {
+.button1 {
     background-color: rgba(152, 156, 156, 0.486);
     color: black;
     padding: 14px 20px;
     margin: 8px 0;
-    border: 1px solid rgb(8, 8, 8);
     cursor: pointer;
     width: auto; 
-    float: right
+    margin-right: 15px;
+
+    right: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+
+.button2 {
+    background-color: rgba(152, 156, 156, 0.486);
+    color: black;
+    padding: 14px 20px;
+    margin: 8px 0;
+    cursor: pointer;
+    width: auto; 
+    margin-right: 15px;
+
+    right: 100px;
+    bottom: 0;
+    position: absolute;
 }
 
 button:hover {
@@ -33,4 +51,31 @@ button:hover {
     box-shadow: 3px 3px 2px #E9E9E9;
     border-radius:4px;
     margin: 0 auto;
+
+    position: relative;
 }
+
+.img{
+    width: 60px;
+    float: left;
+    padding : 0 15px;
+}
+
+.disable_text_highlighting {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; /* Webkit */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE 10  */
+    
+    /* Currently not supported in Opera but will be soon */
+    -o-user-select: none;
+    user-select: none;
+}
+
+.lable{
+    margin: 25px;
+    word-wrap:break-word;
+    
+}
+
+
