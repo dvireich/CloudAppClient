@@ -1,12 +1,16 @@
 <div class="disable_text_highlighting">
-    <div class="container">
+    <div class="container" autosize>
         <p>
             <img class="img" draggable="false" [src]='getMessaeImage()'>
         </p>
         <p class="lable">
-            <label for="uname"><b>{{text}}</b></label>
+            <label for="uname">{{text}}</label>
         </p>
-        <button *ngIf ='button1Visible' class="button1" (click)='button1Click()'>{{button1Name}}</button>
-        <button *ngIf ='button2Visible' class="button2" (click)='button2Click()'>{{button2Name}}</button>
+
+        <button #button1 [style.width]='max' *ngIf='button1Visible' class="button1" (click)='button1Click()'>{{button1Name}}</button>
+        <button #button2 [style.width]='max' *ngIf='button2Visible' class="button2" (click)='button2Click()'>{{button2Name}}</button>
+
+
+
     </div>
 </div>

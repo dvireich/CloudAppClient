@@ -265,7 +265,10 @@ export class FolderContentContainter implements OnInit {
         let resp = this.folderContentService.createFolder(folderName, this.getCurrentPath());
         resp.subscribe(
             data => this.updateThisFolderContentAfterOperation(),
-            error => this.messageBoxText = <any>error)
+            error => 
+            {
+                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok );
+            })
     }
 
     validateNotEmptyStringAndShowMessageBox(str: string, errorMessage: string) : boolean{

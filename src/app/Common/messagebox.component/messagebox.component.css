@@ -5,12 +5,13 @@
     padding: 14px 20px;
     margin: 8px 0;
     cursor: pointer;
-    width: auto; 
+    width: 100px; 
     margin-right: 15px;
-
     right: 0;
     bottom: 0;
     position: absolute;
+
+
 }
 
 
@@ -20,10 +21,9 @@
     padding: 14px 20px;
     margin: 8px 0;
     cursor: pointer;
-    width: auto; 
+    width: 100px; 
     margin-right: 15px;
-
-    right: 100px;
+    right: 125px;
     bottom: 0;
     position: absolute;
 }
@@ -44,21 +44,22 @@ button:hover {
 
 .container {
     padding: 32px;
-    width:500px;  
-    height: 100px;    
+    width:450px;   
     background:#F9F9F9;
     border:1px solid #B2B2B2;
     box-shadow: 3px 3px 2px #E9E9E9;
     border-radius:4px;
     margin: 0 auto;
-
     position: relative;
+   
 }
 
 .img{
     width: 60px;
     float: left;
     padding : 0 15px;
+    margin-top: auto;
+    margin-bottom: 100%;
 }
 
 .disable_text_highlighting {
@@ -75,7 +76,5 @@ button:hover {
 .lable{
     margin: 25px;
     word-wrap:break-word;
-    
 }
-
 

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit } from "@angular/core";
+import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, ElementRef} from "@angular/core";
 import { MessageBoxType } from "./messageBoxType";
 import { MessageBoxButton } from "./messageBoxButtons";
 
@@ -7,15 +7,18 @@ import { MessageBoxButton } from "./messageBoxButtons";
     templateUrl: "./messagebox.component.html",
     styleUrls: ["./messagebox.component.css"]
 })
-export class MessageBox implements OnInit{
+export class MessageBox implements OnInit, AfterViewInit {
+
+    ngAfterViewInit(): void {
+    }
 
     ngOnInit(): void {
         this.setButtonsVisibility();
     }
     @Input() text: string = "message text";
-    
     @Input() messageIcon: MessageBoxType = MessageBoxType.Error;
     @Input() buttons: MessageBoxButton = MessageBoxButton.YesNo;
+
     @Output() onButton1Click: EventEmitter<string> = new EventEmitter<string>();
     @Output() onButton2Click: EventEmitter<string> = new EventEmitter<string>();
 

@@ -22,11 +22,14 @@ export class FolderContnentService {
 
   deleteFolder(name: string, path: string){
     let folderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
-    return this.http.post(folderUrl, {Name: name, Path: path, Type: 1});
+    return this.http.post(folderUrl, {Name: name, Path: path, Type: 1}).pipe(
+      catchError(this.handleError)
+    );
   }
 
   getFolder(name: string, path: string): Observable<IFolder> {
-    //path = this.fixPath(path);
+    path = this.fixPath(path);
+    console.log("fixed path: "+ path);
     let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"`;
 
     return this.http.get<string>(folderUrl).pipe(
@@ -46,16 +49,14 @@ export class FolderContnentService {
   }
 
   fixPath(path: string): string {
-    if(path === undefined || path === ''){
-      return '""';
-    }
-
-    return path;
+    return path.replace(new RegExp('/', 'g'), ',');
   }
 
   createFolder(name: string, path: string) {
     let folderUrl = `${this.FolderContentRepositoryUrl}/CreateFolder`;
-    return this.http.post(folderUrl, {Name: name, Path: path});
+    return this.http.post(folderUrl, {Name: name, Path: path}).pipe(
+      catchError(this.handleError) 
+    );
   }
 
   getContaningFolderPathFromPath(path: string): string {
