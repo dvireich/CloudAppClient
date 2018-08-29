@@ -14,6 +14,7 @@ export class Inputbox implements AfterViewInit{
 
     @Input() placeHolder: string = "Plaese enter input...";
     @Input() header: string = "Input";
+    @Input() caption: string = "Caption";
     @Input() okButtonName: string = "Ok";
     @Input() cancelButtonName: string = "Cancel";
     @Input() onCancel: ()=>void;
@@ -31,12 +32,18 @@ export class Inputbox implements AfterViewInit{
     }
 
     shouldOkButtonDisabled(event : any) : void {
-        console.log(this.inputText);
         let disable = this.isEmptyOrSpaces(this.inputText);
         this.okButtonDisabled = disable;
     }
 
     isEmptyOrSpaces(str : string){
         return str === undefined || str === null || str.length === 0;
+    }
+
+    onEnterDown(){
+        this.shouldOkButtonDisabled(null);
+        if(this.okButtonDisabled) return;
+
+        this.submit(this.inputText);
     }
 }

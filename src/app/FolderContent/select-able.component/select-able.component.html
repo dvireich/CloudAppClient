@@ -1,10 +1,15 @@
 <div class="disable_text_highlighting">
-    <table (click)="onClick()" (dblclick)="onDbClick()" (contextmenu)="onrightClick($event)" [attr.bgcolor]='color'>
+    <table class="table-hover" [style.background]='color'>
         <tr>
-            <img [src]='getImgSrc()' class="center" width="50" draggable="false">
-        </tr>
-        <tr align="middle">
-            {{text}}
+            <table (click)="onClick()" (dblclick)="onDbClick()" (contextmenu)="onrightClick($event)">
+                <tr>
+                    <img [src]='getImgSrc()' class="center" width="50" draggable="false">
+                </tr>
+                <tr align="middle">
+                    {{text}}
+                </tr>
+            </table>
         </tr>
     </table>
+
 </div>

@@ -1,16 +1,30 @@
 <div class="disable_text_highlighting">
-    <div class="container" autosize>
-        <p>
-            <img class="img" draggable="false" [src]='getMessaeImage()'>
-        </p>
-        <p class="lable">
-            <label for="uname">{{text}}</label>
-        </p>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    <div class="lable row">
+                        <div class="col-md-3">
+                            <img class="img" draggable="false" [src]='getMessaeImage()'>
+                        </div>
+                        <div class="col-md-9">{{caption}}</div>
+                    </div>
+                </h3>
+            </div>
+            <div class="panel-body">
 
-        <button #button1 [style.width]='max' *ngIf='button1Visible' class="button1" (click)='button1Click()'>{{button1Name}}</button>
-        <button #button2 [style.width]='max' *ngIf='button2Visible' class="button2" (click)='button2Click()'>{{button2Name}}</button>
+                <div class="row">
 
+                    <div class="lable col-md-12">
+                        <label>{{text}}</label>
+                    </div>
+                </div>
 
+                <button *ngIf='button1Visible' class="button1" (click)='button1Click()'>{{button1Name}}</button>
+                <button *ngIf='button2Visible' class="button2" (click)='button2Click()'>{{button2Name}}</button>
+
+            </div>
+        </div>
 
     </div>
 </div>

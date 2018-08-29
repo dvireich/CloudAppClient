@@ -27,9 +27,15 @@ export class FolderContnentService {
     );
   }
 
+  renameFolderContent(name: string, path: string, newName: string){
+    let folderUrl = `${this.FolderContentRepositoryUrl}/Rename`;
+    return this.http.post(folderUrl, {Name: name, Path: path, NewName: newName}).pipe(
+      catchError(this.handleError) 
+    );
+  }
+
   getFolder(name: string, path: string): Observable<IFolder> {
     path = this.fixPath(path);
-    console.log("fixed path: "+ path);
     let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"`;
 
     return this.http.get<string>(folderUrl).pipe(

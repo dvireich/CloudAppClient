@@ -21,16 +21,17 @@
                          [contexMentuItems] = 'contexMenuItems'>
         </app-contextmenu>
     </div>
-    <div *ngIf ='showInputBox'>
-        <input-box [placeHolder] = "'Enter folder name...'"
-                   [header] = "'Folder name:'"
-                   [okButtonName] = "'Create'"
+    <div *ngIf ='neddToShowInputBox'>
+        <input-box [placeHolder] = "inputBoxPlaceHolder"
+                   [header] = "inputBoxHeader"
+                   [okButtonName] = "inputBoxOkButtonName"
                    [onCancel] = "inputBoxOnCancel.bind(this)"
-                   (onSubmit) = "inputBoxCreateNewFolder($event)"></input-box>
+                   (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
     </div>
     <div *ngIf = 'needToShowMessageBox'>
         <message-box [text] = 'messageBoxText'
                      [buttons] = 'messageBoxButtons'
+                     [caption] = 'messageBoxCaption'
                      [messageIcon] = 'messageBoxMessageType'
                      (onButton1Click) = "messageBoxOnButton1Click($event)"
                      (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>

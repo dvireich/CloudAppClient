@@ -14,7 +14,7 @@
     padding-left:10px;
     padding-right:10px;
     padding-bottom:3px;
-    font-size:15px;
+    font-size:13px;
     color: #333333;
     white-space: nowrap;
     
@@ -24,6 +24,7 @@
     background-color:#E4E4E4;
     border-color:#E4E4E4;
     color:#E4E4E4;
+    margin-top: 0;
   }
   
   .li{
@@ -33,7 +34,7 @@
   
   
   .items :hover{
-     color: white;
+    color: white;
     background:#284570;
     border-radius:2px;
   }

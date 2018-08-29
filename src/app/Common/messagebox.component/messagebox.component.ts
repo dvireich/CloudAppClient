@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, ElementRef} from "@angular/core";
 import { MessageBoxType } from "./messageBoxType";
 import { MessageBoxButton } from "./messageBoxButtons";
+import { DialogResult } from "./messageboxResult";
 
 @Component({
     selector: "message-box",
@@ -16,11 +17,12 @@ export class MessageBox implements OnInit, AfterViewInit {
         this.setButtonsVisibility();
     }
     @Input() text: string = "message text";
+    @Input() caption: string = "caption";
     @Input() messageIcon: MessageBoxType = MessageBoxType.Error;
     @Input() buttons: MessageBoxButton = MessageBoxButton.YesNo;
 
-    @Output() onButton1Click: EventEmitter<string> = new EventEmitter<string>();
-    @Output() onButton2Click: EventEmitter<string> = new EventEmitter<string>();
+    @Output() onButton1Click: EventEmitter<DialogResult> = new EventEmitter<DialogResult>();
+    @Output() onButton2Click: EventEmitter<DialogResult> = new EventEmitter<DialogResult>();
 
     private button1Visible: boolean;
     private button2Visible: boolean;
@@ -31,7 +33,7 @@ export class MessageBox implements OnInit, AfterViewInit {
     setButtonsVisibility(){
         if(this.buttons ===  MessageBoxButton.YesNo){
             this.button1Name = "Yes";
-            this.button2Name = "No";
+            this.button2Name = "No"; 
 
             this.button1Visible = true;
             this.button2Visible = true;
@@ -53,13 +55,31 @@ export class MessageBox implements OnInit, AfterViewInit {
         }
     }
 
-
     button1Click(){
-        this.onButton1Click.emit("");
+        let result : DialogResult;
+        if(this.buttons == MessageBoxButton.YesNo){
+            result = DialogResult.Yes;
+        }
+        if(this.buttons == MessageBoxButton.OkCancel){
+            result = DialogResult.Ok;
+        }
+        if(this.buttons == MessageBoxButton.Ok){
+            result = DialogResult.Ok;
+        }
+
+        this.onButton1Click.emit(result);
     }
 
     button2Click(){
-        this.onButton2Click.emit("");
+        let result : DialogResult;
+        if(this.buttons == MessageBoxButton.YesNo){
+            result = DialogResult.No;
+        }
+        if(this.buttons == MessageBoxButton.OkCancel){
+            result = DialogResult.Cancel;
+        }
+ 
+        this.onButton2Click.emit(result);
     }
     
     getMessaeImage(): string{

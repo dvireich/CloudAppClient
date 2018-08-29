@@ -12,8 +12,8 @@ import { IContexMentuItem } from "../../Common/contexMenu.component/IContexMentu
 import { ContexMentuItem } from "../../Common/contexMenu.component/contexMentuItem";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
-import { retry } from "rxjs/operators";
 import { EnterFolderArgs } from "../select-able.component/enterFolderArgs";
+import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
 
 @Component({
     selector: "folder-content-container",
@@ -36,15 +36,25 @@ export class FolderContentContainter implements OnInit {
     private contexMenuItems: IContexMentuItem[];
 
     showContexMenu: boolean;
-    showInputBox: boolean;
+    
+
+    //inputBox
+    neddToShowInputBox: boolean;
+    inputBoxHeader: string;
+    inputBoxOkButtonName: string;
+    inputBoxPlaceHolder: string;
+    inputBoxOnCancelEvent: () => void;
+    inputBoxOnSubmitEvent: (input: string) => void;
 
     //message box
+    messageBoxResult: DialogResult;
     needToShowMessageBox: boolean;
     messageBoxText: string;
+    messageBoxCaption: string;
     messageBoxMessageType: MessageBoxType;
     messageBoxButtons: MessageBoxButton;
-    messageBoxOnButton1Click: (str: string) => void;
-    messageBoxOnButton2Click: (str: string) => void;
+    messageBoxOnButton1Click: (result: DialogResult) => void;
+    messageBoxOnButton2Click: (result: DialogResult) => void;
 
     public get listOfFileFolderNames(): IFolder {
         return this._listOfFileFolderNames;
@@ -104,13 +114,20 @@ export class FolderContentContainter implements OnInit {
 
     onDeleteContexMenuClick() {
         let selected = this.getSelected();
-        if (selected.Type === folderContentType.folder) {
-            this.folderContentService.deleteFolder(selected.Name, selected.Path).subscribe(
-                data => this.updateThisFolderContentAfterOperation(),
-                error => this.messageBoxText = <any>error
-            );
-        }
-        this.InitializeListOfListsOfNames();
+        this.showMessageBox("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", ()=>{
+            if(this.messageBoxResult === DialogResult.No) return;
+            if (selected.Type === folderContentType.folder) {
+                this.folderContentService.deleteFolder(selected.Name, selected.Path).subscribe(
+                    data => this.updateThisFolderContentAfterOperation(),
+                    error => this.messageBoxText = <any>error
+                );
+            }
+            this.InitializeListOfListsOfNames();
+        });  
+    }
+
+    onRenameContexMenuClick(){
+        this.showInputBox("Enter the new name...","Rename", "Rename", this.inputBoxRename(this.getSelected()), this.inputBoxOnCancel, ()=>{});
     }
 
     onCoptyContexMenuClick() {
@@ -126,7 +143,7 @@ export class FolderContentContainter implements OnInit {
     }
 
     onCreateNewFolderContexMenuClick() {
-        this.showInputBox = true;
+        this.showInputBox("Enter folder name...","Create Folder", "Create", this.inputBoxCreateNewFolder, this.inputBoxOnCancel,()=>{});
     }
 
     addChildComponent(child: SelectableComponent) {
@@ -200,6 +217,12 @@ export class FolderContentContainter implements OnInit {
         deleteToEvent.needToshow = () => true;
         deleteToEvent.showAllways = true;
 
+        let renameToEvent = new ContexMentuItem();
+        renameToEvent.onClick = this.onRenameContexMenuClick.bind(this);
+        renameToEvent.name = "Rename";
+        renameToEvent.needToshow = () => true;
+        renameToEvent.showAllways = true;
+
         let copyToEvent = new ContexMentuItem();
         copyToEvent.onClick = this.onCoptyContexMenuClick.bind(this);
         copyToEvent.name = "Copy";
@@ -226,6 +249,7 @@ export class FolderContentContainter implements OnInit {
 
         return [deleteToEvent,
             copyToEvent,
+            renameToEvent,
             cutToEvent,
             pasteToEvent,
             enterToEvent];
@@ -241,7 +265,7 @@ export class FolderContentContainter implements OnInit {
     }
 
     inputBoxOnCancel() {
-        this.showInputBox = false;
+        this.neddToShowInputBox = false;
     }
 
     getCurrentPath(): string {
@@ -258,7 +282,7 @@ export class FolderContentContainter implements OnInit {
     }
 
     inputBoxCreateNewFolder(folderName: string) {
-        this.showInputBox = false;
+        this.neddToShowInputBox = false;
 
         if(!this.validateNotEmptyStringAndShowMessageBox(folderName,"The folder name cannot be empty")) return;
 
@@ -267,35 +291,80 @@ export class FolderContentContainter implements OnInit {
             data => this.updateThisFolderContentAfterOperation(),
             error => 
             {
-                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok );
+                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
             })
+    }
+
+    inputBoxRename(selected : IFolderContent) : (input: string)=> void{
+        return (newName: string)=>{
+            this.neddToShowInputBox = false;
+            console.log("inputBoxRename: selected: " + selected);
+            if(!this.validateNotEmptyStringAndShowMessageBox(newName,"The new name cannot be empty")) return;
+    
+            let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, newName);
+            resp.subscribe(
+                data => this.updateThisFolderContentAfterOperation(),
+                error => 
+                {
+                    this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename" );
+                })
+        }
     }
 
     validateNotEmptyStringAndShowMessageBox(str: string, errorMessage: string) : boolean{
         if(str === "" || str === undefined){
-            this.showMessageBox(errorMessage, MessageBoxType.Error, MessageBoxButton.Ok);
+            this.showMessageBox(errorMessage, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
             return false;
         }
 
         return true;
     }
+
+    onMessageBoxClick(action: (result: DialogResult)=> void, cont : ()=> void){
+        let bindedAction = action.bind(this);
+        let bindedCont = cont.bind(this);
+        return (result: DialogResult) =>{
+            bindedAction(result);
+            bindedCont();
+        }
+    }
+
+    onInputBoxClick(action: (input : string) => void, cont: ()=> void){
+        let bindedAction = action.bind(this);
+        let bindedCont = cont.bind(this);
+        return (input : string) =>{
+            bindedAction(input);
+            bindedCont();
+        }
+    }
     
-    onMessageBoxCancel(input: string){
+    onMessageBoxCancel(result: DialogResult){
+        this.messageBoxResult = result;
         this.needToShowMessageBox = false;
     }
 
-    onMessageBoxOk(input: string){
+    onMessageBoxOk(result: DialogResult){
+        this.messageBoxResult = result;
         this.needToShowMessageBox = false;
     }
 
-    showMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton) {
+    showMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont : ()=> void = ()=>{}) {
 
-        this.messageBoxOnButton1Click = this.onMessageBoxOk;
-        this.messageBoxOnButton2Click = this.onMessageBoxCancel;
+        this.messageBoxOnButton1Click = this.onMessageBoxClick(this.onMessageBoxOk, cont).bind(this);
+        this.messageBoxOnButton2Click = this.onMessageBoxClick(this.onMessageBoxCancel, cont).bind(this);
         this.messageBoxMessageType = type;
         this.messageBoxText = message;
         this.messageBoxButtons = buttons;
-        this.showInputBox = false;
+        this,this.messageBoxCaption = caption;
         this.needToShowMessageBox = true;
+    }
+
+    showInputBox(placeHolder: string ,header: string, okBUttonName: string, onSubmit: (input: string)=> void, onCancel: ()=>void, cont: ()=> void){
+        this.inputBoxPlaceHolder = placeHolder;
+        this.inputBoxHeader = header;
+        this.inputBoxOkButtonName = okBUttonName;
+        this.inputBoxOnSubmitEvent = this.onInputBoxClick(onSubmit, cont);
+        this.inputBoxOnCancel = onCancel.bind(this);
+        this.neddToShowInputBox = true;
     }
 }

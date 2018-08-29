@@ -1,11 +1,22 @@
-<div class="container" (mousemove) = 'shouldOkButtonDisabled($event)'>
-    <label for="uname"><b>{{header}}</b></label><br>
-    <input #TextInput type="text" [(ngModel)]="inputText" [placeholder]='placeHolder' name="uname" required><br>
-    
-    <button type="button" (click)='onCancel()'>{{cancelButtonName}}</button>
-    <button type="button"
-    [disabled] = 'okButtonDisabled'
-    [style.cursor] = 'okButtonDisabled?  "not-allowed" : "pointer"'
-    (click)='submit(inputText)'>
-    {{okButtonName}}</button>
+<div class="disable_text_highlighting" (mousemove)='shouldOkButtonDisabled($event)'>
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <div class="lable row">
+            <div class="col-md-12">{{header}}</div>
+          </div>
+        </h3>
+      </div>
+      <div class="panel-body">
+        <input #TextInput type="text" [(ngModel)]="inputText" [placeholder]='placeHolder' (keyup.enter)= 'onEnterDown()' required><br>
+        <div class="row">
+        <button type="button" (click)='onCancel()'>{{cancelButtonName}}</button>
+        <button type="button" [disabled]='okButtonDisabled' [style.cursor]='okButtonDisabled ? "not-allowed" : "pointer"' (click)='submit(inputText)'>
+          {{okButtonName}}</button>
+
+      </div>
+    </div>
+
   </div>
+</div>
