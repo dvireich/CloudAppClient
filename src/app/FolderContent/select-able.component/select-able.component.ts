@@ -47,8 +47,7 @@ export class SelectableComponent implements AfterViewInit {
         this.UnSelectAll.emit();
         this.color = "#80d4ff";
         this.notSelected = false;
-
-        console.log("Is selected: " + this.isSeletcted());
+        
         if(!applyIgnoreDisableSelection) return;
         this.ApplyIgnoreDisableSelection.emit();
     }

@@ -14,6 +14,8 @@ import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { EnterFolderArgs } from "../select-able.component/enterFolderArgs";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
+import { FolderContentClipBoard } from "../folder-content-clipboard";
+import { ClipBoardOperation } from "../clipBoardOperation";
 
 @Component({
     selector: "folder-content-container",
@@ -23,7 +25,8 @@ import { DialogResult } from "../../Common/messagebox.component/messageboxResult
 })
 export class FolderContentContainter implements OnInit {
 
-    constructor(private folderContentService: FolderContnentService) {
+    constructor(private folderContentService: FolderContnentService, 
+                private clipboard: FolderContentClipBoard) {
     }
 
     private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
@@ -131,14 +134,41 @@ export class FolderContentContainter implements OnInit {
     }
 
     onCoptyContexMenuClick() {
-        console.log("Copy");
+        let selected = this.getSelected();
+        this.clipboard.AddToClipBoard(selected, ClipBoardOperation.Copy);
     }
 
     onCutContexMenuClick() {
-        console.log("Cut");
+        let selected = this.getSelected();
+        this.clipboard.AddToClipBoard(selected, ClipBoardOperation.Cut);
     }
 
     onPasteContexMenuClick() {
+        let copyTo = this.getSelected();
+        let letClipBoardOperation = this.clipboard.popClipBoardOperation();
+        let objTocopy = this.clipboard.popClipBoardObj();
+        let respOfCopy = this.folderContentService.copy(objTocopy, <IFolder>copyTo);
+        
+        respOfCopy.subscribe(
+            data => {
+                if(letClipBoardOperation === ClipBoardOperation.Cut){
+                    let respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path);
+                    respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(),
+                                            error => 
+                                            {
+                                                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
+                                            });
+
+                }
+                else{
+                    this.updateThisFolderContentAfterOperation();
+                }
+                
+            },
+            error => 
+            {
+                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
+            })
         console.log("Paste");
     }
 

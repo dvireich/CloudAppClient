@@ -65,6 +65,17 @@ export class FolderContnentService {
     );
   }
 
+  copy(folderContentToCopy: IFolderContent, folderToCopyTo: IFolder ){
+    let folderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
+    return this.http.post(folderUrl, {FolderContentName: folderContentToCopy.Name, 
+                                      FolderContentPath: folderContentToCopy.Path,
+                                      FolderContentType: folderContentToCopy.Type,
+                                      CopyToName: folderToCopyTo.Name,
+                                      CopyToPath: folderToCopyTo.Path}).pipe(
+      catchError(this.handleError) 
+    );
+  }
+
   getContaningFolderPathFromPath(path: string): string {
     //base case
     if(path === 'home/') return 'home/';
