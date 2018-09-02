@@ -82,7 +82,7 @@ export class FolderContnentService {
 
   getContaningFolderPathFromPath(path: string): string {
     //base case
-    if(path === 'home') return 'home';
+    if(path === 'home/') return 'home/';
     //other cases
     let splitted = path.split('/');
     let contaningFolderPathArray = splitted.slice(0, splitted.length -1);
@@ -92,7 +92,7 @@ export class FolderContnentService {
 
   getContaningFolderNameFromPath(path: string): string {
     //base case
-    if(path === '') return '';
+    if(path === 'home/') return 'root';
     //other cases
     let splitted = path.split('/');
     let contaningFolderName = splitted.reverse().shift();

@@ -15,6 +15,10 @@ export class FolderContentClipBoard{
         this.operation = operation;
     }
 
+    peekClipBoardObj() : IFolderContent{
+        return this.folderContent;
+    }
+
     popClipBoardObj(): IFolderContent{
         let clipboardobj =  this.folderContent;
         this.ClearClipBoard();

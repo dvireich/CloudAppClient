@@ -331,8 +331,11 @@ export class FolderContentContainter implements OnInit {
     }
 
     canPaste() : boolean{
-        //console.log("canPaste() = " + this.clipboard.popClipBoardOperation() !== null && this.clipboard.popClipBoardOperation() !== undefined);
-        return this.clipboard.popClipBoardOperation() !== null && this.clipboard.popClipBoardOperation() !== undefined;
+        let clipboardObj = this.clipboard.peekClipBoardObj();
+        let selected = this.getSelected();
+        return this.clipboard.popClipBoardOperation() !== null && 
+        this.clipboard.popClipBoardOperation() !== undefined &&
+        !clipboardObj.equals(selected);
     }
 
     inputBoxOnCancel() {
@@ -341,7 +344,7 @@ export class FolderContentContainter implements OnInit {
 
     getCurrentPath(): string {
         if (this.listOfFileFolderNames == undefined) {
-            return 'home';
+            return 'home/';
         }
         if (this.listOfFileFolderNames.Path === '') return this.listOfFileFolderNames.Name;
         return `${this.listOfFileFolderNames.Path}/${this.listOfFileFolderNames.Name}`;
