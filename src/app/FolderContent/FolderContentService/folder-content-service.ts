@@ -27,9 +27,9 @@ export class FolderContnentService {
     );
   }
 
-  renameFolderContent(name: string, path: string, newName: string){
+  renameFolderContent(name: string, path: string, type: folderContentType, newName: string){
     let folderUrl = `${this.FolderContentRepositoryUrl}/Rename`;
-    return this.http.post(folderUrl, {Name: name, Path: path, NewName: newName}).pipe(
+    return this.http.post(folderUrl, {Name: name, Path: path, Type: type, NewName: newName}).pipe(
       catchError(this.handleError) 
     );
   }
@@ -37,11 +37,9 @@ export class FolderContnentService {
   getFolder(name: string, path: string): Observable<IFolder> {
     path = this.fixPath(path);
     let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"`;
-
     return this.http.get<string>(folderUrl).pipe(
       map(jsonStr => {
         let ifolder = <IFolder>JSON.parse(jsonStr);
-
         if(ifolder.Content === undefined || ifolder.Content === null){
           ifolder.Content = new Array<FolderContent>();
         }
@@ -49,7 +47,7 @@ export class FolderContnentService {
         ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
         return ifolder;
       }),
-      tap(data => data), //console.log('All: ' + JSON.stringify(data))),
+      tap(data => data),//console.log('All: ' + JSON.stringify(data))),
       catchError(this.handleError)
     );
   }
@@ -76,9 +74,15 @@ export class FolderContnentService {
     );
   }
 
+  createPath(name: string, path: string){
+    return (path === undefined || path === null || path === '') ?
+            name :
+            `${name}/${path}`;
+  }
+
   getContaningFolderPathFromPath(path: string): string {
     //base case
-    if(path === 'home/') return 'home/';
+    if(path === 'home') return 'home';
     //other cases
     let splitted = path.split('/');
     let contaningFolderPathArray = splitted.slice(0, splitted.length -1);
@@ -88,7 +92,7 @@ export class FolderContnentService {
 
   getContaningFolderNameFromPath(path: string): string {
     //base case
-    if(path === 'home/') return 'root';
+    if(path === '') return '';
     //other cases
     let splitted = path.split('/');
     let contaningFolderName = splitted.reverse().shift();
@@ -112,7 +116,7 @@ export class FolderContnentService {
       folder.Path = path;
       return folder;
     }
-
+    console.log("Not able to map object: " + name + " " + path + " " + type);
     throw new Error("Not able to map object: " + name + " " + path + " " + type);
   }
 

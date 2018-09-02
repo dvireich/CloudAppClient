@@ -1,5 +1,5 @@
 <div class="disable_text_highlighting">
-    <table class="table-hover" [style.background]='color'>
+    <table [ngClass]="{'table-hover' : notSelected}" [style.background]='color'>
         <tr>
             <table (click)="onClick()" (dblclick)="onDbClick()" (contextmenu)="onrightClick($event)">
                 <tr>
