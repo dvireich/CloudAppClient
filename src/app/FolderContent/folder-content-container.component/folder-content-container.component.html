@@ -1,4 +1,6 @@
 <div class="squareSelection" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
+        <nav-bar [pathBreaks] = 'navBarPathBreaks'
+                 (PathBreakClick)='navBarPathBreakClick($event)'></nav-bar>
     <table>
         <tr *ngFor ='let listOfNames of listOfListsOfNames'>
             <td *ngFor='let item of listOfNames'>

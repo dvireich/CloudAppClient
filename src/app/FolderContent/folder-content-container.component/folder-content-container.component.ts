@@ -16,6 +16,8 @@ import { EnterFolderArgs } from "../select-able.component/enterFolderArgs";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
 import { FolderContentClipBoard } from "../folder-content-clipboard";
 import { ClipBoardOperation } from "../clipBoardOperation";
+import { IPathBreak } from "../../Common/navBar.component/IPathBreak";
+import { PathBreak } from "../../Common/navBar.component/pathBreak";
 
 @Component({
     selector: "folder-content-container",
@@ -33,13 +35,17 @@ export class FolderContentContainter implements OnInit {
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
     private listOfListsOfNames: IFolderContent[][] = [];
+    private _listOfFileFolderNames: IFolder;
+
+    //NavBar
+    navBarPathBreaks: IPathBreak[];
+    navBarPathBreakClick : (fullPath: string)=>void = this.navBarOnPathBreakClick;
+    
+    //ContexMenu
+    showContexMenu: boolean;
     private contexMenuX: number;
     private contexMenuY: number;
-    private _listOfFileFolderNames: IFolder;
     private contexMenuItems: IContexMentuItem[];
-
-    showContexMenu: boolean;
-    
 
     //inputBox
     neddToShowInputBox: boolean;
@@ -80,7 +86,10 @@ export class FolderContentContainter implements OnInit {
 
     private updateFolderContent(folderName: string, folderPath: string): void {
         this.folderContentService.getFolder(folderName, folderPath).subscribe(
-            folder => this.listOfFileFolderNames = folder,
+            folder => {
+                this.listOfFileFolderNames = folder;
+                this.navBarPathBreaks = this.breakPathIntoPathBreaks(this.getCurrentPath());
+            },
             error => this.messageBoxText = <any>error);
     }
 
@@ -440,5 +449,26 @@ export class FolderContentContainter implements OnInit {
         this.inputBoxOnSubmitEvent = this.onInputBoxClick(onSubmit, cont);
         this.inputBoxOnCancel = onCancel.bind(this);
         this.neddToShowInputBox = true;
+    }
+
+    breakPathIntoPathBreaks(path: string): IPathBreak[] {
+        let splittedPath = path.split('/');
+        let result: IPathBreak[] = new Array<IPathBreak>();
+        
+        for(let i: number = 0; i < splittedPath.length; i++){
+            let pathBreak = splittedPath[i];
+
+            let fullPathBreaks = splittedPath.slice(0, i);
+            let fullPath = fullPathBreaks.reduce((prev, currVal) => prev + '/' + currVal, "");
+
+            result.push(new PathBreak(pathBreak, fullPath));
+        }
+        return result;
+    }
+
+    navBarOnPathBreakClick(fullPath: string){
+        let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
+        let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
+        this.updateFolderContent(folderName, folderPath);
     }
 }

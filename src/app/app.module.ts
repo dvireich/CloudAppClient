@@ -9,6 +9,7 @@ import { FolderContentContainter } from './FolderContent/folder-content-containe
 import { SelectableComponent } from './FolderContent/select-able.component/select-able.component';
 import { MessageBox } from './Common/messagebox.component/messagebox.component';
 import { Inputbox } from './Common/inputbox.component/inputbox.component';
+import { NavagationBar } from './Common/navBar.component/nav-bar.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { Inputbox } from './Common/inputbox.component/inputbox.component';
     ContextmenuComponent,
     FolderContentContainter,
     MessageBox,
-    Inputbox
+    Inputbox,
+    NavagationBar
   ],
   imports: [
     BrowserModule,

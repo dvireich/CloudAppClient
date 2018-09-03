@@ -1,5 +1,6 @@
 .squareSelection{
     min-height:300px;
-    min-width: 300px;
+    min-width: 200px;
     background-color: LightGrey ;
+    padding: 8px 15px;
 }
