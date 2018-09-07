@@ -1,0 +1,54 @@
+<!-- <div class="container disable_text_highlighting">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" placeholder="Bob" formControlName="name">
+    </div>
+    <div class="form-group">
+      <input type="file" id="avatar" (change)="onFileChange($event)" #fileInput>
+      <button type="button" class="btn btn-sm btn-default" (click)="clearFile()">clear file</button>
+    </div>
+    <button type="submit" [disabled]="form.invalid || loading" class="btn btn-sm btn-default">Submit</button>
+    <i class="fa fa-spinner fa-spin fa-fw" *ngIf="loading"></i>
+  </form>
+</div> -->
+
+
+<div class="disable_text_highlighting">
+  <div class="container">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <div class="lable row">
+            <div class="col-md-9">Add File</div>
+          </div>
+        </h3>
+      </div>
+      <div class="panel-body">
+
+
+       
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="name">File Name:</label>
+      <input type="text" class="form-control" id="name" placeholder="Enter file new name..." formControlName="name">
+    </div>
+    <div class="form-group">
+      <input type="file" id="avatar" (change)="onFileChange($event)" #fileInput>
+      <button type="button" class="button" (click)="cancel()">Cancel</button>
+      <button type="button" class="button" (click)="clearFile()">Clear file</button>
+      <button type="submit" class="button" [disabled]="form.invalid || loading" 
+              [style.cursor]='(form.invalid || loading) ? "not-allowed" : "pointer"'>Add</button>
+    </div>
+    
+    <i class="fa fa-spinner fa-spin fa-fw" *ngIf="true"></i>
+  </form>
+      </div>
+    </div>
+
+        <!-- <label for="name">Please enter the file name:</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter file name..." (change)="onTextChange($event)">
+        <input type="file" id="avatar" (change)="onFileChange($event)" #fileInput>
+        <button class="btn btn-sm btn-default" (click)='cancel()'>Cancel</button>
+        <button class="btn btn-sm btn-default" (click)='clearFile()'>Clear File</button>
+        <button [disabled]="shouldDisableAddButon || loading" class="btn btn-sm btn-default" (click)='onSubmit()'>Add</button> -->

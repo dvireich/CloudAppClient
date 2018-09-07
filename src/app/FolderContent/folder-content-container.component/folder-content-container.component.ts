@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
 import { SelectableComponent } from "../select-able.component/select-able.component";
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
 import { IFolderContent } from "../IFolderContent";
@@ -27,8 +27,8 @@ import { PathBreak } from "../../Common/navBar.component/pathBreak";
 })
 export class FolderContentContainter implements OnInit {
 
-    constructor(private folderContentService: FolderContnentService, 
-                private clipboard: FolderContentClipBoard) {
+    constructor(private folderContentService: FolderContnentService,
+        private clipboard: FolderContentClipBoard) {
     }
 
     private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
@@ -37,10 +37,14 @@ export class FolderContentContainter implements OnInit {
     private listOfListsOfNames: IFolderContent[][] = [];
     private _listOfFileFolderNames: IFolder;
 
+    //UploadBox
+    needToShowUploadBox: boolean;
+    uploadBoxCancel: () => void = this.uploadFileOnCancel;
+
     //NavBar
     navBarPathBreaks: IPathBreak[];
-    navBarPathBreakClick : (fullPath: string)=>void = this.navBarOnPathBreakClick;
-    
+    navBarPathBreakClick: (fullPath: string) => void = this.navBarOnPathBreakClick;
+
     //ContexMenu
     showContexMenu: boolean;
     private contexMenuX: number;
@@ -87,6 +91,7 @@ export class FolderContentContainter implements OnInit {
     private updateFolderContent(folderName: string, folderPath: string): void {
         this.folderContentService.getFolder(folderName, folderPath).subscribe(
             folder => {
+                console.log(folder);
                 this.listOfFileFolderNames = folder;
                 this.navBarPathBreaks = this.breakPathIntoPathBreaks(this.getCurrentPath());
             },
@@ -126,20 +131,26 @@ export class FolderContentContainter implements OnInit {
 
     onDeleteContexMenuClick() {
         let selected = this.getSelected();
-        this.showMessageBox("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", ()=>{
-            if(this.messageBoxResult === DialogResult.No) return;
+        this.showMessageBox("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", () => {
+            if (this.messageBoxResult === DialogResult.No) return;
             if (selected.Type === folderContentType.folder) {
                 this.folderContentService.deleteFolder(selected.Name, selected.Path).subscribe(
                     data => this.updateThisFolderContentAfterOperation(),
                     error => this.messageBoxText = <any>error
                 );
             }
+            if (selected.Type === folderContentType.file) {
+                this.folderContentService.deleteFile(selected.Name, selected.Path).subscribe(
+                    data => this.updateThisFolderContentAfterOperation(),
+                    error => this.messageBoxText = <any>error
+                );
+            }
             this.InitializeListOfListsOfNames();
-        });  
+        });
     }
 
-    onRenameContexMenuClick(){
-        this.showInputBox("Enter the new name...","Rename", "Rename", this.inputBoxRename(this.getSelected()), this.inputBoxOnCancel, ()=>{});
+    onRenameContexMenuClick() {
+        this.showInputBox("Enter the new name...", "Rename", "Rename", this.inputBoxRename(this.getSelected()), this.inputBoxOnCancel, () => { });
     }
 
     onCoptyContexMenuClick() {
@@ -152,19 +163,19 @@ export class FolderContentContainter implements OnInit {
         this.clipboard.AddToClipBoard(selected, ClipBoardOperation.Cut);
     }
 
-    getCurrentFolder() : IFolder{
+    getCurrentFolder(): IFolder {
         let result = new FolderObj();
         if (this.listOfFileFolderNames == undefined) {
             result.Name = 'home';
             result.Path = '';
             result.Content = new Array<IFolderContent>();
         }
-        else if (this.listOfFileFolderNames.Path === ''){
+        else if (this.listOfFileFolderNames.Path === '') {
             result.Name = this.listOfFileFolderNames.Name;
             result.Path = '';
             result.Content = new Array<IFolderContent>();
         }
-        else{
+        else {
             result.Name = this.listOfFileFolderNames.Name;
             result.Path = this.listOfFileFolderNames.Path;
             result.Content = new Array<IFolderContent>();
@@ -178,38 +189,36 @@ export class FolderContentContainter implements OnInit {
         let letClipBoardOperation = this.clipboard.popClipBoardOperation();
         let objTocopy = this.clipboard.popClipBoardObj();
 
-        if(copyTo === null || copyTo === undefined){
+        if (copyTo === null || copyTo === undefined) {
             copyTo = this.getCurrentFolder();
         }
-        
-        if(this.folderContentService.createPath(copyTo.Name, copyTo.Path) === objTocopy.Path) return;
+
+        if (this.folderContentService.createPath(copyTo.Name, copyTo.Path) === objTocopy.Path) return;
 
         let respOfCopy = this.folderContentService.copy(objTocopy, <IFolder>copyTo);
-        
+
         respOfCopy.subscribe(
             data => {
-                if(letClipBoardOperation === ClipBoardOperation.Cut){
+                if (letClipBoardOperation === ClipBoardOperation.Cut) {
                     let respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path);
                     respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(),
-                                            error => 
-                                            {
-                                                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
-                                            });
+                        error => {
+                            this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
+                        });
                 }
-                else{
+                else {
                     this.updateThisFolderContentAfterOperation();
                 }
-                
+
             },
-            error => 
-            {
-                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
+            error => {
+                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
             })
         console.log("Paste");
     }
 
     onCreateNewFolderContexMenuClick() {
-        this.showInputBox("Enter folder name...","Create Folder", "Create", this.inputBoxCreateNewFolder, this.inputBoxOnCancel,()=>{});
+        this.showInputBox("Enter folder name...", "Create Folder", "Create", this.inputBoxCreateNewFolder, this.inputBoxOnCancel, () => { });
     }
 
     addChildComponent(child: SelectableComponent) {
@@ -262,7 +271,7 @@ export class FolderContentContainter implements OnInit {
         this.updateFolderContent(selected.Name, selected.Path);
     }
 
-    dbClickEnterFolder(args : EnterFolderArgs){
+    dbClickEnterFolder(args: EnterFolderArgs) {
         this.updateFolderContent(args.Name, args.Path);
     }
 
@@ -275,6 +284,11 @@ export class FolderContentContainter implements OnInit {
         this.contexMenuY = event.pageY;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
         this.showContexMenu = true;
+    }
+
+    onAddFile() {
+        this.needToShowUploadBox = true;
+        console.log("onAddFile");
     }
 
     getContexMentuItemsForFolderContentRClick(): IContexMentuItem[] {
@@ -305,7 +319,7 @@ export class FolderContentContainter implements OnInit {
         let pasteToEvent = new ContexMentuItem();
         pasteToEvent.onClick = this.onPasteContexMenuClick.bind(this);
         pasteToEvent.name = "Paste";
-        pasteToEvent.needToshow = (()=> {return (this.isFolder() && this.canPaste());}).bind(this);
+        pasteToEvent.needToshow = (() => { return (this.isFolder() && this.canPaste()); }).bind(this);
         pasteToEvent.showAllways = false;
 
         let enterToEvent = new ContexMentuItem();
@@ -335,20 +349,31 @@ export class FolderContentContainter implements OnInit {
         pasteToEvent.needToshow = this.canPaste.bind(this);
         pasteToEvent.showAllways = false;
 
+        let addFileToEvent = new ContexMentuItem();
+        addFileToEvent.onClick = this.onAddFile.bind(this);
+        addFileToEvent.name = "Add File";
+        addFileToEvent.needToshow = () => true;
+        addFileToEvent.showAllways = true;
+
         return [createNewFolderToEvent,
-                pasteToEvent];
+            pasteToEvent,
+            addFileToEvent];
     }
 
-    canPaste() : boolean{
+    canPaste(): boolean {
         let clipboardObj = this.clipboard.peekClipBoardObj();
         let selected = this.getSelected();
-        return this.clipboard.popClipBoardOperation() !== null && 
-        this.clipboard.popClipBoardOperation() !== undefined &&
-        !clipboardObj.equals(selected);
+        return this.clipboard.popClipBoardOperation() !== null &&
+            this.clipboard.popClipBoardOperation() !== undefined &&
+            !clipboardObj.equals(selected);
     }
 
     inputBoxOnCancel() {
         this.neddToShowInputBox = false;
+    }
+
+    uploadFileOnCancel() {
+        this.needToShowUploadBox = false;
     }
 
     getCurrentPath(): string {
@@ -359,6 +384,14 @@ export class FolderContentContainter implements OnInit {
         return `${this.listOfFileFolderNames.Path}/${this.listOfFileFolderNames.Name}`;
     }
 
+    onFinishAddFile() {
+        this.updateThisFolderContentAfterOperation();
+    }
+
+    onStartAddFile() {
+        this.needToShowUploadBox = false;
+    }
+
     updateThisFolderContentAfterOperation() {
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
             this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()));
@@ -367,35 +400,33 @@ export class FolderContentContainter implements OnInit {
     inputBoxCreateNewFolder(folderName: string) {
         this.neddToShowInputBox = false;
 
-        if(!this.validateNotEmptyStringAndShowMessageBox(folderName,"The folder name cannot be empty")) return;
+        if (!this.validateNotEmptyStringAndShowMessageBox(folderName, "The folder name cannot be empty")) return;
 
         let resp = this.folderContentService.createFolder(folderName, this.getCurrentPath());
         resp.subscribe(
             data => this.updateThisFolderContentAfterOperation(),
-            error => 
-            {
-                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder" );
+            error => {
+                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
             })
     }
 
-    inputBoxRename(selected : IFolderContent) : (input: string)=> void{
-        return (newName: string)=>{
+    inputBoxRename(selected: IFolderContent): (input: string) => void {
+        return (newName: string) => {
             this.neddToShowInputBox = false;
             console.log("inputBoxRename: selected: " + selected);
-            if(!this.validateNotEmptyStringAndShowMessageBox(newName,"The new name cannot be empty")) return;
-    
+            if (!this.validateNotEmptyStringAndShowMessageBox(newName, "The new name cannot be empty")) return;
+
             let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
             resp.subscribe(
                 data => this.updateThisFolderContentAfterOperation(),
-                error => 
-                {
-                    this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename" );
+                error => {
+                    this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename");
                 })
         }
     }
 
-    validateNotEmptyStringAndShowMessageBox(str: string, errorMessage: string) : boolean{
-        if(str === "" || str === undefined){
+    validateNotEmptyStringAndShowMessageBox(str: string, errorMessage: string): boolean {
+        if (str === "" || str === undefined) {
             this.showMessageBox(errorMessage, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
             return false;
         }
@@ -403,46 +434,46 @@ export class FolderContentContainter implements OnInit {
         return true;
     }
 
-    onMessageBoxClick(action: (result: DialogResult)=> void, cont : ()=> void){
+    onMessageBoxClick(action: (result: DialogResult) => void, cont: () => void) {
         let bindedAction = action.bind(this);
         let bindedCont = cont.bind(this);
-        return (result: DialogResult) =>{
+        return (result: DialogResult) => {
             bindedAction(result);
             bindedCont();
         }
     }
 
-    onInputBoxClick(action: (input : string) => void, cont: ()=> void){
+    onInputBoxClick(action: (input: string) => void, cont: () => void) {
         let bindedAction = action.bind(this);
         let bindedCont = cont.bind(this);
-        return (input : string) =>{
+        return (input: string) => {
             bindedAction(input);
             bindedCont();
         }
     }
-    
-    onMessageBoxCancel(result: DialogResult){
+
+    onMessageBoxCancel(result: DialogResult) {
         this.messageBoxResult = result;
         this.needToShowMessageBox = false;
     }
 
-    onMessageBoxOk(result: DialogResult){
+    onMessageBoxOk(result: DialogResult) {
         this.messageBoxResult = result;
         this.needToShowMessageBox = false;
     }
 
-    showMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont : ()=> void = ()=>{}) {
+    showMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: () => void = () => { }) {
 
         this.messageBoxOnButton1Click = this.onMessageBoxClick(this.onMessageBoxOk, cont).bind(this);
         this.messageBoxOnButton2Click = this.onMessageBoxClick(this.onMessageBoxCancel, cont).bind(this);
         this.messageBoxMessageType = type;
         this.messageBoxText = message;
         this.messageBoxButtons = buttons;
-        this,this.messageBoxCaption = caption;
+        this, this.messageBoxCaption = caption;
         this.needToShowMessageBox = true;
     }
 
-    showInputBox(placeHolder: string ,header: string, okBUttonName: string, onSubmit: (input: string)=> void, onCancel: ()=>void, cont: ()=> void){
+    showInputBox(placeHolder: string, header: string, okBUttonName: string, onSubmit: (input: string) => void, onCancel: () => void, cont: () => void) {
         this.inputBoxPlaceHolder = placeHolder;
         this.inputBoxHeader = header;
         this.inputBoxOkButtonName = okBUttonName;
@@ -454,8 +485,8 @@ export class FolderContentContainter implements OnInit {
     breakPathIntoPathBreaks(path: string): IPathBreak[] {
         let splittedPath = path.split('/');
         let result: IPathBreak[] = new Array<IPathBreak>();
-        
-        for(let i: number = 0; i < splittedPath.length; i++){
+
+        for (let i: number = 0; i < splittedPath.length; i++) {
             let pathBreak = splittedPath[i];
 
             let fullPathBreaks = splittedPath.slice(0, i);
@@ -466,7 +497,7 @@ export class FolderContentContainter implements OnInit {
         return result;
     }
 
-    navBarOnPathBreakClick(fullPath: string){
+    navBarOnPathBreakClick(fullPath: string) {
         let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
         let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
         this.updateFolderContent(folderName, folderPath);

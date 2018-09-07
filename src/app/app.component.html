@@ -1,5 +1,16 @@
 <div class="backgroundColor">
-<folder-content-container [maxColumns] = '8'></folder-content-container>
+                <nav class="navbar navbar-inverse noSpaceButton">
+                                <div class="container-fluid">
+                                  <div class="navbar-header">
+                                    <a class="navbar-brand" href="">My Could</a>
+                                  </div>
+                                  <ul class="nav navbar-nav">
+                                    <li class="active"><a routerLinkActive='active' [routerLink]="['/workspace']">workspace</a></li>
+                                    <li><a routerLinkActive='active' [routerLink]="['/uploadprogress']">Upload Progress</a></li>
+                                  </ul>
+                                </div>
+                              </nav>
+                              <router-outlet></router-outlet>
 </div>
 
 

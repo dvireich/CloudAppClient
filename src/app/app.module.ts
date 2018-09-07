@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import {ReactiveFormsModule} from "@angular/forms";
+import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { ContextmenuComponent } from './Common/contexMenu.component/contextmenu.component';
@@ -10,6 +12,9 @@ import { SelectableComponent } from './FolderContent/select-able.component/selec
 import { MessageBox } from './Common/messagebox.component/messagebox.component';
 import { Inputbox } from './Common/inputbox.component/inputbox.component';
 import { NavagationBar } from './Common/navBar.component/nav-bar.component';
+import { Base64UploadComponent } from './Common/uploadForm.component/uploadForm.component';
+import { UploadProgress } from './Common/uploadProgress.component/uploadProgress.component';
+import { UploadProgressContainer } from './FolderContent/upload-progress-container.component/upload-progress-container.component';
 
 
 @NgModule({
@@ -20,12 +25,22 @@ import { NavagationBar } from './Common/navBar.component/nav-bar.component';
     FolderContentContainter,
     MessageBox,
     Inputbox,
-    NavagationBar
+    NavagationBar,
+    Base64UploadComponent,
+    UploadProgress,
+    UploadProgressContainer
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule.forRoot([
+      { path: 'workspace', component: FolderContentContainter },
+      { path: 'uploadprogress', component: UploadProgressContainer },
+      { path: '', redirectTo: 'workspace', pathMatch: 'full' },
+      { path: '**', redirectTo: 'www'}
+    ]),
   ],
   providers: [],
   bootstrap: [AppComponent]
