@@ -29,6 +29,7 @@ export class FolderContentContainter implements OnInit {
 
     constructor(private folderContentService: FolderContnentService,
         private clipboard: FolderContentClipBoard) {
+            folderContentService.subscriberToFinishUploadToAction(this, this.updateThisFolderContentAfterOperation.bind(this))
     }
 
     private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
@@ -77,7 +78,7 @@ export class FolderContentContainter implements OnInit {
         this._listOfFileFolderNames = value;
         this.InitializeListOfListsOfNames();
     }
-    @Input() maxColumns: number = 4;
+    @Input() maxColumns: number = 25;
 
     ngOnInit(): void {
         if (this._listOfFileFolderNames == undefined) {
@@ -91,7 +92,6 @@ export class FolderContentContainter implements OnInit {
     private updateFolderContent(folderName: string, folderPath: string): void {
         this.folderContentService.getFolder(folderName, folderPath).subscribe(
             folder => {
-                console.log(folder);
                 this.listOfFileFolderNames = folder;
                 this.navBarPathBreaks = this.breakPathIntoPathBreaks(this.getCurrentPath());
             },
@@ -262,7 +262,6 @@ export class FolderContentContainter implements OnInit {
 
     private isFolder(): boolean {
         let selected = this.getSelected();
-        //console.log("isFolder() = " + (selected.Type === folderContentType.folder));
         return selected.Type === folderContentType.folder;
     }
 
@@ -289,6 +288,11 @@ export class FolderContentContainter implements OnInit {
     onAddFile() {
         this.needToShowUploadBox = true;
         console.log("onAddFile");
+    }
+
+    downloadFile(){
+        let selected = this.getSelected();
+        this.folderContentService.downloadFile(selected.Name, selected.Path);
     }
 
     getContexMentuItemsForFolderContentRClick(): IContexMentuItem[] {
@@ -328,11 +332,19 @@ export class FolderContentContainter implements OnInit {
         enterToEvent.needToshow = this.isFolder.bind(this);;
         enterToEvent.showAllways = false;
 
+        let downloadToEvent = new ContexMentuItem();
+        downloadToEvent.onClick = this.downloadFile.bind(this);
+        downloadToEvent.name = "Download";
+        downloadToEvent.needToshow = (() => { return (!this.isFolder()); }).bind(this);
+        downloadToEvent.showAllways = false;
+
+
         return [deleteToEvent,
             copyToEvent,
             renameToEvent,
             cutToEvent,
             pasteToEvent,
+            downloadToEvent,
             enterToEvent];
     }
 
@@ -413,7 +425,6 @@ export class FolderContentContainter implements OnInit {
     inputBoxRename(selected: IFolderContent): (input: string) => void {
         return (newName: string) => {
             this.neddToShowInputBox = false;
-            console.log("inputBoxRename: selected: " + selected);
             if (!this.validateNotEmptyStringAndShowMessageBox(newName, "The new name cannot be empty")) return;
 
             let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
@@ -501,5 +512,9 @@ export class FolderContentContainter implements OnInit {
         let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
         let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
         this.updateFolderContent(folderName, folderPath);
+    }
+
+    onErrorUploadFile(error: string){
+        this.showMessageBox(`Error on upload file: ${error}`, MessageBoxType.Error, MessageBoxButton.Ok, "Upload File");
     }
 }

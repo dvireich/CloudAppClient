@@ -1,12 +1,13 @@
 <div class="disable_text_highlighting">
-    <table [ngClass]="{'table-hover' : notSelected}" [style.background]='color'>
+    <table [title]="text" [ngClass]="{'table-hover' : notSelected}" [style.background]='color'>
         <tr>
             <table (click)="onClick()" (dblclick)="onDbClick()" (contextmenu)="onrightClick($event)">
                 <tr>
                     <img [src]='getImgSrc()' class="center" width="50" draggable="false">
                 </tr>
                 <tr align="middle">
-                    {{text}}
+                    {{textToShow}}
+
                 </tr>
             </table>
         </tr>

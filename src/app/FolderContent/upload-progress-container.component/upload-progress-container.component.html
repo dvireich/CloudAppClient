@@ -1,1 +1,4 @@
-<upload-progress></upload-progress>
+
+<div *ngFor='let uploads of uploadsToMaxColumns' class="row">
+  <upload-progress *ngFor='let upload of uploads' [uploadData]='upload'></upload-progress>
+</div>

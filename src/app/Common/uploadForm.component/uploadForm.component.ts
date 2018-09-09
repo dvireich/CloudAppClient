@@ -10,10 +10,11 @@ import { FolderContnentService } from '../../FolderContent/FolderContentService/
 export class Base64UploadComponent {
   form: FormGroup;
   loading: boolean = false;
-  shouldDisableAddButon: boolean = true;
+  disableAddButon: boolean = true;
 
   @ViewChild('fileInput') fileInput: ElementRef;
   @Input() currentFolderPath: string;
+  @Input() onErrorUpload: (message: string) => void;
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @Output() onAddEnd: EventEmitter<void> = new EventEmitter<void>();
   @Output() onAddStart: EventEmitter<void> = new EventEmitter<void>();
@@ -34,7 +35,7 @@ export class Base64UploadComponent {
     let reader = new FileReader();
     if (event.target.files && event.target.files.length > 0) {
       let file = event.target.files[0];
-      reader.readAsBinaryString(file);
+      reader.readAsDataURL(file);
       reader.onload = () => {
         this.form.get('avatar').setValue({
           filename: file.name,
@@ -54,7 +55,8 @@ export class Base64UploadComponent {
                                          this.currentFolderPath ,
                                          formModel.avatar.filetype, 
                                          formModel.avatar.value, 
-                                         ()=> this.onAddEnd.emit());
+                                         ()=> this.onAddEnd.emit(),
+                                         this.onErrorUpload);
   this.onAddStart.emit();
   }
 
@@ -74,10 +76,11 @@ export class Base64UploadComponent {
     this.onCancel.emit();
   }
 
-  onTextChange(input: any){
-    this.shouldDisableAddButon = 
-          (this.fileInput.nativeElement.value !== undefined &&
+  shouldDisableAddButon(){
+    this.disableAddButon = 
+          !(this.fileInput.nativeElement.value !== undefined &&
            this.fileInput.nativeElement.value !== null &&
-           this.fileInput.nativeElement.value.length > 0);
+           this.fileInput.nativeElement.value.length > 0 &&
+           this.form.value.avatar !== null);
   }
 }

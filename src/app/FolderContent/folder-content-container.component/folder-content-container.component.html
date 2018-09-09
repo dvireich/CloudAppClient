@@ -40,9 +40,11 @@
                      (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
     </div>
     <div *ngIf='needToShowUploadBox'>
-            <base64-upload [currentFolderPath] = 'getCurrentPath()'
+            <base64-upload 
+            [currentFolderPath] = 'getCurrentPath()'
             (onCancel)='uploadBoxCancel($event)'
             (onAddEnd)='onFinishAddFile($event)'
-            (onAddStart)='onStartAddFile($event)'></base64-upload>
+            (onAddStart)='onStartAddFile($event)'
+            [onErrorUpload] = 'onErrorUploadFile.bind(this)'></base64-upload>
     </div>
 </div>

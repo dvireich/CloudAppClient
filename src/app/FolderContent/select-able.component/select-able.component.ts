@@ -10,24 +10,40 @@ import { EnterFolderArgs } from "./enterFolderArgs";
 })
 
 export class SelectableComponent implements AfterViewInit {
-    @Input() text: string;
+    private _text: string;
+    private textToShow: string;
     @Input() type: folderContentType;
     @Input() path: string;
     @Output() RegisterInParent: EventEmitter<SelectableComponent> = new EventEmitter<SelectableComponent>();
     @Output() UnSelectAll: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyParentIgnoreOnRightClick: EventEmitter<void> = new EventEmitter<void>();
-    @Output() ShowContexMenu : EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
-    @Output() EnterFolderByDbClick : EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
+    @Output() ShowContexMenu: EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
+    @Output() EnterFolderByDbClick: EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
     color: string = "LightGrey";
     private notSelected: boolean = true;
-    
-    private getImgSrc(): string{
+
+    private getImgSrc(): string {
         return this.type === folderContentType.file ? "http://www.haipic.com/icon/38089/38089.png" :
-                                                      "https://dumielauxepices.net/sites/default/files/folder-icons-transparent-613037-9176493.png"
+            "https://dumielauxepices.net/sites/default/files/folder-icons-transparent-613037-9176493.png"
     }
 
-    onClick(): void{
+    
+
+    @Input()
+    set text(value: string) {
+        this._text = value;
+        this.textToShow = value;
+        if(value.length > 8){
+            this.textToShow = value.substring(0, 5) + "...";
+        }
+    }
+
+    get text(): string {
+        return this._text;
+    }
+
+    onClick(): void {
         if (this.notSelected) {
             this.select();
         }
@@ -36,36 +52,41 @@ export class SelectableComponent implements AfterViewInit {
         }
     }
 
-    onDbClick(){
+    onDbClick() {
+        if (this.type === folderContentType.file) return;
         let args = new EnterFolderArgs();
         args.Name = this.text;
         args.Path = this.path;
         this.EnterFolderByDbClick.emit(args);
     }
 
-    private select(applyIgnoreDisableSelection : boolean = true) {
+    private select(applyIgnoreDisableSelection: boolean = true) {
         this.UnSelectAll.emit();
         this.color = "#80d4ff";
         this.notSelected = false;
         
-        if(!applyIgnoreDisableSelection) return;
+        if (!applyIgnoreDisableSelection) return;
         this.ApplyIgnoreDisableSelection.emit();
     }
 
-    isSeletcted(): boolean{
+    isSeletcted(): boolean {
         return !this.notSelected;
     }
 
-    unSelect() : void {
+    unSelect(): void {
         this.color = "LightGrey";
         this.notSelected = true;
+
+        if(this.text.length > 8){
+            this.textToShow = this.text.substring(0, 5) + "...";
+        }
     }
 
     ngAfterViewInit(): void {
         this.RegisterInParent.emit(this);
     }
 
-    onrightClick(event : IContexMenuCoordinates) : void{
+    onrightClick(event: IContexMenuCoordinates): void {
         this.select(false);
         this.ApplyParentIgnoreOnRightClick.emit();
         this.ShowContexMenu.emit(event);
