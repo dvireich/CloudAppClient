@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, Input, OnInit, ViewChild, ElementRef, OnDestroy } from "@angular/core";
 import { SelectableComponent } from "../select-able.component/select-able.component";
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
 import { IFolderContent } from "../IFolderContent";
@@ -18,6 +18,7 @@ import { FolderContentClipBoard } from "../folder-content-clipboard";
 import { ClipBoardOperation } from "../clipBoardOperation";
 import { IPathBreak } from "../../Common/navBar.component/IPathBreak";
 import { PathBreak } from "../../Common/navBar.component/pathBreak";
+import { Observable } from "rxjs";
 
 @Component({
     selector: "folder-content-container",
@@ -25,7 +26,10 @@ import { PathBreak } from "../../Common/navBar.component/pathBreak";
     styleUrls: ['./folder-content-container.component.css']
 
 })
-export class FolderContentContainter implements OnInit {
+export class FolderContentContainter implements OnInit, OnDestroy {
+    ngOnDestroy(): void {
+        this.folderContentService.removeSubscriberToFinishUploadToAction(this);
+    }
 
     constructor(private folderContentService: FolderContnentService,
         private clipboard: FolderContentClipBoard) {
@@ -200,7 +204,15 @@ export class FolderContentContainter implements OnInit {
         respOfCopy.subscribe(
             data => {
                 if (letClipBoardOperation === ClipBoardOperation.Cut) {
-                    let respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path);
+
+                    let respOfDelete : Observable<object>;
+                    if(objTocopy.Type == folderContentType.folder){
+                        respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path);
+                    }
+                    if(objTocopy.Type == folderContentType.file){
+                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path);
+                    }
+                    
                     respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(),
                         error => {
                             this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
@@ -377,6 +389,10 @@ export class FolderContentContainter implements OnInit {
         let selected = this.getSelected();
         return this.clipboard.popClipBoardOperation() !== null &&
             this.clipboard.popClipBoardOperation() !== undefined &&
+            clipboardObj !== null &&
+            clipboardObj !== undefined &&
+            selected !== null &&
+            selected !== undefined &&
             !clipboardObj.equals(selected);
     }
 
@@ -426,6 +442,12 @@ export class FolderContentContainter implements OnInit {
         return (newName: string) => {
             this.neddToShowInputBox = false;
             if (!this.validateNotEmptyStringAndShowMessageBox(newName, "The new name cannot be empty")) return;
+
+            if(selected.Type === folderContentType.file){
+                let fileExtentionIndex = selected.Name.lastIndexOf('.');
+                let fileExtention = selected.Name.substring(fileExtentionIndex);
+                newName = newName+fileExtention;
+            }
 
             let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
             resp.subscribe(

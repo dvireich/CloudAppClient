@@ -34,8 +34,8 @@ export class SelectableComponent implements AfterViewInit {
     set text(value: string) {
         this._text = value;
         this.textToShow = value;
-        if(value.length > 8){
-            this.textToShow = value.substring(0, 5) + "...";
+        if(value.length > 10){
+            this.textToShow = value.substring(0, 10) + "...";
         }
     }
 
@@ -77,8 +77,8 @@ export class SelectableComponent implements AfterViewInit {
         this.color = "LightGrey";
         this.notSelected = true;
 
-        if(this.text.length > 8){
-            this.textToShow = this.text.substring(0, 5) + "...";
+        if(this.text.length > 10){
+            this.textToShow = this.text.substring(0, 10) + "...";
         }
     }
 

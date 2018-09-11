@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnDestroy } from "@angular/core";
 import { FolderContnentService } from "../FolderContentService/folder-content-service";
 import { IUploadData } from "../../Common/uploadProgress.component/IuploadData";
 
@@ -7,7 +7,10 @@ import { IUploadData } from "../../Common/uploadProgress.component/IuploadData";
     templateUrl: "./upload-progress-container.component.html",
     styleUrls: ["./upload-progress-container.component.css"]
 })
-export class UploadProgressContainer {
+export class UploadProgressContainer implements OnDestroy {
+    ngOnDestroy(): void {
+        this.folderContentService.removeSubscriberToCreateUploadToAction(this);
+    }
     constructor(private folderContentService: FolderContnentService) {
         folderContentService.subscriberToCreateUploadToAction(this, this.onCreateUpload.bind(this));
         this.onCreateUpload();

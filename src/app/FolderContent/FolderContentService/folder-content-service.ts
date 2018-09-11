@@ -79,10 +79,12 @@ export class FolderContnentService {
   splitString(string, size, multiline) {
     var matchAllToken = (multiline == true) ? '[^]' : '.';
     var re = new RegExp(matchAllToken + '{1,' + size + '}', 'g');
-    return string.match(re);
+    let result =  string.match(re);
+    return result === null ? [''] : result;
   }
 
   substringFirstCommnaFormString(value: string) : string{
+    if(value === "data:") return '';
     let firstComma = value.indexOf(',');
     return value.substring(firstComma + 1);
   }
@@ -94,7 +96,7 @@ export class FolderContnentService {
         this.rquestIdToProgress.set(requestId, uploadData);
         this.onCreateUpload();
         let createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
-        let chunks = this.splitString( this.substringFirstCommnaFormString(value) , Math.pow(4, 7) , true);
+        let chunks = this.splitString(this.substringFirstCommnaFormString(value) , Math.pow(4, 7) , true);
         this.http.post(createFileUrl, {
           Name: fileName,
           Path: path,
@@ -110,26 +112,16 @@ export class FolderContnentService {
       error => onError(error));
   }
 
-  finishUpload(requestId: number): void {
-    let finishUploadUrl = `${this.FolderContentRepositoryUrl}/FinishUploadFileContent`;
-    this.http.post(finishUploadUrl, requestId).pipe(
+  clearUpload(requestId: number): void {
+    let clearUploadUrl = `${this.FolderContentRepositoryUrl}/ClearUpload`;
+    this.http.post(clearUploadUrl, requestId).pipe(
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);
       this.onCreateUpload();
     });
   }
-
-  cancelUpload(requestId: number): void {
-    let cancelUploadUrl = `${this.FolderContentRepositoryUrl}/Cancel`;
-    this.http.post(cancelUploadUrl, requestId).pipe(
-      catchError(this.handleError)
-    ).subscribe(data => {
-      this.rquestIdToProgress.delete(requestId);
-      this.onCreateUpload();
-    });
-  }
-
+  
   private updateFile(requestId: number,
     fileName: string,
     path: string,
@@ -142,9 +134,8 @@ export class FolderContnentService {
     let uploadData = this.rquestIdToProgress.get(requestId);
     if (uploadData === null || uploadData === undefined) return;
 
-    uploadData.progress = Math.floor((index / chunks.length) * 100);
+    uploadData.progress = chunks.length > 0 ? Math.floor((index / chunks.length) * 100): 100;
     this.onUploadProgressUpdate();
-
     if (index >= chunks.length) {
       this.onFinishUpload()
       cont();
@@ -206,6 +197,7 @@ export class FolderContnentService {
   }
 
   downloadFile(name: string, path: string){
+    path = this.fixPath(path)
     let downloadFileUrl = `${this.FolderContentRepositoryUrl}/GetFile/name="${name}"&path="${path}"`;
     window.open(downloadFileUrl);
   }

@@ -10,7 +10,7 @@ export class FileObj extends FolderContent implements IFile{
     }
 
     equals(other : any): boolean {
-        console.log("file equals: "+ other.constructor.name +" (instanceof FolderContent)= "+ (other instanceof FolderContent));
+        // console.log("file equals: "+ other.constructor.name +" (instanceof FolderContent)= "+ (other instanceof FolderContent));
         return other instanceof FileObj &&
                super.equals(other);
     }
