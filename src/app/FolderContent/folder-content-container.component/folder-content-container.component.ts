@@ -24,7 +24,6 @@ import { Observable } from "rxjs";
     selector: "folder-content-container",
     templateUrl: "./folder-content-container.component.html",
     styleUrls: ['./folder-content-container.component.css']
-
 })
 export class FolderContentContainter implements OnInit, OnDestroy {
     ngOnDestroy(): void {
@@ -41,6 +40,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     private ignoreOnRightClick: boolean;
     private listOfListsOfNames: IFolderContent[][] = [];
     private _listOfFileFolderNames: IFolder;
+    private _currentPage: number = 1;
 
     //UploadBox
     needToShowUploadBox: boolean;
@@ -82,19 +82,21 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this._listOfFileFolderNames = value;
         this.InitializeListOfListsOfNames();
     }
-    @Input() maxColumns: number = 25;
+    @Input() maxColumns: number = 20;
 
     ngOnInit(): void {
         if (this._listOfFileFolderNames == undefined) {
-            this.updateFolderContent('"home"', '""');
+            this._currentPage = 1;
+            this.updateFolderContent('"home"', '""', 1);
         }
         else {
             this.InitializeListOfListsOfNames();
         }
     }
 
-    private updateFolderContent(folderName: string, folderPath: string): void {
-        this.folderContentService.getFolder(folderName, folderPath).subscribe(
+    private updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
+        this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
+        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
             folder => {
                 this.listOfFileFolderNames = folder;
                 this.navBarPathBreaks = this.breakPathIntoPathBreaks(this.getCurrentPath());
@@ -138,14 +140,14 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.showMessageBox("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", () => {
             if (this.messageBoxResult === DialogResult.No) return;
             if (selected.Type === folderContentType.folder) {
-                this.folderContentService.deleteFolder(selected.Name, selected.Path).subscribe(
-                    data => this.updateThisFolderContentAfterOperation(),
+                this.folderContentService.deleteFolder(selected.Name, selected.Path, this._currentPage).subscribe(
+                    data => this.updateThisFolderContentAfterOperation(this._currentPage),
                     error => this.messageBoxText = <any>error
                 );
             }
             if (selected.Type === folderContentType.file) {
-                this.folderContentService.deleteFile(selected.Name, selected.Path).subscribe(
-                    data => this.updateThisFolderContentAfterOperation(),
+                this.folderContentService.deleteFile(selected.Name, selected.Path, this._currentPage).subscribe(
+                    data => this.updateThisFolderContentAfterOperation(this._currentPage),
                     error => this.messageBoxText = <any>error
                 );
             }
@@ -207,19 +209,19 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
                     let respOfDelete : Observable<object>;
                     if(objTocopy.Type == folderContentType.folder){
-                        respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path);
+                        respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path, this._currentPage);
                     }
                     if(objTocopy.Type == folderContentType.file){
-                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path);
+                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path, this._currentPage);
                     }
                     
-                    respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(),
+                    respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(this._currentPage),
                         error => {
                             this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
                         });
                 }
                 else {
-                    this.updateThisFolderContentAfterOperation();
+                    this.updateThisFolderContentAfterOperation(this._currentPage);
                 }
 
             },
@@ -279,11 +281,13 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     enterFolder() {
         let selected = this.getSelected();
-        this.updateFolderContent(selected.Name, selected.Path);
+        this._currentPage = 1;
+        this.updateFolderContent(selected.Name, selected.Path, 1);
     }
 
     dbClickEnterFolder(args: EnterFolderArgs) {
-        this.updateFolderContent(args.Name, args.Path);
+        this._currentPage = 1;
+        this.updateFolderContent(args.Name, args.Path, 1);
     }
 
     onrightClick(event: IContexMenuCoordinates) {
@@ -391,9 +395,13 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             this.clipboard.popClipBoardOperation() !== undefined &&
             clipboardObj !== null &&
             clipboardObj !== undefined &&
-            selected !== null &&
+            //Or we have selected or we do not have and we paste in the containing folder
+            ((selected !== null &&
             selected !== undefined &&
-            !clipboardObj.equals(selected);
+            !clipboardObj.equals(selected))
+            ||
+            (selected === null ||
+             selected === undefined));
     }
 
     inputBoxOnCancel() {
@@ -413,16 +421,17 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     onFinishAddFile() {
-        this.updateThisFolderContentAfterOperation();
+        this.updateThisFolderContentAfterOperation(this._currentPage);
     }
 
     onStartAddFile() {
         this.needToShowUploadBox = false;
     }
 
-    updateThisFolderContentAfterOperation() {
+    updateThisFolderContentAfterOperation(pageNum: number) {
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
-            this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()));
+                                 this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
+                                 pageNum);
     }
 
     inputBoxCreateNewFolder(folderName: string) {
@@ -432,7 +441,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
         let resp = this.folderContentService.createFolder(folderName, this.getCurrentPath());
         resp.subscribe(
-            data => this.updateThisFolderContentAfterOperation(),
+            data => this.updateThisFolderContentAfterOperation(this._currentPage),
             error => {
                 this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
             })
@@ -451,7 +460,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
             let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
             resp.subscribe(
-                data => this.updateThisFolderContentAfterOperation(),
+                data => this.updateThisFolderContentAfterOperation(this._currentPage),
                 error => {
                     this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename");
                 })
@@ -533,10 +542,16 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     navBarOnPathBreakClick(fullPath: string) {
         let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
         let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
-        this.updateFolderContent(folderName, folderPath);
+        this._currentPage = 1;
+        this.updateFolderContent(folderName, folderPath, 1);
     }
 
     onErrorUploadFile(error: string){
         this.showMessageBox(`Error on upload file: ${error}`, MessageBoxType.Error, MessageBoxButton.Ok, "Upload File");
+    }
+
+    onPageChanged(pageNum: number){
+        this._currentPage = pageNum;
+        this.updateThisFolderContentAfterOperation(pageNum);
     }
 }

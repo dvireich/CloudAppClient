@@ -15,6 +15,10 @@ import { NavagationBar } from './Common/navBar.component/nav-bar.component';
 import { Base64UploadComponent } from './Common/uploadForm.component/uploadForm.component';
 import { UploadProgress } from './Common/uploadProgress.component/uploadProgress.component';
 import { UploadProgressContainer } from './FolderContent/upload-progress-container.component/upload-progress-container.component';
+import { FillPipe } from './Common/fillPipe';
+import { FolderContentPagingNav } from './FolderContent/folderContent-Paging.component/folderContent-Paging.component';
+import { PagingNav } from './Common/paging.component/paging.component';
+import { TakePipe } from './Common/takePipe';
 
 
 @NgModule({
@@ -28,7 +32,11 @@ import { UploadProgressContainer } from './FolderContent/upload-progress-contain
     NavagationBar,
     Base64UploadComponent,
     UploadProgress,
-    UploadProgressContainer
+    UploadProgressContainer,
+    FillPipe,
+    FolderContentPagingNav,
+    PagingNav,
+    TakePipe
   ],
   imports: [
     BrowserModule,

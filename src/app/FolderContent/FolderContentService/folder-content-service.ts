@@ -26,6 +26,7 @@ export class FolderContnentService {
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersFinishUploadToAction: Map<object, () => void> = new Map<object, () => void>();
+  private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   getUploadProgress(): IUploadData[] {
     return Array.from(this.rquestIdToProgress.values());
@@ -42,8 +43,22 @@ export class FolderContnentService {
     });
   }
 
+  private onPageChange(page: number) {
+    Array.from(this.subscribersPageChangedToAction.values()).forEach(onPageChangedAction => {
+      onPageChangedAction(page)
+    });
+  }
+
   subscriberToCreateUploadToAction(subscriber: object, onChange: () => void) {
     this.subscribersCreateUploadToAction.set(subscriber, onChange);
+  }
+
+  subscriberToPageChangedToAction(subscriber: object, onChange: (page: number) => void) {
+    this.subscribersPageChangedToAction.set(subscriber, onChange);
+  }
+
+  removeSubscriberToPageChangedToAction(subscriber: object) {
+    this.subscribersPageChangedToAction.delete(subscriber);
   }
 
   removeSubscriberToCreateUploadToAction(subscriber: object) {
@@ -157,16 +172,16 @@ export class FolderContnentService {
   }
 
 
-  deleteFolder(name: string, path: string) {
+  deleteFolder(name: string, path: string, page: number) {
     let deleteFolderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
-    return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1 }).pipe(
+    return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1, Page: page }).pipe(
       catchError(this.handleError)
     );
   }
 
-  deleteFile(name: string, path: string) {
+  deleteFile(name: string, path: string, page: number) {
     let deleteFileUrl = `${this.FolderContentRepositoryUrl}/DeleteFile`;
-    return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0 }).pipe(
+    return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0, Page: page }).pipe(
       catchError(this.handleError)
     );
   }
@@ -178,9 +193,16 @@ export class FolderContnentService {
     );
   }
 
-  getFolder(name: string, path: string): Observable<IFolder> {
+  UpdateNumberOfPagesForFolder(name: string, path: string) : void{
     path = this.fixPath(path);
-    let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"`;
+    let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/NumberOfPages/name="${name}"&path="${path}"`;
+    this.http.get<number>(numberOfPagesUrl).pipe(catchError(this.handleError)).subscribe(
+      pageNum => this.onPageChange(pageNum));
+  }
+
+  getFolder(name: string, path: string, page: number): Observable<IFolder> {
+    path = this.fixPath(path);
+    let folderUrl = `${this.FolderContentRepositoryUrl}/name="${name}"&path="${path}"&page=${page}`;
     return this.http.get<string>(folderUrl).pipe(
       map(jsonStr => {
         let ifolder = <IFolder>JSON.parse(jsonStr);
@@ -235,7 +257,7 @@ export class FolderContnentService {
 
   getContaningFolderPathFromPath(path: string): string {
     //base case
-    if (path === 'home/') return 'home';
+    if (path === 'home/') return '';
     //other cases
     let splitted = path.split('/');
     let contaningFolderPathArray = splitted.slice(0, splitted.length - 1);
@@ -256,6 +278,7 @@ export class FolderContnentService {
     let contaningFolderName = splitted.reverse().shift();
     return contaningFolderName;
   }
+
   private mapToAppropriateFolderContentObj(element: IFolderContent) {
     let name = element.Name;
     let path = element.Path;

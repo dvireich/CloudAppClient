@@ -1,0 +1,18 @@
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+      <li [ngClass]='{ "disabled" : _currentPage === 1}'>
+        <a class="pointer" (click)='onPrevPage()' aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li *ngFor = 'let x of _visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : _currentPage === x}'
+      ><a class="pointer" (click)='onPageChange(i + 1)'>{{x}}</a></li>
+      <li *ngIf='numberOfPages > 5' class="disabled">
+      <a class="pointer">...</a></li>
+      <li [ngClass]='{ "disabled" : _currentPage === numberOfPages}'>
+        <a class="pointer" (click)='onNextPage()' aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
