@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit, Output, EventEmitter } from '@angular/core';
+import { Component, Input} from '@angular/core';
 import { IContexMentuItem } from './IcontexMentuItem';
 
 @Component({

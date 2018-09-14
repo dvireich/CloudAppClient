@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
-import {saveAs as importedSaveAs} from "file-saver";
 
 import { IFolder } from "../IFolder";
 import { FolderObj } from "../FolderObj";

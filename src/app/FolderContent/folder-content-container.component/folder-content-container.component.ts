@@ -19,6 +19,8 @@ import { ClipBoardOperation } from "../clipBoardOperation";
 import { IPathBreak } from "../../Common/navBar.component/IPathBreak";
 import { PathBreak } from "../../Common/navBar.component/pathBreak";
 import { Observable } from "rxjs";
+import { FolderContentStateService } from "../folderContentStateService/folderContentStateService";
+import { Router, NavigationStart } from "@angular/router";
 
 @Component({
     selector: "folder-content-container",
@@ -31,8 +33,15 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     constructor(private folderContentService: FolderContnentService,
-        private clipboard: FolderContentClipBoard) {
-            folderContentService.subscriberToFinishUploadToAction(this, this.updateThisFolderContentAfterOperation.bind(this))
+        private clipboard: FolderContentClipBoard,
+        private folderContentStateService: FolderContentStateService,
+        private router: Router) {
+        folderContentService.subscriberToFinishUploadToAction(this, this.updateThisFolderContentAfterOperation.bind(this));
+        router.events.subscribe(event => {
+            if (event instanceof NavigationStart) {
+                folderContentStateService.setCurrentFolderState(this.getCurrentFolder(), this._currentPage);
+            }
+        });       
     }
 
     private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
@@ -85,13 +94,9 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     @Input() maxColumns: number = 20;
 
     ngOnInit(): void {
-        if (this._listOfFileFolderNames == undefined) {
-            this._currentPage = 1;
-            this.updateFolderContent('"home"', '""', 1);
-        }
-        else {
-            this.InitializeListOfListsOfNames();
-        }
+        let state = this.folderContentStateService.restoreFolderState()
+        this._currentPage = state.currentPage;
+        this.updateFolderContent(state.currentFolderName, state.currentFolderPath, state.currentPage);
     }
 
     private updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
@@ -207,14 +212,14 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             data => {
                 if (letClipBoardOperation === ClipBoardOperation.Cut) {
 
-                    let respOfDelete : Observable<object>;
-                    if(objTocopy.Type == folderContentType.folder){
+                    let respOfDelete: Observable<object>;
+                    if (objTocopy.Type == folderContentType.folder) {
                         respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path, this._currentPage);
                     }
-                    if(objTocopy.Type == folderContentType.file){
+                    if (objTocopy.Type == folderContentType.file) {
                         respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path, this._currentPage);
                     }
-                    
+
                     respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(this._currentPage),
                         error => {
                             this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
@@ -306,7 +311,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         console.log("onAddFile");
     }
 
-    downloadFile(){
+    downloadFile() {
         let selected = this.getSelected();
         this.folderContentService.downloadFile(selected.Name, selected.Path);
     }
@@ -397,11 +402,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             clipboardObj !== undefined &&
             //Or we have selected or we do not have and we paste in the containing folder
             ((selected !== null &&
-            selected !== undefined &&
-            !clipboardObj.equals(selected))
-            ||
-            (selected === null ||
-             selected === undefined));
+                selected !== undefined &&
+                !clipboardObj.equals(selected))
+                ||
+                (selected === null ||
+                    selected === undefined));
     }
 
     inputBoxOnCancel() {
@@ -430,8 +435,8 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     updateThisFolderContentAfterOperation(pageNum: number) {
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
-                                 this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
-                                 pageNum);
+            this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
+            pageNum);
     }
 
     inputBoxCreateNewFolder(folderName: string) {
@@ -452,10 +457,10 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             this.neddToShowInputBox = false;
             if (!this.validateNotEmptyStringAndShowMessageBox(newName, "The new name cannot be empty")) return;
 
-            if(selected.Type === folderContentType.file){
+            if (selected.Type === folderContentType.file) {
                 let fileExtentionIndex = selected.Name.lastIndexOf('.');
                 let fileExtention = selected.Name.substring(fileExtentionIndex);
-                newName = newName+fileExtention;
+                newName = newName + fileExtention;
             }
 
             let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
@@ -546,11 +551,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.updateFolderContent(folderName, folderPath, 1);
     }
 
-    onErrorUploadFile(error: string){
+    onErrorUploadFile(error: string) {
         this.showMessageBox(`Error on upload file: ${error}`, MessageBoxType.Error, MessageBoxButton.Ok, "Upload File");
     }
 
-    onPageChanged(pageNum: number){
+    onPageChanged(pageNum: number) {
         this._currentPage = pageNum;
         this.updateThisFolderContentAfterOperation(pageNum);
     }
