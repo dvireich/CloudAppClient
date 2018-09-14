@@ -5,10 +5,19 @@
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
+      <li *ngIf='!_visiblePageNumbers.includes(1)'>
+        <a class="pointer" (click)='onPageChange(1)'>1</a></li>
+        <li *ngIf='!_visiblePageNumbers.includes(1) && 
+                   !_visiblePageNumbers.includes(2)' class="disabled">
+          <a class="pointer">...</a></li>
       <li *ngFor = 'let x of _visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : _currentPage === x}'
       ><a class="pointer" (click)='onPageChange(i + 1)'>{{x}}</a></li>
-      <li *ngIf='numberOfPages > 5' class="disabled">
+      <li *ngIf='!_visiblePageNumbers.includes(numberOfPages) && 
+                 !_visiblePageNumbers.includes(numberOfPages -1)'
+                  class="disabled">
       <a class="pointer">...</a></li>
+      <li *ngIf='!_visiblePageNumbers.includes(numberOfPages)'>
+        <a class="pointer" (click)='onPageChange(numberOfPages)'>{{numberOfPages}}</a></li>
       <li [ngClass]='{ "disabled" : _currentPage === numberOfPages}'>
         <a class="pointer" (click)='onNextPage()' aria-label="Next">
           <span aria-hidden="true">&raquo;</span>

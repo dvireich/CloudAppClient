@@ -11,7 +11,6 @@ export class PagingNav {
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
     @Input()
     set numberOfPages(value: number) {
-        console.log(value);
         this._numberOfPages = value;
         this.updateVisiblePageNumbers();
     }
@@ -24,10 +23,6 @@ export class PagingNav {
         else{
             this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(this._currentPage -1, this._currentPage + 4);
         }
-        
-        
-        console.log(JSON.stringify(this._visiblePageNumbers));
-        console.log(JSON.stringify(this._numberOfPages));
     }
 
     get numberOfPages(): number {
