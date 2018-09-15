@@ -1,55 +1,94 @@
 <nav-bar [pathBreaks] = 'navBarPathBreaks'
 (PathBreakClick)='navBarPathBreakClick($event)'></nav-bar>
-<div class="squareSelection" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
 
-    <table>
-        <tr *ngFor ='let listOfNames of listOfListsOfNames'>
-            <td *ngFor='let item of listOfNames'>
-                    <select-able 
-                    (RegisterInParent)="addChildComponent($event)" 
-                    (UnSelectAll)="unSelectAllChilds($event)" 
-                    (ApplyIgnoreDisableSelection)="SetIgnoreDisableSelection($event)"
-                    (ApplyParentIgnoreOnRightClick)="SetIgnoreOnRightClick($event)"
-                    (ShowContexMenu) ="showContexMenuOnCoordinates($event)"
-                    (EnterFolderByDbClick) ="dbClickEnterFolder($event)"
-                    [text]='item.Name'
-                    [path]='item.Path'
-                    [type]='item.Type'></select-able>
-            </td>
-        </tr>
-    </table>
-    <div *ngIf = 'showContexMenu'>
-        <app-contextmenu [x] = 'contexMenuX' 
-                         [y] = 'contexMenuY'
-                         [contexMentuItems] = 'contexMenuItems'>
-        </app-contextmenu>
-    </div>
-    <div *ngIf ='neddToShowInputBox'>
-        <input-box [placeHolder] = "inputBoxPlaceHolder"
-                   [header] = "inputBoxHeader"
-                   [okButtonName] = "inputBoxOkButtonName"
-                   [onCancel] = "inputBoxOnCancel.bind(this)"
-                   (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
-    </div>
-    <div *ngIf = 'needToShowMessageBox'>
-        <message-box [text] = 'messageBoxText'
-                     [buttons] = 'messageBoxButtons'
-                     [caption] = 'messageBoxCaption'
-                     [messageIcon] = 'messageBoxMessageType'
-                     (onButton1Click) = "messageBoxOnButton1Click($event)"
-                     (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
-    </div>
-    <div *ngIf='needToShowUploadBox'>
-            <base64-upload 
-            [currentFolderPath] = 'getCurrentPath()'
-            (onCancel)='uploadBoxCancel($event)'
-            (onAddEnd)='onFinishAddFile($event)'
-            (onAddStart)='onStartAddFile($event)'
-            [onErrorUpload] = 'onErrorUploadFile.bind(this)'></base64-upload>
-    </div>
-    <div class="bottomCenterPossition">
-     <folder-content-paging-nav
-     (pageChange)='onPageChanged($event)'
-     ></folder-content-paging-nav>
-    </div>
+<div class="col-md-2 noSpaceToLeft">
+        <div class="panel panel-default infoPanel">
+                <!-- Default panel contents -->
+                <div class="panel-heading">Properties</div>
+              
+                <!-- List group -->
+                <ul class="list-group">
+                  <li *ngIf='selectedProperties !== null &&
+                             selectedProperties !== undefind &&
+                             selectedProperties.Name'
+                             class="list-group-item">Name: {{selectedProperties.Name}}</li>
+                  <li *ngIf='selectedProperties !== null &&
+                             selectedProperties !== undefind &&
+                             selectedProperties.CreationTime'
+                             class="list-group-item">Creation Time: {{selectedProperties.CreationTime}}</li>
+                  <li *ngIf='selectedProperties !== null &&
+                             selectedProperties !== undefind &&
+                             selectedProperties.ModificationTime'
+                            class="list-group-item">Modification Time: {{selectedProperties.ModificationTime}}</li>
+                  <li *ngIf='selectedProperties !== null &&
+                             selectedProperties !== undefind &&
+                             selectedProperties.Path'
+                             class="list-group-item">Path: {{selectedProperties.Path}}</li>
+                  <li *ngIf='selectedProperties !== null &&
+                             selectedProperties !== undefind &&
+                             selectedProperties.Size' 
+                             class="list-group-item">Size: {{selectedProperties.Size}}</li>
+                </ul>
+              </div>
 </div>
+
+<div class="col-md-10 noSpaceToLeft">
+        <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
+
+                <table>
+                    <tr *ngFor ='let listOfNames of listOfListsOfNames'>
+                        <td *ngFor='let item of listOfNames'>
+                                <select-able 
+                                (RegisterInParent)="addChildComponent($event)" 
+                                (UnSelectAll)="unSelectAllChilds($event)" 
+                                (ApplyIgnoreDisableSelection)="SetIgnoreDisableSelection($event)"
+                                (ApplyParentIgnoreOnRightClick)="SetIgnoreOnRightClick($event)"
+                                (ShowContexMenu) ="showContexMenuOnCoordinates($event)"
+                                (EnterFolderByDbClick) ="dbClickEnterFolder($event)"
+                                (SelectionChanged) ="onSelectionChanged($event)"
+                                [text]='item.Name'
+                                [path]='item.Path'
+                                [creationTime]='item.CreationTime'
+                                [modificationTime]='item.ModificationTime'
+                                [size]='item.Size'
+                                [type]='item.Type'></select-able>
+                        </td>
+                    </tr>
+                </table>
+                <div *ngIf = 'showContexMenu'>
+                    <app-contextmenu [x] = 'contexMenuX' 
+                                     [y] = 'contexMenuY'
+                                     [contexMentuItems] = 'contexMenuItems'>
+                    </app-contextmenu>
+                </div>
+                <div *ngIf ='neddToShowInputBox'>
+                    <input-box [placeHolder] = "inputBoxPlaceHolder"
+                               [header] = "inputBoxHeader"
+                               [okButtonName] = "inputBoxOkButtonName"
+                               [onCancel] = "inputBoxOnCancel.bind(this)"
+                               (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
+                </div>
+                <div *ngIf = 'needToShowMessageBox'>
+                    <message-box [text] = 'messageBoxText'
+                                 [buttons] = 'messageBoxButtons'
+                                 [caption] = 'messageBoxCaption'
+                                 [messageIcon] = 'messageBoxMessageType'
+                                 (onButton1Click) = "messageBoxOnButton1Click($event)"
+                                 (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
+                </div>
+                <div *ngIf='needToShowUploadBox'>
+                        <base64-upload 
+                        [currentFolderPath] = 'getCurrentPath()'
+                        (onCancel)='uploadBoxCancel($event)'
+                        (onAddEnd)='onFinishAddFile($event)'
+                        (onAddStart)='onStartAddFile($event)'
+                        [onErrorUpload] = 'onErrorUploadFile.bind(this)'></base64-upload>
+                </div>
+            </div>
+            <div class="bottomCenterPossition">
+                    <folder-content-paging-nav
+                    (pageChange)='onPageChanged($event)'
+                    ></folder-content-paging-nav>
+                   </div>
+</div>
+

@@ -2,6 +2,8 @@ import { Component, Input, AfterViewInit, EventEmitter, Output } from "@angular/
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
 import { folderContentType } from "../folderContentType";
 import { EnterFolderArgs } from "./enterFolderArgs";
+import { ISelecableProperties } from "../ISelecableProperties";
+import { SelecableProperties } from "../selecableProperties";
 
 @Component({
     templateUrl: "./select-able.Component.html",
@@ -14,12 +16,16 @@ export class SelectableComponent implements AfterViewInit {
     private textToShow: string;
     @Input() type: folderContentType;
     @Input() path: string;
+    @Input() modificationTime: string;
+    @Input() creationTime: string;
+    @Input() size: string;
     @Output() RegisterInParent: EventEmitter<SelectableComponent> = new EventEmitter<SelectableComponent>();
     @Output() UnSelectAll: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyParentIgnoreOnRightClick: EventEmitter<void> = new EventEmitter<void>();
     @Output() ShowContexMenu: EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
     @Output() EnterFolderByDbClick: EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
+    @Output() SelectionChanged: EventEmitter<ISelecableProperties> = new EventEmitter<ISelecableProperties>();
     color: string = "LightGrey";
     private notSelected: boolean = true;
 
@@ -64,7 +70,12 @@ export class SelectableComponent implements AfterViewInit {
         this.UnSelectAll.emit();
         this.color = "#80d4ff";
         this.notSelected = false;
-        
+        this.SelectionChanged.emit(new SelecableProperties(
+            this._text, 
+            this.creationTime,
+            this.modificationTime,
+            this.path,
+            this.size))
         if (!applyIgnoreDisableSelection) return;
         this.ApplyIgnoreDisableSelection.emit();
     }

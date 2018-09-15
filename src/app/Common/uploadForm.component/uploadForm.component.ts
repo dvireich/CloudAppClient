@@ -40,7 +40,8 @@ export class Base64UploadComponent {
         this.form.get('avatar').setValue({
           filename: file.name,
           filetype: file.type,
-          value: reader.result
+          value: reader.result,
+          size: file.size
         })
       };
     }
@@ -55,6 +56,7 @@ export class Base64UploadComponent {
                                          this.currentFolderPath ,
                                          formModel.avatar.filetype, 
                                          formModel.avatar.value, 
+                                         formModel.avatar.size,
                                          ()=> this.onAddEnd.emit(),
                                          this.onErrorUpload);
   this.onAddStart.emit();

@@ -21,6 +21,7 @@ import { PathBreak } from "../../Common/navBar.component/pathBreak";
 import { Observable } from "rxjs";
 import { FolderContentStateService } from "../folderContentStateService/folderContentStateService";
 import { Router, NavigationStart } from "@angular/router";
+import { ISelecableProperties } from "../ISelecableProperties";
 
 @Component({
     selector: "folder-content-container",
@@ -50,6 +51,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     private listOfListsOfNames: IFolderContent[][] = [];
     private _listOfFileFolderNames: IFolder;
     private _currentPage: number = 1;
+    private selectedProperties: ISelecableProperties;
 
     //UploadBox
     needToShowUploadBox: boolean;
@@ -91,7 +93,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this._listOfFileFolderNames = value;
         this.InitializeListOfListsOfNames();
     }
-    @Input() maxColumns: number = 20;
+    @Input() maxColumns: number = 17;
 
     ngOnInit(): void {
         let state = this.folderContentStateService.restoreFolderState()
@@ -245,6 +247,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     unSelectAllChilds() {
+        this.selectedProperties = null;
         this.hideContexMenu();
         this.listOfFileFoldersObj.forEach(element => {
             element.unSelect();
@@ -300,6 +303,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             this.ignoreOnRightClick = false;
             return;
         }
+        console.log(event);
         this.contexMenuX = event.pageX;
         this.contexMenuY = event.pageY;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
@@ -558,5 +562,9 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     onPageChanged(pageNum: number) {
         this._currentPage = pageNum;
         this.updateThisFolderContentAfterOperation(pageNum);
+    }
+
+    onSelectionChanged(selectedProperties: ISelecableProperties){
+        this.selectedProperties = selectedProperties;
     }
 }

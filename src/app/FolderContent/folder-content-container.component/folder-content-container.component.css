@@ -1,10 +1,10 @@
 .squareSelection{
-    min-height:600px;
-    min-width: 200px;
     background-color: LightGrey ;
     padding: 8px 15px;
     z-index: 0;
     position: relative;
+    height : 100%;
+    width: 100%;
 }
 
 .bottomCenterPossition{
@@ -14,3 +14,23 @@
     left: 50%;
     margin-right: -50%;
 }
+
+.infoPanel{
+    position: relative;
+    width:100%;
+    float:left;
+    z-index: 1;
+    height : 80vh;
+    word-break: break-word;
+}
+
+.noSpaceToLeft{
+    padding: 0;
+    height : 80vh;
+}
+
+.scroll-area{
+    width:100%;
+    float:left;
+    overflow-y:scroll;
+  }

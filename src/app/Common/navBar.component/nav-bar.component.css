@@ -24,3 +24,7 @@
 *:focus {
     outline: none;
 }
+
+.navBarBreaks{
+    margin-bottom: 0;
+}

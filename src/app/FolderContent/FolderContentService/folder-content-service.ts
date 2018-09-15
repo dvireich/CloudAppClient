@@ -11,6 +11,7 @@ import { IFolderContent } from "../IFolderContent";
 import { FolderContent } from "../FolderContent";
 import { IUploadData } from "../../Common/uploadProgress.component/IuploadData";
 import { UploadData } from "../../Common/uploadProgress.component/UploadData";
+import { IFile } from "../IFile";
 
 @Injectable({
   providedIn: "root"
@@ -103,7 +104,7 @@ export class FolderContnentService {
     return value.substring(firstComma + 1);
   }
 
-  createFile(fileName: string, path: string, fileType: string, value: string, cont: () => void, onError: (message: string) => void) {
+  createFile(fileName: string, path: string, fileType: string, value: string, size: number, cont: () => void, onError: (message: string) => void) {
     return this.getReuestId().pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(
       requestId => {
         let uploadData = new UploadData(fileName, requestId, 0);
@@ -117,7 +118,8 @@ export class FolderContnentService {
           FileType: fileType,
           NewValue: '',
           RequestId: requestId,
-          NumOfChunks: chunks.length
+          NumOfChunks: chunks.length,
+          Size: size
         }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
           this.updateFile(requestId, fileName, path, fileType, chunks, 0, cont, onError)
         },
@@ -282,11 +284,20 @@ export class FolderContnentService {
     let name = element.Name;
     let path = element.Path;
     let type = element.Type;
+    let creationTime = element.CreationTime;
+    let modificationTime = element.ModificationTime;
 
     if (type === folderContentType.file) {
+      let elementFile = element as IFile;
+      let size = +elementFile.Size;
+      console.log(size);
+      let sizeInMb = Math.floor(size / (1024 * 1024));
       let file = new FileObj();
       file.Name = name;
       file.Path = path;
+      file.CreationTime = creationTime;
+      file.ModificationTime = modificationTime;
+      file.Size = `${sizeInMb} MB`;
       return file;
     }
 
@@ -294,6 +305,8 @@ export class FolderContnentService {
       let folder = new FolderObj();
       folder.Name = name;
       folder.Path = path;
+      folder.CreationTime = creationTime;
+      folder.ModificationTime = modificationTime;
       return folder;
     }
     console.log("Not able to map object: " + name + " " + path + " " + type);

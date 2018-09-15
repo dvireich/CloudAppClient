@@ -1,3 +1,5 @@
 import { IFolderContent } from "./IFolderContent";
 
-export interface IFile extends IFolderContent{}
+export interface IFile extends IFolderContent{
+    Size: string;
+}
