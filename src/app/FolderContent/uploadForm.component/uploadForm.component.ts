@@ -1,6 +1,7 @@
 import { Component, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FolderContnentService } from '../../FolderContent/FolderContentService/folder-content-service';
+import { FolderContnentService } from '../FolderContentService/folder-content-service';
+
 
 @Component({
   selector: 'base64-upload',

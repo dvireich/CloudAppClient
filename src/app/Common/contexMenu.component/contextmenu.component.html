@@ -2,9 +2,9 @@
         <div class="contextmenu" [ngStyle]="{'left.px': x, 'top.px': y}">
 
                 <div *ngFor='let contextMenuItem of contexMentuItems; first as isFirst'>
-                        <ul class="items">
-                                <hr class="hr" *ngIf='!isFirst && (contextMenuItem.needToshow() || contextMenuItem.showAllways)' />
-                                <li class="li" (click)="contextMenuItem.onClick()" *ngIf='(contextMenuItem.needToshow() || contextMenuItem.showAllways)'>{{contextMenuItem.name}}</li>
+                        <ul class="items" *ngIf='(contextMenuItem.needToshow() || contextMenuItem.showAllways)'>
+                                <hr class="hr" *ngIf='!isFirst' />
+                                <li class="li" (click)="contextMenuItem.onClick()">{{contextMenuItem.name}}</li>
                         </ul>
                 </div>
 

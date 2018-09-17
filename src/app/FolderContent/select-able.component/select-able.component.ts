@@ -1,9 +1,9 @@
 import { Component, Input, AfterViewInit, EventEmitter, Output } from "@angular/core";
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
-import { folderContentType } from "../folderContentType";
+import { folderContentType } from "../Model/folderContentType";
 import { EnterFolderArgs } from "./enterFolderArgs";
-import { ISelecableProperties } from "../ISelecableProperties";
-import { SelecableProperties } from "../selecableProperties";
+import { ISelecableProperties } from "../Model/ISelecableProperties";
+import { SelecableProperties } from "../Model/selecableProperties";
 
 @Component({
     templateUrl: "./select-able.Component.html",

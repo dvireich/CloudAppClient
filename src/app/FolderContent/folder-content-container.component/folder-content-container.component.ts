@@ -1,27 +1,27 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, OnDestroy } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy } from "@angular/core";
 import { SelectableComponent } from "../select-able.component/select-able.component";
 import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
-import { IFolderContent } from "../IFolderContent";
+import { IFolderContent } from "../Model/IFolderContent";
 
-import { IFolder } from "../IFolder";
-import { FileObj } from "../FileObj";
-import { FolderObj } from "../FolderObj";
+import { IFolder } from "../Model/IFolder";
+import { FileObj } from "../Model/FileObj";
+import { FolderObj } from "../Model/FolderObj";
 import { FolderContnentService } from "../FolderContentService/folder-content-service";
-import { folderContentType } from "../folderContentType";
+import { folderContentType } from "../Model/folderContentType";
 import { IContexMentuItem } from "../../Common/contexMenu.component/IContexMentuItem";
 import { ContexMentuItem } from "../../Common/contexMenu.component/contexMentuItem";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { EnterFolderArgs } from "../select-able.component/enterFolderArgs";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
-import { FolderContentClipBoard } from "../folder-content-clipboard";
-import { ClipBoardOperation } from "../clipBoardOperation";
+import { ClipBoardOperation } from "../clipboardService/clipBoardOperation";
 import { IPathBreak } from "../../Common/navBar.component/IPathBreak";
 import { PathBreak } from "../../Common/navBar.component/pathBreak";
 import { Observable } from "rxjs";
 import { FolderContentStateService } from "../folderContentStateService/folderContentStateService";
 import { Router, NavigationStart } from "@angular/router";
-import { ISelecableProperties } from "../ISelecableProperties";
+import { ISelecableProperties } from "../Model/ISelecableProperties";
+import { FolderContentClipBoard } from "../clipboardService/folder-content-clipboard";
 
 @Component({
     selector: "folder-content-container",
@@ -44,6 +44,13 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             }
         });       
     }
+
+    @Input()
+    public set listOfFileFolderNames(value: IFolder) {
+        this._listOfFileFolderNames = value;
+        this.InitializeListOfListsOfNames();
+    }
+    @Input() maxColumns: number = 17;
 
     private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
     private ignoreDisableSelection: boolean;
@@ -88,12 +95,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     public get listOfFileFolderNames(): IFolder {
         return this._listOfFileFolderNames;
     }
-    @Input()
-    public set listOfFileFolderNames(value: IFolder) {
-        this._listOfFileFolderNames = value;
-        this.InitializeListOfListsOfNames();
-    }
-    @Input() maxColumns: number = 17;
 
     ngOnInit(): void {
         let state = this.folderContentStateService.restoreFolderState()
@@ -120,6 +121,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             }
             this.listOfListsOfNames.push(tmpArray);
         }
+        this.onSelectionChanged(null);
     }
 
     private getSelected(): IFolderContent {
@@ -247,12 +249,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     unSelectAllChilds() {
-        this.selectedProperties = null;
         this.hideContexMenu();
-        this.onSelectionChanged(null);
         this.listOfFileFoldersObj.forEach(element => {
             element.unSelect();
         });
+        this.onSelectionChanged(null);
     }
 
     SetIgnoreOnRightClick() {
@@ -304,7 +305,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             this.ignoreOnRightClick = false;
             return;
         }
-        console.log(event);
         this.contexMenuX = event.pageX;
         this.contexMenuY = event.pageY;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();

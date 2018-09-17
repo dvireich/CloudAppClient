@@ -3,15 +3,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 
-import { IFolder } from "../IFolder";
-import { FolderObj } from "../FolderObj";
-import { FileObj } from "../FileObj";
-import { folderContentType } from "../folderContentType";
-import { IFolderContent } from "../IFolderContent";
-import { FolderContent } from "../FolderContent";
+import { IFolder } from "../Model/IFolder";
+import { FolderObj } from "../Model/FolderObj";
+import { FileObj } from "../Model/FileObj";
+import { folderContentType } from "../Model/folderContentType";
+import { IFolderContent } from "../Model/IFolderContent";
+import { FolderContent } from "../Model/FolderContent";
 import { IUploadData } from "../../Common/uploadProgress.component/IuploadData";
 import { UploadData } from "../../Common/uploadProgress.component/UploadData";
-import { IFile } from "../IFile";
+import { IFile } from "../Model/IFile";
 
 @Injectable({
   providedIn: "root"

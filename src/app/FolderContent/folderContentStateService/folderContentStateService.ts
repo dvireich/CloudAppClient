@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { IFolder } from "../IFolder";
+import { IFolder } from "../Model/IFolder";
 import { IFolderState } from "./IFolderState";
 import { FolderState } from "./folderState";
 import { IUploadContainerState } from "./IUploadContainerState";

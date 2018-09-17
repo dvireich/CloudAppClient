@@ -1,8 +1,9 @@
-<nav-bar [pathBreaks] = 'navBarPathBreaks'
+<nav-bar  oncontextmenu="return false;"
+[pathBreaks] = 'navBarPathBreaks'
 (PathBreakClick)='navBarPathBreakClick($event)'></nav-bar>
 <div class="row" style="margin:0">
 <div class="col-md-2 noSpaceToLeft">
-        <div class="panel panel-default infoPanel" style="margin-bottom: 0">
+        <div class="panel panel-default infoPanel scroll-area" oncontextmenu="return false;" style="margin-bottom: 0">
                 <!-- Default panel contents -->
                 <div class="panel-heading">Properties</div>
               
@@ -29,6 +30,9 @@
                              selectedProperties.Size' 
                              class="list-group-item">Size: {{selectedProperties.Size}}</li>
                 </ul>
+
+                <p *ngIf='selectedProperties === null ||
+                          selectedProperties === undefind'> Create folder or add file and click on them in order to see thier properites </p>
               </div>
 </div>
 
