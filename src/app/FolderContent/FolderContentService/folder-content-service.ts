@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
+import xml2js from "xml2js";
+
 
 import { IFolder } from "../Model/IFolder";
 import { FolderObj } from "../Model/FolderObj";
@@ -321,8 +323,15 @@ export class FolderContnentService {
     } else {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
-      errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-    }
+      var parser = new xml2js.Parser();
+      parser.parseString(err.error,(error, result) => {
+          if (error) {
+            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+          } else {
+            errorMessage = result['string']['_'];
+          }
+    });
+  }
     console.error("handleError " + errorMessage);
     return throwError(errorMessage);
   }
@@ -336,7 +345,14 @@ export class FolderContnentService {
       } else {
         // The backend returned an unsuccessful response code.
         // The response body may contain clues as to what went wrong,
-        errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+        var parser = new xml2js.Parser();
+        parser.parseString(err.error,(error, result) => {
+            if (error) {
+              errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+            } else {
+              errorMessage = result['string']['_'];
+            }
+      });
       }
       console.error("hanldeErrorWithErrorHandler " + errorMessage);
       errorHanlder(errorMessage);
