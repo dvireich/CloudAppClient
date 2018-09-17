@@ -84,13 +84,13 @@ export class MessageBox implements OnInit, AfterViewInit {
     
     getMessaeImage(): string{
         if(this.messageIcon === MessageBoxType.Error){
-            return "https://cdn0.iconfinder.com/data/icons/iVista2/256/Error.png";
+            return "../../api/Resources/error.png";
         }
         if(this.messageIcon === MessageBoxType.Information){
-            return "https://cdn3.iconfinder.com/data/icons/micro/scalable/status/dialog-information.png";
+            return "../../api/Resources/information.png";
         }
         if(this.messageIcon === MessageBoxType.Question){
-            return "https://cdn2.iconfinder.com/data/icons/humano2/128x128/apps/gnome-help.png";
+            return "../../../api/Resources/question.png";
         }
     }
 }
