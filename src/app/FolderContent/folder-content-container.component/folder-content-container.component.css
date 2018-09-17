@@ -20,17 +20,31 @@
     width:100%;
     float:left;
     z-index: 1;
-    height : 80vh;
+    height : 84vh;
     word-break: break-word;
 }
 
 .noSpaceToLeft{
     padding: 0;
-    height : 80vh;
+    height : 84vh;
 }
 
 .scroll-area{
     width:100%;
     float:left;
-    overflow-y:scroll;
+    overflow-y:auto;
+  }
+
+  .uploadsMain{
+    z-index: 1;
+    position: absolute;
+    bottom: 0; 
+    width: 400px;
+    /* height: 200px; */
+    margin-bottom:0;
+  }
+
+  .upoadsBody{
+    height: 200px;
+    overflow-x:hidden;
   }

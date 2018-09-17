@@ -37,7 +37,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         private clipboard: FolderContentClipBoard,
         private folderContentStateService: FolderContentStateService,
         private router: Router) {
-        folderContentService.subscriberToFinishUploadToAction(this, this.updateThisFolderContentAfterOperation.bind(this));
+        folderContentService.subscriberToFinishUploadToAction(this, this.onFinishAddFile.bind(this));
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
                 folderContentStateService.setCurrentFolderState(this.getCurrentFolder(), this._currentPage);
@@ -249,6 +249,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     unSelectAllChilds() {
         this.selectedProperties = null;
         this.hideContexMenu();
+        this.onSelectionChanged(null);
         this.listOfFileFoldersObj.forEach(element => {
             element.unSelect();
         });
@@ -436,6 +437,8 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     onStartAddFile() {
         this.needToShowUploadBox = false;
     }
+
+
 
     updateThisFolderContentAfterOperation(pageNum: number) {
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),

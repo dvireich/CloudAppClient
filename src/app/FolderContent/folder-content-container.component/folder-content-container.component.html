@@ -1,8 +1,8 @@
 <nav-bar [pathBreaks] = 'navBarPathBreaks'
 (PathBreakClick)='navBarPathBreakClick($event)'></nav-bar>
-
+<div class="row" style="margin:0">
 <div class="col-md-2 noSpaceToLeft">
-        <div class="panel panel-default infoPanel">
+        <div class="panel panel-default infoPanel" style="margin-bottom: 0">
                 <!-- Default panel contents -->
                 <div class="panel-heading">Properties</div>
               
@@ -89,6 +89,7 @@
                     <folder-content-paging-nav
                     (pageChange)='onPageChanged($event)'
                     ></folder-content-paging-nav>
-                   </div>
+            </div>
 </div>
-
+</div>
+<upload-progress-container></upload-progress-container>

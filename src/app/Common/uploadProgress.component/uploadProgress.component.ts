@@ -24,7 +24,6 @@ export class UploadProgress implements OnDestroy {
     @Input()
     set uploadData(value: IUploadData) {
         this._uploadData = value;
-
         if (this.uploadData.progress < 100) return;
 
         this.uploadEnded = true;
@@ -53,5 +52,13 @@ export class UploadProgress implements OnDestroy {
 
     onButtonClick() {
         this.folderContentService.clearUpload(this._uploadData.requestId);
+    }
+
+    fixNameToShow(value: string): string{
+        if(value.length > 7){
+            return value.substring(0, 7) + "...";
+        }
+
+        return value;
     }
 }
