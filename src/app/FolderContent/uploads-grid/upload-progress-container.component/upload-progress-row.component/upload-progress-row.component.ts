@@ -1,14 +1,13 @@
 import { Component, Input, OnDestroy } from "@angular/core";
 import { IUploadData } from "./IUploadData";
-import { FolderContnentService } from "../../FolderContent/FolderContentService/folder-content-service";
-import { element } from "@angular/core/src/render3/instructions";
+import { FolderContnentService } from "../../../Folder-content-service/folder-content-service";
 
 @Component({
-    selector: "upload-progress",
-    templateUrl: "./uploadProgress.component.html",
-    styleUrls: ["./uploadProgress.component.css"]
+    selector: "upload-progress-row",
+    templateUrl: "./upload-progress-row.component.html",
+    styleUrls: ["./upload-progress-row.component.css"]
 })
-export class UploadProgress implements OnDestroy {
+export class UploadProgressRow implements OnDestroy {
     ngOnDestroy(): void {
         this.folderContentService.removeSubscribeToChangeInUploadProgress(this)
     }

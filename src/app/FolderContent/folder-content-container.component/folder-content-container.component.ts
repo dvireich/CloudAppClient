@@ -1,27 +1,24 @@
-import { Component, Input, OnInit, OnDestroy } from "@angular/core";
-import { SelectableComponent } from "../select-able.component/select-able.component";
-import { IContexMenuCoordinates } from "../../Common/contexMenu.component/IContexMenuCoordinates";
+import { Component, OnInit, OnDestroy } from "@angular/core";
 import { IFolderContent } from "../Model/IFolderContent";
 
 import { IFolder } from "../Model/IFolder";
-import { FileObj } from "../Model/FileObj";
 import { FolderObj } from "../Model/FolderObj";
-import { FolderContnentService } from "../FolderContentService/folder-content-service";
 import { folderContentType } from "../Model/folderContentType";
-import { IContexMentuItem } from "../../Common/contexMenu.component/IContexMentuItem";
-import { ContexMentuItem } from "../../Common/contexMenu.component/contexMentuItem";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
-import { EnterFolderArgs } from "../select-able.component/enterFolderArgs";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
-import { ClipBoardOperation } from "../clipboardService/clipBoardOperation";
-import { IPathBreak } from "../../Common/navBar.component/IPathBreak";
-import { PathBreak } from "../../Common/navBar.component/pathBreak";
 import { Observable } from "rxjs";
-import { FolderContentStateService } from "../folderContentStateService/folderContentStateService";
 import { Router, NavigationStart } from "@angular/router";
 import { ISelecableProperties } from "../Model/ISelecableProperties";
-import { FolderContentClipBoard } from "../clipboardService/folder-content-clipboard";
+import { SelectableGrid } from "../selectable-grid/selectalbe-grid.component/selectalbe-grid.component";
+import { EnterFolderArgs } from "../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
+import { FolderContentClipBoard } from "../clipboard-service/folder-content-clipboard";
+import { ClipBoardOperation } from "../clipboard-service/clip-board-operation";
+import { FolderContentStateService } from "../folder-content-state-service/folder-content-state-service";
+import { FolderContnentService } from "../Folder-content-service/folder-content-service";
+import { IContexMentuItem } from "../../Common/contex-menu.component/icontex-mentu-item";
+import { IContexMenuCoordinates } from "../../Common/contex-menu.component/icontex-menu-coordinates";
+import { ContexMentuItem } from "../../Common/contex-menu.component/contex-mentu-item";
 
 @Component({
     selector: "folder-content-container",
@@ -45,27 +42,21 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         });       
     }
 
-    @Input()
-    public set listOfFileFolderNames(value: IFolder) {
-        this._listOfFileFolderNames = value;
-        this.InitializeListOfListsOfNames();
-    }
-    @Input() maxColumns: number = 17;
-
-    private listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
-    private listOfListsOfNames: IFolderContent[][] = [];
     private _listOfFileFolderNames: IFolder;
     private _currentPage: number = 1;
     private selectedProperties: ISelecableProperties;
+
+    //selectable-grid
+    private _selectableGrid: SelectableGrid;
 
     //UploadBox
     needToShowUploadBox: boolean;
     uploadBoxCancel: () => void = this.uploadFileOnCancel;
 
     //NavBar
-    navBarPathBreaks: IPathBreak[];
+    navBarPath: string;
     navBarPathBreakClick: (fullPath: string) => void = this.navBarOnPathBreakClick;
 
     //ContexMenu
@@ -92,10 +83,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     messageBoxOnButton1Click: (result: DialogResult) => void;
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
-    public get listOfFileFolderNames(): IFolder {
-        return this._listOfFileFolderNames;
-    }
-
     ngOnInit(): void {
         let state = this.folderContentStateService.restoreFolderState()
         this._currentPage = state.currentPage;
@@ -106,42 +93,10 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
         this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
             folder => {
-                this.listOfFileFolderNames = folder;
-                this.navBarPathBreaks = this.breakPathIntoPathBreaks(this.getCurrentPath());
+                this._listOfFileFolderNames = folder;
+                this.navBarPath = this.getCurrentPath();
             },
             error => this.messageBoxText = <any>error);
-    }
-
-    private InitializeListOfListsOfNames() {
-        this.listOfListsOfNames = [];
-        for (let i: number = 0; i < this.listOfFileFolderNames.Content.length; i = i + this.maxColumns) {
-            let tmpArray: IFolderContent[] = new Array<IFolderContent>();
-            for (let j: number = 0; j < this.maxColumns && i + j < this.listOfFileFolderNames.Content.length; j++) {
-                tmpArray.push(this.listOfFileFolderNames.Content[i + j])
-            }
-            this.listOfListsOfNames.push(tmpArray);
-        }
-        this.onSelectionChanged(null);
-    }
-
-    private getSelected(): IFolderContent {
-        let selectedNames = this.listOfFileFoldersObj.filter(element => element.isSeletcted());
-        if (selectedNames.length > 1) {
-            selectedNames.forEach(element => console.log(element.text + " is selected!"));
-            throw new Error('There is more than 1 selected items! This is not allowed');
-        }
-        if (selectedNames.length === 0) return null;
-
-        let folderContentObject: IFolderContent;
-        if (selectedNames[0].type === folderContentType.file) {
-            folderContentObject = new FileObj();
-        }
-        if (selectedNames[0].type === folderContentType.folder) {
-            folderContentObject = new FolderObj();
-        }
-        folderContentObject.Name = selectedNames[0].text;
-        folderContentObject.Path = selectedNames[0].path;
-        return folderContentObject;
     }
 
     onDeleteContexMenuClick() {
@@ -160,7 +115,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
                     error => this.messageBoxText = <any>error
                 );
             }
-            this.InitializeListOfListsOfNames();
         });
     }
 
@@ -180,19 +134,19 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     getCurrentFolder(): IFolder {
         let result = new FolderObj();
-        if (this.listOfFileFolderNames == undefined) {
+        if (this._listOfFileFolderNames == undefined) {
             result.Name = 'home';
             result.Path = '';
             result.Content = new Array<IFolderContent>();
         }
-        else if (this.listOfFileFolderNames.Path === '') {
-            result.Name = this.listOfFileFolderNames.Name;
+        else if (this._listOfFileFolderNames.Path === '') {
+            result.Name = this._listOfFileFolderNames.Name;
             result.Path = '';
             result.Content = new Array<IFolderContent>();
         }
         else {
-            result.Name = this.listOfFileFolderNames.Name;
-            result.Path = this.listOfFileFolderNames.Path;
+            result.Name = this._listOfFileFolderNames.Name;
+            result.Path = this._listOfFileFolderNames.Path;
             result.Content = new Array<IFolderContent>();
         }
 
@@ -244,15 +198,9 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.showInputBox("Enter folder name...", "Create Folder", "Create", this.inputBoxCreateNewFolder, this.inputBoxOnCancel, () => { });
     }
 
-    addChildComponent(child: SelectableComponent) {
-        this.listOfFileFoldersObj.push(child);
-    }
-
-    unSelectAllChilds() {
+    clearSelectbleGridSelection(){
         this.hideContexMenu();
-        this.listOfFileFoldersObj.forEach(element => {
-            element.unSelect();
-        });
+        this._selectableGrid.clearSelection();
         this.onSelectionChanged(null);
     }
 
@@ -269,8 +217,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
             this.ignoreDisableSelection = false;
             return;
         }
-        this.unSelectAllChilds();
-        this.hideContexMenu();
+        this.clearSelectbleGridSelection();
     }
 
     hideContexMenu() {
@@ -423,11 +370,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     getCurrentPath(): string {
-        if (this.listOfFileFolderNames == undefined) {
+        if (this._listOfFileFolderNames == undefined) {
             return 'home/';
         }
-        if (this.listOfFileFolderNames.Path === '') return this.listOfFileFolderNames.Name;
-        return `${this.listOfFileFolderNames.Path}/${this.listOfFileFolderNames.Name}`;
+        if (this._listOfFileFolderNames.Path === '') return this._listOfFileFolderNames.Name;
+        return `${this._listOfFileFolderNames.Path}/${this._listOfFileFolderNames.Name}`;
     }
 
     onFinishAddFile() {
@@ -437,8 +384,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     onStartAddFile() {
         this.needToShowUploadBox = false;
     }
-
-
 
     updateThisFolderContentAfterOperation(pageNum: number) {
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
@@ -536,21 +481,6 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.neddToShowInputBox = true;
     }
 
-    breakPathIntoPathBreaks(path: string): IPathBreak[] {
-        let splittedPath = path.split('/');
-        let result: IPathBreak[] = new Array<IPathBreak>();
-
-        for (let i: number = 0; i < splittedPath.length; i++) {
-            let pathBreak = splittedPath[i];
-
-            let fullPathBreaks = splittedPath.slice(0, i);
-            let fullPath = fullPathBreaks.reduce((prev, currVal) => prev + '/' + currVal, "");
-
-            result.push(new PathBreak(pathBreak, fullPath));
-        }
-        return result;
-    }
-
     navBarOnPathBreakClick(fullPath: string) {
         let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
         let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
@@ -569,5 +499,13 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     onSelectionChanged(selectedProperties: ISelecableProperties){
         this.selectedProperties = selectedProperties;
+    }
+
+    registerSelectableGrid(selectableGrid: SelectableGrid){
+        this._selectableGrid = selectableGrid;
+    }
+
+    getSelected(): IFolderContent{
+        return this._selectableGrid.getSelected();
     }
 }

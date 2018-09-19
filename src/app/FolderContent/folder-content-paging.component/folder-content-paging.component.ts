@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { FolderContnentService } from "../FolderContentService/folder-content-service";
+import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 
 @Component({
     selector: 'folder-content-paging-nav',
-    templateUrl: './folderContent-Paging.component.html',
-    styleUrls: ['./folderContent-Paging.component.css']
+    templateUrl: './folder-content-paging.component.html',
+    styleUrls: ['./folder-content-paging.component.css']
 })
 export class FolderContentPagingNav{
 

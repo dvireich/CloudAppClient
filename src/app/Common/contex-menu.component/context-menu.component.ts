@@ -1,10 +1,10 @@
 import { Component, Input} from '@angular/core';
-import { IContexMentuItem } from './IcontexMentuItem';
+import { IContexMentuItem } from './icontex-mentu-item';
 
 @Component({
   selector: 'app-contextmenu',
-  templateUrl: './contextmenu.Component.html',
-  styleUrls: ['./contextmenu.Component.css']
+  templateUrl: './context-menu.component.html',
+  styleUrls: ['./context-menu.component.css']
 })
 export class ContextmenuComponent{
     

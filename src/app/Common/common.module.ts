@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ContextmenuComponent } from './contexMenu.component/contextmenu.component';
 import { MessageBox } from './messagebox.component/messagebox.component';
-import { NavagationBar } from './navBar.component/nav-bar.component';
 import { Inputbox } from './inputbox.component/inputbox.component';
-import { UploadProgress } from './uploadProgress.component/uploadProgress.component';
 import { FillPipe } from './fillPipe';
 import { PagingNav } from './paging.component/paging.component';
 import { TakePipe } from './takePipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ContextmenuComponent } from './contex-menu.component/context-menu.component';
+import { NavagationBar } from './nav-bar.component/nav-bar.component';
 
 @NgModule({
   imports: [
@@ -21,7 +20,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MessageBox,
     Inputbox,
     NavagationBar,
-    UploadProgress,
     FillPipe,
     PagingNav,
     TakePipe
@@ -31,7 +29,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MessageBox,
     Inputbox,
     NavagationBar,
-    UploadProgress,
     FillPipe,
     PagingNav,
     TakePipe,

@@ -1,4 +1,4 @@
-import { IFolderState } from "./IFolderState";
+import { IFolderState } from "./ifolder-state";
 
 export class FolderState implements IFolderState{
     constructor(public currentFolderName: string,

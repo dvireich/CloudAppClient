@@ -1,0 +1,20 @@
+<table>
+    <tr *ngFor ='let listOfNames of listOfListsOfNames'>
+        <td *ngFor='let item of listOfNames'>
+                <select-able 
+                (RegisterInParent)="addChildComponent($event)" 
+                (UnSelectAll)="clearSelection($event)" 
+                (ApplyIgnoreDisableSelection)="onApplyIgnoreDisableSelection($event)"
+                (ApplyParentIgnoreOnRightClick)="onSetIgnoreOnRightClick($event)"
+                (ShowContexMenu) ="onShowContexMenu($event)"
+                (EnterFolderByDbClick) ="onEnterFolderByDbClick($event)"
+                (SelectionChanged) ="onSelectionChanged($event)"
+                [text]='item.Name'
+                [path]='item.Path'
+                [creationTime]='item.CreationTime'
+                [modificationTime]='item.ModificationTime'
+                [size]='item.Size'
+                [type]='item.Type'></select-able>
+        </td>
+    </tr>
+</table>

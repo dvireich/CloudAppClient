@@ -1,14 +1,14 @@
 import { Component, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FolderContnentService } from '../FolderContentService/folder-content-service';
+import { FolderContnentService } from '../Folder-content-service/folder-content-service';
 
 
 @Component({
-  selector: 'base64-upload',
-  templateUrl: './uploadForm.component.html',
-  styleUrls: ['./uploadForm.component.css']
+  selector: 'upload-form',
+  templateUrl: './upload-form.component.html',
+  styleUrls: ['./upload-form.component.css']
 })
-export class Base64UploadComponent {
+export class UploadForm {
   form: FormGroup;
   loading: boolean = false;
   disableAddButon: boolean = true;

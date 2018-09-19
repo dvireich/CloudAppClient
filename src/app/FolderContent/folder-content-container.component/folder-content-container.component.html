@@ -1,6 +1,7 @@
-<nav-bar  oncontextmenu="return false;"
-[pathBreaks] = 'navBarPathBreaks'
-(PathBreakClick)='navBarPathBreakClick($event)'></nav-bar>
+<folder-content-nav-bar
+[Path] = 'navBarPath'
+(PathBarClick) = 'navBarPathBreakClick($event)'>
+</folder-content-nav-bar>
 <div class="row" style="margin:0">
 <div class="col-md-2 noSpaceToLeft">
         <div class="panel panel-default infoPanel scroll-area" oncontextmenu="return false;" style="margin-bottom: 0">
@@ -12,23 +13,42 @@
                   <li *ngIf='selectedProperties !== null &&
                              selectedProperties !== undefind &&
                              selectedProperties.Name'
-                             class="list-group-item">Name: {{selectedProperties.Name}}</li>
+                             class="list-group-item">
+                             Name: {{selectedProperties !== null &&
+                                     selectedProperties !== undefind ? 
+                                     selectedProperties.Name: 
+                                     ""}}</li>
                   <li *ngIf='selectedProperties !== null &&
                              selectedProperties !== undefind &&
                              selectedProperties.CreationTime'
-                             class="list-group-item">Creation Time: {{selectedProperties.CreationTime}}</li>
+                             class="list-group-item">
+                             Creation Time: {{selectedProperties !== null &&
+                                              selectedProperties !== undefind ? 
+                                              selectedProperties.CreationTime:
+                                              ""}}</li>
                   <li *ngIf='selectedProperties !== null &&
                              selectedProperties !== undefind &&
                              selectedProperties.ModificationTime'
-                            class="list-group-item">Modification Time: {{selectedProperties.ModificationTime}}</li>
+                            class="list-group-item">
+                            Modification Time: {{selectedProperties !== null &&
+                                                 selectedProperties !== undefind ?
+                                                 selectedProperties.ModificationTime:
+                                                 ""}}</li>
                   <li *ngIf='selectedProperties !== null &&
                              selectedProperties !== undefind &&
                              selectedProperties.Path'
-                             class="list-group-item">Path: {{selectedProperties.Path}}</li>
+                             class="list-group-item">
+                             Path: {{selectedProperties !== null &&
+                                     selectedProperties !== undefind ?
+                                     selectedProperties.Path:
+                                     ""}}</li>
                   <li *ngIf='selectedProperties !== null &&
                              selectedProperties !== undefind &&
                              selectedProperties.Size' 
-                             class="list-group-item">Size: {{selectedProperties.Size}}</li>
+                             class="list-group-item">Size: {{selectedProperties !== null &&
+                                                     selectedProperties !== undefind ?
+                                                     selectedProperties.Size:
+                                                     ""}}</li>
                 </ul>
 
                 <p *ngIf='selectedProperties === null ||
@@ -39,26 +59,16 @@
 <div class="col-md-10 noSpaceToLeft">
         <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
 
-                <table>
-                    <tr *ngFor ='let listOfNames of listOfListsOfNames'>
-                        <td *ngFor='let item of listOfNames'>
-                                <select-able 
-                                (RegisterInParent)="addChildComponent($event)" 
-                                (UnSelectAll)="unSelectAllChilds($event)" 
-                                (ApplyIgnoreDisableSelection)="SetIgnoreDisableSelection($event)"
-                                (ApplyParentIgnoreOnRightClick)="SetIgnoreOnRightClick($event)"
-                                (ShowContexMenu) ="showContexMenuOnCoordinates($event)"
-                                (EnterFolderByDbClick) ="dbClickEnterFolder($event)"
-                                (SelectionChanged) ="onSelectionChanged($event)"
-                                [text]='item.Name'
-                                [path]='item.Path'
-                                [creationTime]='item.CreationTime'
-                                [modificationTime]='item.ModificationTime'
-                                [size]='item.Size'
-                                [type]='item.Type'></select-able>
-                        </td>
-                    </tr>
-                </table>
+                <selectable-grid
+                [listOfFileFolderNames] = '_listOfFileFolderNames'
+                (RegisterInParent) = 'registerSelectableGrid($event)'
+                (SelectionChanged) = 'onSelectionChanged($event)'
+                (ApplyIgnoreDisableSelection) = 'SetIgnoreDisableSelection($event)'
+                (ApplyParentIgnoreOnRightClick) = 'SetIgnoreOnRightClick($event)'
+                (ShowContexMenu) = 'showContexMenuOnCoordinates($event)'
+                (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
+                </selectable-grid>
+
                 <div *ngIf = 'showContexMenu'>
                     <app-contextmenu [x] = 'contexMenuX' 
                                      [y] = 'contexMenuY'
@@ -81,12 +91,12 @@
                                  (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
                 </div>
                 <div *ngIf='needToShowUploadBox'>
-                        <base64-upload 
+                        <upload-form 
                         [currentFolderPath] = 'getCurrentPath()'
                         (onCancel)='uploadBoxCancel($event)'
                         (onAddEnd)='onFinishAddFile($event)'
                         (onAddStart)='onStartAddFile($event)'
-                        [onErrorUpload] = 'onErrorUploadFile.bind(this)'></base64-upload>
+                        [onErrorUpload] = 'onErrorUploadFile.bind(this)'></upload-form>
                 </div>
             </div>
             <div class="bottomCenterPossition">
@@ -96,4 +106,4 @@
             </div>
 </div>
 </div>
-<upload-progress-container></upload-progress-container>
+<uploads-grid></uploads-grid>

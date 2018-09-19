@@ -1,17 +1,18 @@
 import { Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { FolderContnentService } from "../FolderContentService/folder-content-service";
-import { IUploadData } from "../../Common/uploadProgress.component/IuploadData";
-import { retry } from "rxjs/operators";
-import { FolderContentStateService } from "../folderContentStateService/folderContentStateService";
-import { UploadContainerState } from "../folderContentStateService/UploadContainerState";
 import { Router, NavigationStart } from "@angular/router";
+import { FolderContentStateService } from "../../folder-content-state-service/folder-content-state-service";
+import { UploadContainerState } from "../../folder-content-state-service/upload-container-state";
+import { FolderContnentService } from "../../Folder-content-service/folder-content-service";
+import { IUploadData } from "./upload-progress-row.component/IUploadData";
+
+
 
 @Component({
-    selector: "upload-progress-container",
-    templateUrl: "./upload-progress-container.component.html",
-    styleUrls: ["./upload-progress-container.component.css"]
+    selector: "uploads-grid",
+    templateUrl: "./uploads-grid.component.html",
+    styleUrls: ["./uploads-grid.component.css"]
 })
-export class UploadProgressContainer implements OnDestroy, OnInit {
+export class UploadsGrid implements OnDestroy, OnInit {
     ngOnInit(): void {
         let state = this.folderContentStateService.restoreUploadContainerState();
         if(state === null || state === undefined) return;

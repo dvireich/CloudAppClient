@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { IFolder } from "../Model/IFolder";
-import { IFolderState } from "./IFolderState";
-import { FolderState } from "./folderState";
-import { IUploadContainerState } from "./IUploadContainerState";
+import { IFolderState } from "./ifolder-state";
+import { FolderState } from "./folder-state";
+import { IUploadContainerState } from "./iupload-container-state";
 
 @Injectable({
     providedIn: "root"

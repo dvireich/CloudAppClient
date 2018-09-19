@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { IPathBreak } from "./IPathBreak";
+import { IPathBreak } from "./ipath-break";
 
 @Component({
     selector: 'nav-bar',
