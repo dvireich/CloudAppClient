@@ -7,6 +7,7 @@ import { UploadsGridModule } from './uploads-grid/uploads-grid.module';
 import { UploadForm } from './upload-form.component/upload-form.component';
 import { FolderContentPagingNav } from './folder-content-paging.component/folder-content-paging.component';
 import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav-bar';
+import { FolderContentPropertyInfo } from './folder-content-property-info/folder-content-property-info';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav
     FolderContentContainter,
     UploadForm,
     FolderContentPagingNav,
-    FolderContentNavBar
+    FolderContentNavBar,
+    FolderContentPropertyInfo
   ]
 })
 export class FolderContentModule { }

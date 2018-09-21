@@ -1,51 +1,72 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { IFolderContent } from "../Model/IFolderContent";
-
-import { IFolder } from "../Model/IFolder";
-import { FolderObj } from "../Model/FolderObj";
 import { folderContentType } from "../Model/folderContentType";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
-import { Observable } from "rxjs";
-import { Router, NavigationStart } from "@angular/router";
-import { ISelecableProperties } from "../Model/ISelecableProperties";
+import { NavigationStart, Router } from "@angular/router";
 import { SelectableGrid } from "../selectable-grid/selectalbe-grid.component/selectalbe-grid.component";
 import { EnterFolderArgs } from "../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
-import { FolderContentClipBoard } from "../clipboard-service/folder-content-clipboard";
-import { ClipBoardOperation } from "../clipboard-service/clip-board-operation";
-import { FolderContentStateService } from "../folder-content-state-service/folder-content-state-service";
-import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 import { IContexMentuItem } from "../../Common/contex-menu.component/icontex-mentu-item";
-import { IContexMenuCoordinates } from "../../Common/contex-menu.component/icontex-menu-coordinates";
 import { ContexMentuItem } from "../../Common/contex-menu.component/contex-mentu-item";
+import { IUploadArgs } from "../upload-form.component/iupload-args";
+import { FolderContentContainerControler } from "../folder-content-container-controler/folder-content-container-controler";
+import { IFolderContentContainerView } from "../folder-content-container-controler/ifolder-content-container-view";
+import { IFolder } from "../Model/IFolder";
+import { IContexMenuCoordinates } from "../../Common/contex-menu.component/icontex-menu-coordinates";
+import { ISelecableProperties } from "../Model/ISelecableProperties";
 
 @Component({
     selector: "folder-content-container",
     templateUrl: "./folder-content-container.component.html",
     styleUrls: ['./folder-content-container.component.css']
 })
-export class FolderContentContainter implements OnInit, OnDestroy {
-    ngOnDestroy(): void {
-        this.folderContentService.removeSubscriberToFinishUploadToAction(this);
-    }
+export class FolderContentContainter implements IFolderContentContainerView, OnInit {
 
-    constructor(private folderContentService: FolderContnentService,
-        private clipboard: FolderContentClipBoard,
-        private folderContentStateService: FolderContentStateService,
-        private router: Router) {
-        folderContentService.subscriberToFinishUploadToAction(this, this.onFinishAddFile.bind(this));
+
+    constructor(
+        private controler: FolderContentContainerControler, router: Router) {
+        controler.initializeView(this)
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
-                folderContentStateService.setCurrentFolderState(this.getCurrentFolder(), this._currentPage);
+                this.controler.saveState();
             }
-        });       
+        });
     }
+
+    //IFolderContentContainerView implementaion
+    private _listOfFileFolderNames: IFolder;
+
+    public get listOfFileFolderNames(): IFolder {
+        return this._listOfFileFolderNames;
+    }
+
+    public set listOfFileFolderNames(value: IFolder) {
+        this._listOfFileFolderNames = value;
+    }
+
+    private _currentPage: number;
+
+    public get currentPage(): number {
+        return this._currentPage;
+    }
+
+    public set currentPage(value: number) {
+        this._currentPage = value;
+    }
+
+    showMessage(
+        message: string,
+        type: MessageBoxType,
+        buttons: MessageBoxButton,
+        caption: string,
+        cont: () => void) {
+        this.showMessageBox(message, type, buttons, caption, cont);
+    }
+
 
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
-    private _listOfFileFolderNames: IFolder;
-    private _currentPage: number = 1;
     private selectedProperties: ISelecableProperties;
 
     //selectable-grid
@@ -56,7 +77,15 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     uploadBoxCancel: () => void = this.uploadFileOnCancel;
 
     //NavBar
-    navBarPath: string;
+    private _navBarPath: string;
+
+    public get navBarPath(): string {
+        return this._navBarPath;
+    }
+
+    public set navBarPath(value: string) {
+        this._navBarPath = value;
+    }
     navBarPathBreakClick: (fullPath: string) => void = this.navBarOnPathBreakClick;
 
     //ContexMenu
@@ -74,9 +103,25 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     inputBoxOnSubmitEvent: (input: string) => void;
 
     //message box
-    messageBoxResult: DialogResult;
+    private _messageBoxResult: DialogResult;
+
+    public get messageBoxResult(): DialogResult {
+        return this._messageBoxResult;
+    }
+
+    public set messageBoxResult(value: DialogResult) {
+        this._messageBoxResult = value;
+    }
     needToShowMessageBox: boolean;
-    messageBoxText: string;
+    private _messageBoxText: string;
+
+    public get messageBoxText(): string {
+        return this._messageBoxText;
+    }
+
+    public set messageBoxText(value: string) {
+        this._messageBoxText = value;
+    }
     messageBoxCaption: string;
     messageBoxMessageType: MessageBoxType;
     messageBoxButtons: MessageBoxButton;
@@ -84,122 +129,38 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
     ngOnInit(): void {
-        let state = this.folderContentStateService.restoreFolderState()
-        this._currentPage = state.currentPage;
-        this.updateFolderContent(state.currentFolderName, state.currentFolderPath, state.currentPage);
-    }
-
-    private updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
-        this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
-        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
-            folder => {
-                this._listOfFileFolderNames = folder;
-                this.navBarPath = this.getCurrentPath();
-            },
-            error => this.messageBoxText = <any>error);
+        this.controler.restoreState();
     }
 
     onDeleteContexMenuClick() {
         let selected = this.getSelected();
-        this.showMessageBox("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", () => {
-            if (this.messageBoxResult === DialogResult.No) return;
-            if (selected.Type === folderContentType.folder) {
-                this.folderContentService.deleteFolder(selected.Name, selected.Path, this._currentPage).subscribe(
-                    data => this.updateThisFolderContentAfterOperation(this._currentPage),
-                    error => this.messageBoxText = <any>error
-                );
-            }
-            if (selected.Type === folderContentType.file) {
-                this.folderContentService.deleteFile(selected.Name, selected.Path, this._currentPage).subscribe(
-                    data => this.updateThisFolderContentAfterOperation(this._currentPage),
-                    error => this.messageBoxText = <any>error
-                );
-            }
-        });
+        this.controler.deleteFolderContent(selected);
     }
 
     onRenameContexMenuClick() {
         this.showInputBox("Enter the new name...", "Rename", "Rename", this.inputBoxRename(this.getSelected()), this.inputBoxOnCancel, () => { });
     }
 
-    onCoptyContexMenuClick() {
+    onCopyContexMenuClick() {
         let selected = this.getSelected();
-        this.clipboard.AddToClipBoard(selected, ClipBoardOperation.Copy);
+        this.controler.copy(selected);
     }
 
     onCutContexMenuClick() {
         let selected = this.getSelected();
-        this.clipboard.AddToClipBoard(selected, ClipBoardOperation.Cut);
-    }
-
-    getCurrentFolder(): IFolder {
-        let result = new FolderObj();
-        if (this._listOfFileFolderNames == undefined) {
-            result.Name = 'home';
-            result.Path = '';
-            result.Content = new Array<IFolderContent>();
-        }
-        else if (this._listOfFileFolderNames.Path === '') {
-            result.Name = this._listOfFileFolderNames.Name;
-            result.Path = '';
-            result.Content = new Array<IFolderContent>();
-        }
-        else {
-            result.Name = this._listOfFileFolderNames.Name;
-            result.Path = this._listOfFileFolderNames.Path;
-            result.Content = new Array<IFolderContent>();
-        }
-
-        return result;
+        this.controler.cut(selected);
     }
 
     onPasteContexMenuClick() {
         let copyTo = this.getSelected();
-        let letClipBoardOperation = this.clipboard.popClipBoardOperation();
-        let objTocopy = this.clipboard.popClipBoardObj();
-
-        if (copyTo === null || copyTo === undefined) {
-            copyTo = this.getCurrentFolder();
-        }
-
-        if (this.folderContentService.createPath(copyTo.Name, copyTo.Path) === objTocopy.Path) return;
-
-        let respOfCopy = this.folderContentService.copy(objTocopy, <IFolder>copyTo);
-
-        respOfCopy.subscribe(
-            data => {
-                if (letClipBoardOperation === ClipBoardOperation.Cut) {
-
-                    let respOfDelete: Observable<object>;
-                    if (objTocopy.Type == folderContentType.folder) {
-                        respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path, this._currentPage);
-                    }
-                    if (objTocopy.Type == folderContentType.file) {
-                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path, this._currentPage);
-                    }
-
-                    respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(this._currentPage),
-                        error => {
-                            this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
-                        });
-                }
-                else {
-                    this.updateThisFolderContentAfterOperation(this._currentPage);
-                }
-
-            },
-            error => {
-                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
-            })
-        console.log("Paste");
+        this.controler.paste(copyTo);
     }
 
     onCreateNewFolderContexMenuClick() {
         this.showInputBox("Enter folder name...", "Create Folder", "Create", this.inputBoxCreateNewFolder, this.inputBoxOnCancel, () => { });
     }
 
-    clearSelectbleGridSelection(){
-        this.hideContexMenu();
+    clearSelectbleGridSelection() {
         this._selectableGrid.clearSelection();
         this.onSelectionChanged(null);
     }
@@ -238,13 +199,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     enterFolder() {
         let selected = this.getSelected();
-        this._currentPage = 1;
-        this.updateFolderContent(selected.Name, selected.Path, 1);
+        this.controler.updateFolderContent(selected.Name, selected.Path, 1);
     }
 
     dbClickEnterFolder(args: EnterFolderArgs) {
-        this._currentPage = 1;
-        this.updateFolderContent(args.Name, args.Path, 1);
+        this.controler.updateFolderContent(args.Name, args.Path, 1);
     }
 
     onrightClick(event: IContexMenuCoordinates) {
@@ -260,12 +219,11 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     onAddFile() {
         this.needToShowUploadBox = true;
-        console.log("onAddFile");
     }
 
-    downloadFile() {
+    onDownloadFileClick() {
         let selected = this.getSelected();
-        this.folderContentService.downloadFile(selected.Name, selected.Path);
+        this.controler.downloadFile(selected);
     }
 
     getContexMentuItemsForFolderContentRClick(): IContexMentuItem[] {
@@ -282,7 +240,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         renameToEvent.showAllways = true;
 
         let copyToEvent = new ContexMentuItem();
-        copyToEvent.onClick = this.onCoptyContexMenuClick.bind(this);
+        copyToEvent.onClick = this.onCopyContexMenuClick.bind(this);
         copyToEvent.name = "Copy";
         copyToEvent.needToshow = () => true;
         copyToEvent.showAllways = true;
@@ -306,7 +264,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         enterToEvent.showAllways = false;
 
         let downloadToEvent = new ContexMentuItem();
-        downloadToEvent.onClick = this.downloadFile.bind(this);
+        downloadToEvent.onClick = this.onDownloadFileClick.bind(this);
         downloadToEvent.name = "Download";
         downloadToEvent.needToshow = (() => { return (!this.isFolder()); }).bind(this);
         downloadToEvent.showAllways = false;
@@ -346,19 +304,8 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     canPaste(): boolean {
-        let clipboardObj = this.clipboard.peekClipBoardObj();
         let selected = this.getSelected();
-        return this.clipboard.popClipBoardOperation() !== null &&
-            this.clipboard.popClipBoardOperation() !== undefined &&
-            clipboardObj !== null &&
-            clipboardObj !== undefined &&
-            //Or we have selected or we do not have and we paste in the containing folder
-            ((selected !== null &&
-                selected !== undefined &&
-                !clipboardObj.equals(selected))
-                ||
-                (selected === null ||
-                    selected === undefined));
+        return this.controler.canPaste(selected);
     }
 
     inputBoxOnCancel() {
@@ -369,39 +316,15 @@ export class FolderContentContainter implements OnInit, OnDestroy {
         this.needToShowUploadBox = false;
     }
 
-    getCurrentPath(): string {
-        if (this._listOfFileFolderNames == undefined) {
-            return 'home/';
-        }
-        if (this._listOfFileFolderNames.Path === '') return this._listOfFileFolderNames.Name;
-        return `${this._listOfFileFolderNames.Path}/${this._listOfFileFolderNames.Name}`;
-    }
-
-    onFinishAddFile() {
-        this.updateThisFolderContentAfterOperation(this._currentPage);
-    }
-
     onStartAddFile() {
         this.needToShowUploadBox = false;
-    }
-
-    updateThisFolderContentAfterOperation(pageNum: number) {
-        this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
-            this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
-            pageNum);
     }
 
     inputBoxCreateNewFolder(folderName: string) {
         this.neddToShowInputBox = false;
 
         if (!this.validateNotEmptyStringAndShowMessageBox(folderName, "The folder name cannot be empty")) return;
-
-        let resp = this.folderContentService.createFolder(folderName, this.getCurrentPath());
-        resp.subscribe(
-            data => this.updateThisFolderContentAfterOperation(this._currentPage),
-            error => {
-                this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder");
-            })
+        this.controler.createFolder(folderName);
     }
 
     inputBoxRename(selected: IFolderContent): (input: string) => void {
@@ -414,13 +337,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
                 let fileExtention = selected.Name.substring(fileExtentionIndex);
                 newName = newName + fileExtention;
             }
-
-            let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
-            resp.subscribe(
-                data => this.updateThisFolderContentAfterOperation(this._currentPage),
-                error => {
-                    this.showMessageBox(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename");
-                })
+            this.controler.rename(selected, newName);
         }
     }
 
@@ -482,10 +399,7 @@ export class FolderContentContainter implements OnInit, OnDestroy {
     }
 
     navBarOnPathBreakClick(fullPath: string) {
-        let folderName = this.folderContentService.getContaningFolderNameFromPath(fullPath);
-        let folderPath = this.folderContentService.getContaningFolderPathFromPath(fullPath);
-        this._currentPage = 1;
-        this.updateFolderContent(folderName, folderPath, 1);
+        this.controler.goToPath(fullPath);
     }
 
     onErrorUploadFile(error: string) {
@@ -494,18 +408,24 @@ export class FolderContentContainter implements OnInit, OnDestroy {
 
     onPageChanged(pageNum: number) {
         this._currentPage = pageNum;
-        this.updateThisFolderContentAfterOperation(pageNum);
+        this.controler.updateThisFolderContentAfterOperation(pageNum);
     }
 
-    onSelectionChanged(selectedProperties: ISelecableProperties){
+    onSelectionChanged(selectedProperties: ISelecableProperties) {
+        this.hideContexMenu();
         this.selectedProperties = selectedProperties;
     }
 
-    registerSelectableGrid(selectableGrid: SelectableGrid){
+    registerSelectableGrid(selectableGrid: SelectableGrid) {
         this._selectableGrid = selectableGrid;
     }
 
-    getSelected(): IFolderContent{
+    getSelected(): IFolderContent {
         return this._selectableGrid.getSelected();
+    }
+
+    onSubmitUpload(uploadArgs: IUploadArgs) {
+        this.controler.addFile(uploadArgs, this.onErrorUploadFile);
+        this.onStartAddFile();
     }
 }

@@ -292,7 +292,6 @@ export class FolderContnentService {
     if (type === folderContentType.file) {
       let elementFile = element as IFile;
       let size = +elementFile.Size;
-      console.log(size);
       let sizeInMb = Math.floor(size / (1024 * 1024));
       let file = new FileObj();
       file.Name = name;

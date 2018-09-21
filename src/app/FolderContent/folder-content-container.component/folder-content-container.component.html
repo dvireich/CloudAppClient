@@ -4,56 +4,7 @@
 </folder-content-nav-bar>
 <div class="row" style="margin:0">
 <div class="col-md-2 noSpaceToLeft">
-        <div class="panel panel-default infoPanel scroll-area" oncontextmenu="return false;" style="margin-bottom: 0">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Properties</div>
-              
-                <!-- List group -->
-                <ul class="list-group">
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
-                             selectedProperties.Name'
-                             class="list-group-item">
-                             Name: {{selectedProperties !== null &&
-                                     selectedProperties !== undefind ? 
-                                     selectedProperties.Name: 
-                                     ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
-                             selectedProperties.CreationTime'
-                             class="list-group-item">
-                             Creation Time: {{selectedProperties !== null &&
-                                              selectedProperties !== undefind ? 
-                                              selectedProperties.CreationTime:
-                                              ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
-                             selectedProperties.ModificationTime'
-                            class="list-group-item">
-                            Modification Time: {{selectedProperties !== null &&
-                                                 selectedProperties !== undefind ?
-                                                 selectedProperties.ModificationTime:
-                                                 ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
-                             selectedProperties.Path'
-                             class="list-group-item">
-                             Path: {{selectedProperties !== null &&
-                                     selectedProperties !== undefind ?
-                                     selectedProperties.Path:
-                                     ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
-                             selectedProperties.Size' 
-                             class="list-group-item">Size: {{selectedProperties !== null &&
-                                                     selectedProperties !== undefind ?
-                                                     selectedProperties.Size:
-                                                     ""}}</li>
-                </ul>
-
-                <p *ngIf='selectedProperties === null ||
-                          selectedProperties === undefind'> Create folder or add file and click on them in order to see thier properites </p>
-              </div>
+    <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
 </div>
 
 <div class="col-md-10 noSpaceToLeft">
@@ -92,11 +43,8 @@
                 </div>
                 <div *ngIf='needToShowUploadBox'>
                         <upload-form 
-                        [currentFolderPath] = 'getCurrentPath()'
                         (onCancel)='uploadBoxCancel($event)'
-                        (onAddEnd)='onFinishAddFile($event)'
-                        (onAddStart)='onStartAddFile($event)'
-                        [onErrorUpload] = 'onErrorUploadFile.bind(this)'></upload-form>
+                        (onSubmit)='onSubmitUpload($event)'></upload-form>
                 </div>
             </div>
             <div class="bottomCenterPossition">

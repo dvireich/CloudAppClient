@@ -1,0 +1,15 @@
+.scroll-area{
+    width:100%;
+    float:left;
+    overflow-y:auto;
+  }
+
+  .infoPanel{
+    position: relative;
+    width:100%;
+    float:left;
+    z-index: 1;
+    height : 84vh;
+    word-break: break-word;
+    
+}

@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FolderContnentService } from '../Folder-content-service/folder-content-service';
+import { UploadArgs } from './upload-args';
+import { IUploadArgs } from './iupload-args';
 
 
 @Component({
@@ -14,14 +16,11 @@ export class UploadForm {
   disableAddButon: boolean = true;
 
   @ViewChild('fileInput') fileInput: ElementRef;
-  @Input() currentFolderPath: string;
-  @Input() onErrorUpload: (message: string) => void;
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onAddEnd: EventEmitter<void> = new EventEmitter<void>();
-  @Output() onAddStart: EventEmitter<void> = new EventEmitter<void>();
+  @Output() onSubmit: EventEmitter<IUploadArgs> = new EventEmitter<IUploadArgs>();
 
 
-  constructor(private fb: FormBuilder, private folderContentService: FolderContnentService) {
+  constructor(private fb: FormBuilder) {
     this.createForm();
   }
 
@@ -48,20 +47,18 @@ export class UploadForm {
     }
   }
 
-  onSubmit() {
+  onSubmitClick() {
     const formModel = this.form.value;
     this.loading = true;
     let userFileName = this.form.get('name').value;
     let newFileNameWithExtention = this.createFileSuffix(userFileName, formModel.avatar.filename);
-    this.folderContentService.createFile(newFileNameWithExtention, 
-                                         this.currentFolderPath ,
-                                         formModel.avatar.filetype, 
-                                         formModel.avatar.value, 
-                                         formModel.avatar.size,
-                                         ()=> this.onAddEnd.emit(),
-                                         this.onErrorUpload);
-  this.onAddStart.emit();
-  }
+    this.onSubmit.emit(new UploadArgs(
+      newFileNameWithExtention,
+      formModel.avatar.filetype,
+      formModel.avatar.value,
+      formModel.avatar.size
+    ))
+   }
 
   createFileSuffix(userFileName: string, originalFileName: string) : string {
     let suffixStart = originalFileName.lastIndexOf('.');

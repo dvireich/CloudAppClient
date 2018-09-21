@@ -10,7 +10,7 @@
       </div>
       <div class="panel-body">
        
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" (mousemove)= 'shouldDisableAddButon()'>
+  <form [formGroup]="form" (ngSubmit)="onSubmitClick()" (mousemove)= 'shouldDisableAddButon()'>
     <div class="form-group">
       <label for="name">File Name:</label>
       <input type="text" class="form-control" id="name" placeholder="Enter file new name..." formControlName="name">
