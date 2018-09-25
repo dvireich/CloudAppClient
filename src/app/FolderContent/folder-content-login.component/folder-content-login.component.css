@@ -4,6 +4,7 @@
     height: auto;
     border: 1px solid #9C9C9C;
     background-color: gray;
+    padding-bottom: 10px;
   }
   #login .container #login-row #login-column .login-box #login-form {
     padding: 20px;
