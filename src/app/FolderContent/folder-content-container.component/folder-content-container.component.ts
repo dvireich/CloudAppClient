@@ -75,6 +75,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
     private selectedProperties: ISelecableProperties = null;
+    
+    //Search text
+    private searchInputText: string;
 
     //selectable-grid
     private _selectableGrid: SelectableGrid;
@@ -218,12 +221,12 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     enterFolder() {
         let selected = this.getSelected();
-        this.onSearchClear();
+        this.searchInputText = '';
         this.controler.updateFolderContent(selected.Name, selected.Path, 1);
     }
 
     dbClickEnterFolder(args: EnterFolderArgs) {
-        this.onSearchClear();
+        this.searchInputText = '';
         this.controler.updateFolderContent(args.Name, args.Path, 1);
     }
 

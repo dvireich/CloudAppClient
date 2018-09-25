@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from "@angular/core";
+import { Component, Output, EventEmitter, Input } from "@angular/core";
 
 @Component({
     selector: 'folder-content-nav-bar',
@@ -9,7 +9,7 @@ export class FolderContentNavBar{
 
     @Output() SearchClick: EventEmitter<string> = new EventEmitter<string>();
     @Output() CancelClick: EventEmitter<void> = new EventEmitter<void>();
-    inputText: string;
+    @Input() inputText: string;
     onSearchClick(searchString: string){
         this.SearchClick.emit(searchString);
     }

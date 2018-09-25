@@ -226,6 +226,8 @@ export class FolderContnentService {
 
   UpdateNumberOfPagesForFolder(name: string, path: string) : void{
     path = this.fixPath(path);
+    console.log("folderName= " +name);
+    console.log("folderPath= " +path);
     let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/NumberOfPages/name="${name}"&path="${path}"`;
     this.http.get<number>(numberOfPagesUrl).pipe(catchError(this.handleError)).subscribe(
       pageNum => this.onPageChange(pageNum));
