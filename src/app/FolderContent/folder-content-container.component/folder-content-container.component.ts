@@ -26,10 +26,10 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         return confirm("Are you sure you want to leave?. If you will press ok you will be logout.")
     }
 
-    @HostListener('window:beforeunload', ['$event'])
-    beforeUnloadHander(event) {
-        this.controler.logout();
-    }
+    // @HostListener('window:beforeunload', ['$event'])
+    // beforeUnloadHander(event) {
+    //     this.controler.logout();
+    // }
 
     constructor(
         private controler: FolderContentContainerControler, private router: Router) {
@@ -144,6 +144,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         if(!this.controler.canActive()){
             this.router.navigate(['login']);
             return;
+        }
+        window.onbeforeunload = ()=>{
+            this.controler.logout();
         }
         this.controler.restoreState();
     }

@@ -12,7 +12,7 @@ export class FolderContentNavBarPathBreak {
    
     private _path: string;
     private _pathBreaks: IPathBreak[];
-
+    
     @Input() public set Path(value: string) {
         this._path = value;
         this._pathBreaks = this.breakPathIntoPathBreaks(this._path);

@@ -1,8 +1,9 @@
 <ol class="breadcrumb disable_text_highlighting navBarBreaks">
         <button [disabled] = 'backButtonDisabled' type="button" class="btn navbar-btn spaceToRight" (click)='onPathBreakClick()'>Back</button>
         <label class="spaceToRight">Current Path:</label>
-        <li *ngFor='let pathBreak of _pathBreaks; index as i; last as isLast'>
-                <a class="cursor" *ngIf='!isLast' (click)='onPathBreakClick(i)'>{{pathBreak.pathBreak}}</a>
-                <label *ngIf='isLast' class="active disableBold">{{pathBreak.pathBreak}}</label>
+        <li *ngFor='let pathBreak of _visiblePathBreaks; index as i; last as isLast'>
+                <a class="cursor" [title]="pathBreak.pathBreak" *ngIf='!isLast && pathBreak.pathBreak !== "..."' (click)='onPathBreakClick(i)'>{{cutString(pathBreak.pathBreak)}}</a>
+                <label [title]="pathBreak.pathBreak" *ngIf='isLast && pathBreak.pathBreak !== "..."' class="active disableBold">{{cutString(pathBreak.pathBreak)}}</label>
+                <label *ngIf='pathBreak.pathBreak === "..."' class="active disableBold">{{cutString(pathBreak.pathBreak)}}</label>
         </li>
 </ol>
