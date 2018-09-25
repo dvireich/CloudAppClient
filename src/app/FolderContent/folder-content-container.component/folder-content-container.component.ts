@@ -95,6 +95,11 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
     navBarPathBreakClick: (fullPath: string) => void = this.navBarOnPathBreakClick;
 
+    //loader
+    private _loading: boolean;
+    public set loading(value: boolean) {
+        this._loading = value;
+    }
     //ContexMenu
     showContexMenu: boolean;
     private contexMenuX: number;

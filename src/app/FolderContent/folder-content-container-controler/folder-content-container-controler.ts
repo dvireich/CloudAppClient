@@ -38,21 +38,28 @@ export class FolderContentContainerControler {
     }
 
     public updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
+        this._view.loading = true;
         this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
         this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
             folder => {
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = this.getCurrentPath();
+                this._view.loading = false;
             },
-            error => this._view.messageBoxText = <any>error);
+            error => {
+                this._view.loading = false;
+                this._view.messageBoxText = <any>error
+            });
     }
 
     public search(name: string, page: number){
+        this._view.loading = true;
         this.folderContentService.search(name, page).subscribe(
             folder =>{
                 this.folderContentService.UpdateNumberOfPagesForFolder("search", name);
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for:${name}`;
+                this._view.loading = false;
             }
         );
     }
@@ -152,16 +159,23 @@ export class FolderContentContainerControler {
     public deleteFolderContent(selected: IFolderContent) {
         this._view.showMessage("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", () => {
             if (this._view.messageBoxResult === DialogResult.No) return;
+            this._view.loading = true;
             if (selected.Type === folderContentType.folder) {
                 this.folderContentService.deleteFolder(selected.Name, selected.Path, this._view.currentPage).subscribe(
                     data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
-                    error => this._view.messageBoxText = <any>error
+                    error => {
+                        this._view.loading = false;
+                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", ()=>{})
+                    }
                 );
             }
             if (selected.Type === folderContentType.file) {
                 this.folderContentService.deleteFile(selected.Name, selected.Path, this._view.currentPage).subscribe(
                     data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
-                    error => this._view.messageBoxText = <any>error
+                    error => {
+                        this._view.loading = false;
+                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", ()=>{})
+                    }
                 );
             }
         });
@@ -176,23 +190,29 @@ export class FolderContentContainerControler {
     }
 
     public downloadFile(selected: IFolderContent) {
+        this._view.loading = true;
         this.folderContentService.downloadFile(selected.Name, selected.Path);
+        this._view.loading = false;
     }
 
     public createFolder(folderName: string) {
+        this._view.loading = true;
         let resp = this.folderContentService.createFolder(folderName, this.getCurrentPath());
         resp.subscribe(
             data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
             error => {
+                this._view.loading = false;
                 this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
             })
     }
 
     public rename(selected: IFolderContent, newName: string) {
+        this._view.loading = true;
         let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
         resp.subscribe(
             data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
             error => {
+                this._view.loading = false;
                 this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Rename", () => { });
             })
     }
@@ -219,7 +239,7 @@ export class FolderContentContainerControler {
         if (this.folderContentService.createPath(copyTo.Name, copyTo.Path) === objTocopy.Path) return;
 
         let respOfCopy = this.folderContentService.copy(objTocopy, <IFolder>copyTo);
-
+        this._view.loading = true;
         respOfCopy.subscribe(
             data => {
                 if (letClipBoardOperation === ClipBoardOperation.Cut) {
@@ -234,6 +254,7 @@ export class FolderContentContainerControler {
 
                     respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
                         error => {
+                            this._view.loading = false;
                             this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
                         });
                 }
@@ -243,6 +264,7 @@ export class FolderContentContainerControler {
 
             },
             error => {
+                this._view.loading = false;
                 this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
             })
     }   

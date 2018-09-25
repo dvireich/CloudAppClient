@@ -10,6 +10,7 @@ export interface IFolderContentContainerView{
     //Message box
     messageBoxResult: DialogResult;
     messageBoxText: string;
+    loading: boolean;
     
 
     showMessage: (
