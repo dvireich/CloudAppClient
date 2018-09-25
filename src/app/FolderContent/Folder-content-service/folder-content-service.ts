@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import xml2js from "xml2js";
 
-
 import { IFolder } from "../Model/IFolder";
 import { FolderObj } from "../Model/FolderObj";
 import { FileObj } from "../Model/FileObj";
@@ -23,13 +22,21 @@ export class FolderContnentService {
   constructor(private http: HttpClient) {
   }
 
-  private FolderContentRepositoryUrl = "http://localhost/CloudAppServer/FolderContent";
+  private FolderContentRepositoryUrl: string = null;
+  private FolderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
   private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersFinishUploadToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
+  initializeFolderContentUrl(id: string){
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+  }
+
+  isInitialized(): boolean{
+    return this.FolderContentRepositoryUrl !== null && this.FolderContentRepositoryUrl !== undefined;
+  }
   getUploadProgress(): IUploadData[] {
     return Array.from(this.rquestIdToProgress.values());
   }
@@ -106,6 +113,11 @@ export class FolderContnentService {
     return value.substring(firstComma + 1);
   }
 
+  pingToServer(){
+    let pingUrl = `${this.FolderContentRepositoryUrl}/ping`
+    return this.http.get<boolean>(pingUrl);
+  }
+
   createFile(fileName: string, path: string, fileType: string, value: string, size: number, cont: () => void, onError: (message: string) => void) {
     return this.getReuestId().pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(
       requestId => {
@@ -177,23 +189,39 @@ export class FolderContnentService {
 
   deleteFolder(name: string, path: string, page: number) {
     let deleteFolderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
-    return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1, Page: page }).pipe(
+    return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1, Page: page}).pipe(
       catchError(this.handleError)
     );
   }
 
   deleteFile(name: string, path: string, page: number) {
     let deleteFileUrl = `${this.FolderContentRepositoryUrl}/DeleteFile`;
-    return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0, Page: page }).pipe(
+    return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0, Page: page}).pipe(
       catchError(this.handleError)
     );
   }
 
   renameFolderContent(name: string, path: string, type: folderContentType, newName: string) {
     let renameUrl = `${this.FolderContentRepositoryUrl}/Rename`;
-    return this.http.post(renameUrl, { Name: name, Path: path, Type: type, NewName: newName }).pipe(
+    return this.http.post(renameUrl, { Name: name, Path: path, Type: type, NewName: newName}).pipe(
       catchError(this.handleError)
     );
+  }
+
+  registerUser(name: string, password: string, onError: (message: string) => void){
+    let authenticationRegisterUrl = `${this.FolderContentAuthenticationUrl}/Register`;
+    return this.http.post(authenticationRegisterUrl, {UserName: name, Password: password}).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+  }
+
+  login(userName: string, password: string, onError: (message: string) => void){
+    let authenticateUrl = `${this.FolderContentAuthenticationUrl}/Authenticate/username=${userName}&password=${password}`;
+    return this.http.get<string>(authenticateUrl).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+  }
+
+  logout(){
+    let logoutUrl = `${this.FolderContentRepositoryUrl}/Logout`;
+    this.http.get<string>(logoutUrl).subscribe(logout => logout);
+    this.FolderContentRepositoryUrl = null;
   }
 
   UpdateNumberOfPagesForFolder(name: string, path: string) : void{
@@ -238,6 +266,24 @@ export class FolderContnentService {
       catchError(this.handleError)
     );
   }
+
+  search(name: string, page: number) : Observable<IFolder>{
+    let searchUrl = `${this.FolderContentRepositoryUrl}/Search/name="${name}"&page="${page}"`;
+    return this.http.get<string>(searchUrl).pipe(
+      map(jsonStr => {
+        let ifolder = <IFolder>JSON.parse(jsonStr);
+        if (ifolder.Content === undefined || ifolder.Content === null) {
+          ifolder.Content = new Array<FolderContent>();
+        }
+
+        ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
+        return ifolder;
+      }),
+      tap(data => data),//console.log('All: ' + JSON.stringify(data))),
+      catchError(this.handleError)
+    );
+  }
+
 
   copy(folderContentToCopy: IFolderContent, folderToCopyTo: IFolder) {
     let copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
@@ -325,7 +371,7 @@ export class FolderContnentService {
       var parser = new xml2js.Parser();
       parser.parseString(err.error,(error, result) => {
           if (error) {
-            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+            errorMessage = err.error;
           } else {
             errorMessage = result['string']['_'];
           }
@@ -344,10 +390,12 @@ export class FolderContnentService {
       } else {
         // The backend returned an unsuccessful response code.
         // The response body may contain clues as to what went wrong,
+        console.log(err.error);
         var parser = new xml2js.Parser();
         parser.parseString(err.error,(error, result) => {
             if (error) {
-              errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+              errorMessage = err.error;
+              
             } else {
               errorMessage = result['string']['_'];
             }

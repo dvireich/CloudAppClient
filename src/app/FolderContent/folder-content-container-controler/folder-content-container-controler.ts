@@ -25,13 +25,16 @@ export class FolderContentContainerControler {
         private clipboard: FolderContentClipBoard,
         private folderContentStateService: FolderContentStateService) {
 
-        folderContentService.subscriberToFinishUploadToAction(this, this.updateFolderContentWithCurrentPage.bind(this));
+        folderContentService.subscriberToFinishUploadToAction(this, this.updateFolderContentWithCurrentPage.bind(this));  
     }
-
     //Public methods:
 
     public initializeView(view: IFolderContentContainerView){
         this._view = view;
+    }
+
+    public logout(){
+        this.folderContentService.logout();
     }
 
     public updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
@@ -44,7 +47,23 @@ export class FolderContentContainerControler {
             error => this._view.messageBoxText = <any>error);
     }
 
+    public search(name: string, page: number){
+        this.folderContentService.search(name, page).subscribe(
+            folder =>{
+                this.folderContentService.UpdateNumberOfPagesForFolder("search", name);
+                this._view.listOfFileFolderNames = folder;
+                this._view.navBarPath = `search for:${name}`;
+            }
+        );
+    }
+
     public updateThisFolderContentAfterOperation(pageNum: number) {
+        if(this.isSearchResult()){
+            let searchString = this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath());
+            this.search(searchString, pageNum);
+            return;
+        }
+
         this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
             this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
             pageNum);
@@ -82,6 +101,10 @@ export class FolderContentContainerControler {
         this.updateFolderContent(state.currentFolderName, state.currentFolderPath, state.currentPage);
     }
 
+    public canActive(){
+        return this.folderContentService.isInitialized();
+    }
+
     //Private methods:
 
     private getCurrentPath(): string {
@@ -90,6 +113,14 @@ export class FolderContentContainerControler {
         }
         if (this._view.listOfFileFolderNames.Path === '') return this._view.listOfFileFolderNames.Name;
         return `${this._view.listOfFileFolderNames.Path}/${this._view.listOfFileFolderNames.Name}`;
+    }
+
+
+    public isSearchResult(): boolean{
+        if(this._view.listOfFileFolderNames === undefined || this._view.listOfFileFolderNames === null){
+            return false;
+        }
+        return this._view.listOfFileFolderNames.Type === folderContentType.folderPageResult;
     }
 
     private getCurrentFolder(): IFolder {
@@ -214,5 +245,5 @@ export class FolderContentContainerControler {
             error => {
                 this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
             })
-    }
+    }   
 }

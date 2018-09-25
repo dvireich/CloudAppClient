@@ -49,3 +49,7 @@
     height: 200px;
     overflow-x:hidden;
   }
+
+  .noSpaceButton{
+    margin-bottom: 0;
+}

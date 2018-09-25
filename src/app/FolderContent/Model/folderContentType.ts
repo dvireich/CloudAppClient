@@ -1,4 +1,5 @@
 export enum folderContentType{
     file,
-    folder
+    folder,
+    folderPageResult
 }

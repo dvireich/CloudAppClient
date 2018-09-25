@@ -1,13 +1,19 @@
 <folder-content-nav-bar
+(SearchClick)='onSearchClick($event)'
+(CancelClick)='onSearchClear($event)'>
+</folder-content-nav-bar>
+
+<folder-content-nav-bar-path-break
 [Path] = 'navBarPath'
 (PathBarClick) = 'navBarPathBreakClick($event)'>
-</folder-content-nav-bar>
+</folder-content-nav-bar-path-break>
 <div class="row" style="margin:0">
+
 <div class="col-md-2 noSpaceToLeft">
     <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
 </div>
 
-<div class="col-md-10 noSpaceToLeft">
+<div class="col-md-9 noSpaceToLeft">
         <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
 
                 <selectable-grid
@@ -26,31 +32,32 @@
                                      [contexMentuItems] = 'contexMenuItems'>
                     </app-contextmenu>
                 </div>
-                <div *ngIf ='neddToShowInputBox'>
+            </div>
+            <div class="bottomCenterPossition">
+                    <folder-content-paging-nav
+                    (pageChange)='onPageChanged($event)'
+                    ></folder-content-paging-nav>
+            </div>
+
+            <div *ngIf ='neddToShowInputBox'>
                     <input-box [placeHolder] = "inputBoxPlaceHolder"
                                [header] = "inputBoxHeader"
                                [okButtonName] = "inputBoxOkButtonName"
                                [onCancel] = "inputBoxOnCancel.bind(this)"
                                (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
-                </div>
-                <div *ngIf = 'needToShowMessageBox'>
+            </div>
+            <div *ngIf = 'needToShowMessageBox'>
                     <message-box [text] = 'messageBoxText'
                                  [buttons] = 'messageBoxButtons'
                                  [caption] = 'messageBoxCaption'
                                  [messageIcon] = 'messageBoxMessageType'
                                  (onButton1Click) = "messageBoxOnButton1Click($event)"
                                  (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
-                </div>
-                <div *ngIf='needToShowUploadBox'>
+            </div>
+            <div *ngIf='needToShowUploadBox'>
                         <upload-form 
                         (onCancel)='uploadBoxCancel($event)'
                         (onSubmit)='onSubmitUpload($event)'></upload-form>
-                </div>
-            </div>
-            <div class="bottomCenterPossition">
-                    <folder-content-paging-nav
-                    (pageChange)='onPageChanged($event)'
-                    ></folder-content-paging-nav>
             </div>
 </div>
 </div>

@@ -6,13 +6,18 @@ import { SelectableGridModule } from './selectable-grid/selectable-grid.module';
 import { UploadsGridModule } from './uploads-grid/uploads-grid.module';
 import { UploadForm } from './upload-form.component/upload-form.component';
 import { FolderContentPagingNav } from './folder-content-paging.component/folder-content-paging.component';
-import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav-bar';
 import { FolderContentPropertyInfo } from './folder-content-property-info/folder-content-property-info';
+import { FolderContentNavBarPathBreak } from './folder-content-nav-bar-path-break/folder-content-nav-bar-path-break';
+import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav-bar';
+import { FolderContentLogin } from './folder-content-login.component/folder-content-login.component';
+import { LoginGuard } from './can-activate/can-go-login.guard';
+
 
 @NgModule({
   imports: [
     RouterModule.forChild([
-      { path: 'workspace', component: FolderContentContainter }
+      { path: 'workspace', component: FolderContentContainter},
+      { path: 'login', component: FolderContentLogin, canActivate: [LoginGuard] }
     ]),
     SharedModule,
     SelectableGridModule,
@@ -22,8 +27,10 @@ import { FolderContentPropertyInfo } from './folder-content-property-info/folder
     FolderContentContainter,
     UploadForm,
     FolderContentPagingNav,
+    FolderContentNavBarPathBreak,
+    FolderContentPropertyInfo,
     FolderContentNavBar,
-    FolderContentPropertyInfo
+    FolderContentLogin
   ]
 })
 export class FolderContentModule { }

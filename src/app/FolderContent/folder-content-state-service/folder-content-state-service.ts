@@ -19,10 +19,11 @@ export class FolderContentStateService {
     }
 
     restoreFolderState(): IFolderState {
+        let currentPage = this.currentPage === undefined ? 1 : this.currentPage;
         if (this.currentFolder === null || this.currentFolder === undefined) {
             return new FolderState('"home"', '""', 1);
         }
-        return new FolderState(this.currentFolder.Name, this.currentFolder.Path, this.currentPage);
+        return new FolderState(this.currentFolder.Name, this.currentFolder.Path, currentPage);
     }
 
     setUploadContainerState(uploadContainerState: IUploadContainerState) {

@@ -8,6 +8,7 @@ import { TakePipe } from './takePipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContextmenuComponent } from './contex-menu.component/context-menu.component';
 import { NavagationBar } from './nav-bar.component/nav-bar.component';
+import { Loader } from './loader.component/loader.component';
 
 @NgModule({
   imports: [
@@ -22,7 +23,8 @@ import { NavagationBar } from './nav-bar.component/nav-bar.component';
     NavagationBar,
     FillPipe,
     PagingNav,
-    TakePipe
+    TakePipe,
+    Loader
   ],
   exports: [
     ContextmenuComponent,
@@ -34,7 +36,8 @@ import { NavagationBar } from './nav-bar.component/nav-bar.component';
     TakePipe,
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    Loader
   ]
 })
 export class SharedModule { }

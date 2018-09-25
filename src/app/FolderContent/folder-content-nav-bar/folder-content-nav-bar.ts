@@ -1,41 +1,22 @@
-import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { IPathBreak } from "../../Common/nav-bar.component/ipath-break";
-import { PathBreak } from "../../Common/nav-bar.component/path-break";
+import { Component, Output, EventEmitter } from "@angular/core";
 
 @Component({
     selector: 'folder-content-nav-bar',
     templateUrl: './folder-content-nav-bar.html',
     styleUrls: ['./folder-content-nav-bar.css']
 })
-export class FolderContentNavBar {
-   
-    private _path: string;
-    private _pathBreaks: IPathBreak[];
+export class FolderContentNavBar{
 
-    @Input() public set Path(value: string) {
-        this._path = value;
-        this._pathBreaks = this.breakPathIntoPathBreaks(this._path);
+    @Output() SearchClick: EventEmitter<string> = new EventEmitter<string>();
+    @Output() CancelClick: EventEmitter<void> = new EventEmitter<void>();
+    inputText: string;
+    onSearchClick(searchString: string){
+        this.SearchClick.emit(searchString);
     }
 
-    @Output() PathBarClick: EventEmitter<string> = new EventEmitter<string>();
-
-    onPathBarClick(fullPath: string) {
-        this.PathBarClick.emit(fullPath);
+    onCancelClick(){
+        this.inputText = '';
+        this.CancelClick.emit();
     }
 
-    breakPathIntoPathBreaks(path: string): IPathBreak[] {
-        if(path === undefined || path === null) return [];
-        let splittedPath = path.split('/');
-        let result: IPathBreak[] = new Array<IPathBreak>();
-
-        for (let i: number = 0; i < splittedPath.length; i++) {
-            let pathBreak = splittedPath[i];
-
-            let fullPathBreaks = splittedPath.slice(0, i);
-            let fullPath = fullPathBreaks.reduce((prev, currVal) => prev + '/' + currVal, "");
-
-            result.push(new PathBreak(pathBreak, fullPath));
-        }
-        return result;
-    }
 }

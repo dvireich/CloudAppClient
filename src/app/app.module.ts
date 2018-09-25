@@ -15,8 +15,8 @@ import { FolderContentModule } from './FolderContent/folder-content.module';
     BrowserModule,
     HttpClientModule,
     RouterModule.forRoot([
-      { path: '', redirectTo: 'workspace', pathMatch: 'full' },
-      { path: '**', redirectTo: 'workspace'}
+      { path: '', redirectTo: 'login', pathMatch: 'full'},
+      { path: '**', redirectTo: 'login'}
     ]),
     FolderContentModule
   ],

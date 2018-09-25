@@ -11,7 +11,7 @@
                    !_visiblePageNumbers.includes(2)' class="disabled">
           <a class="pointer">...</a></li>
       <li *ngFor = 'let x of _visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : _currentPage === x}'
-      ><a class="pointer" (click)='onPageChange(i + 1)'>{{x}}</a></li>
+      ><a class="pointer" (click)='onPageChange(x)'>{{x}}</a></li>
       <li *ngIf='!_visiblePageNumbers.includes(numberOfPages) && 
                  !_visiblePageNumbers.includes(numberOfPages -1)'
                   class="disabled">

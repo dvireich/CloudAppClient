@@ -18,7 +18,8 @@ export class PagingNav {
     updateVisiblePageNumbers() {
         let arrayOfIncreasingNumbers = this.fillPipe.transform(this._numberOfPages);
         if(this._currentPage + 5 > this._numberOfPages){
-            this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(this._numberOfPages -5, this._numberOfPages);
+            let start = this._numberOfPages -5 < 0 ? 0 : this._numberOfPages -5;
+            this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(start, this._numberOfPages);
         }
         else{
             this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(this._currentPage -1, this._currentPage + 4);

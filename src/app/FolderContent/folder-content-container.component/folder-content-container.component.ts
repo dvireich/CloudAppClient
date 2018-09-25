@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, HostListener } from "@angular/core";
 import { IFolderContent } from "../Model/IFolderContent";
 import { folderContentType } from "../Model/folderContentType";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
@@ -22,10 +22,17 @@ import { ISelecableProperties } from "../Model/ISelecableProperties";
     styleUrls: ['./folder-content-container.component.css']
 })
 export class FolderContentContainter implements IFolderContentContainerView, OnInit {
+    canDeactivate(): boolean {
+        return confirm("Are you sure you want to leave?. If you will press ok you will be logout.")
+    }
 
+    @HostListener('window:beforeunload', ['$event'])
+    beforeUnloadHander(event) {
+        this.controler.logout();
+    }
 
     constructor(
-        private controler: FolderContentContainerControler, router: Router) {
+        private controler: FolderContentContainerControler, private router: Router) {
         controler.initializeView(this)
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -67,7 +74,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
-    private selectedProperties: ISelecableProperties;
+    private selectedProperties: ISelecableProperties = null;
 
     //selectable-grid
     private _selectableGrid: SelectableGrid;
@@ -129,6 +136,10 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
     ngOnInit(): void {
+        if(!this.controler.canActive()){
+            this.router.navigate(['login']);
+            return;
+        }
         this.controler.restoreState();
     }
 
@@ -199,10 +210,12 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     enterFolder() {
         let selected = this.getSelected();
+        this.onSearchClear();
         this.controler.updateFolderContent(selected.Name, selected.Path, 1);
     }
 
     dbClickEnterFolder(args: EnterFolderArgs) {
+        this.onSearchClear();
         this.controler.updateFolderContent(args.Name, args.Path, 1);
     }
 
@@ -211,6 +224,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             this.ignoreOnRightClick = false;
             return;
         }
+
+        if(this.controler.isSearchResult()) return;
+        
         this.contexMenuX = event.pageX;
         this.contexMenuY = event.pageY;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
@@ -427,5 +443,13 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     onSubmitUpload(uploadArgs: IUploadArgs) {
         this.controler.addFile(uploadArgs, this.onErrorUploadFile);
         this.onStartAddFile();
+    }
+
+    onSearchClick(nameToSearch: string){
+        this.controler.search(nameToSearch, 1);
+    }
+
+    onSearchClear(){
+        this.controler.updateFolderContent('home', '', 1);
     }
 }
