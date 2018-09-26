@@ -23,7 +23,7 @@ export class FolderContnentService {
   }
 
   private FolderContentRepositoryUrl: string = null;
-  private FolderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
+  private FolderContentAuthenticationUrl = "http://192.168.1.25/CloudAppServer/Authentication";
   private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
@@ -31,7 +31,7 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://192.168.1.25/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {

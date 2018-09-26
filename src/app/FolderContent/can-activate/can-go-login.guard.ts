@@ -14,7 +14,6 @@ export class LoginGuard implements CanActivate {
         next: ActivatedRouteSnapshot,
         state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
         const url = next.url[0].path;
-        console.log(url);
         if (url === 'login') {
             if (this.folderContentService.isInitialized()) {
                 let ans = confirm("Are you sure you want to leave?. If you will press ok you will be logout.");
