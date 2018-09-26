@@ -8,9 +8,9 @@ import { IContexMenuCoordinates } from "../../../../Common/contex-menu.component
 
 
 @Component({
-    templateUrl: "./select-able.Component.html",
+    templateUrl: "./select-able.component.html",
     selector: "select-able",
-    styleUrls: ["./select-able.Component.css"]
+    styleUrls: ["./select-able.component.css"]
 })
 
 export class SelectableComponent implements AfterViewInit {
