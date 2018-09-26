@@ -11,8 +11,8 @@ import { folderContentType } from "../Model/folderContentType";
 import { IFolderContent } from "../Model/IFolderContent";
 import { FolderContent } from "../Model/FolderContent";
 import { IFile } from "../Model/IFile";
-import { IUploadData } from "../uploads-grid/upload-progress-container.component/upload-progress-row.component/IUploadData";
-import { UploadData } from "../uploads-grid/upload-progress-container.component/upload-progress-row.component/UploadData";
+import { IUploadData } from "../Model/IUploadData";
+import { UploadData } from "../Model/UploadData";
 
 @Injectable({
   providedIn: "root"

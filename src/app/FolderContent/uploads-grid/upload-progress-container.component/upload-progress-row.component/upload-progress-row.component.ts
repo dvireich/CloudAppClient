@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from "@angular/core";
-import { IUploadData } from "./IUploadData";
+import { IUploadData } from "../../../Model/IUploadData";
 import { FolderContnentService } from "../../../Folder-content-service/folder-content-service";
 
 @Component({

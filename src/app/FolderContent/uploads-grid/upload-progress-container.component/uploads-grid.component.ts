@@ -3,7 +3,7 @@ import { Router, NavigationStart } from "@angular/router";
 import { FolderContentStateService } from "../../folder-content-state-service/folder-content-state-service";
 import { UploadContainerState } from "../../folder-content-state-service/upload-container-state";
 import { FolderContnentService } from "../../Folder-content-service/folder-content-service";
-import { IUploadData } from "./upload-progress-row.component/IUploadData";
+import { IUploadData } from "../../Model/IUploadData";
 
 
 
