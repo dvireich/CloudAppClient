@@ -80,6 +80,13 @@ button:hover {
     word-break: break-word;
 }
 
+.scrol-lable{
+    line-height: 2;
+    word-break: break-word;
+    overflow-y: auto;
+    max-height: 150px;
+}
+
 #overlay {
     background-color: rgba(0,0,0,0.5);
     position:fixed;

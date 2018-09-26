@@ -25,12 +25,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     canDeactivate(): boolean {
         return confirm("Are you sure you want to leave?. If you will press ok you will be logout.")
     }
-
-    // @HostListener('window:beforeunload', ['$event'])
-    // beforeUnloadHander(event) {
-    //     this.controler.logout();
-    // }
-
+    
     constructor(
         private controler: FolderContentContainerControler, private router: Router) {
         controler.initializeView(this)

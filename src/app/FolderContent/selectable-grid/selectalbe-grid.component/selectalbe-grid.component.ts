@@ -29,7 +29,7 @@ export class SelectableGrid implements AfterViewInit {
         this._listOfFileFolderNames = value;
         this.InitializeListOfListsOfNames();
     }
-    @Input() maxColumns: number = 17;
+    @Input() maxColumns: number = 11;
     @Output() RegisterInParent: EventEmitter<SelectableGrid> = new EventEmitter<SelectableGrid>();
     @Output() SelectionChanged: EventEmitter<ISelecableProperties> = new EventEmitter<ISelecableProperties>();
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
