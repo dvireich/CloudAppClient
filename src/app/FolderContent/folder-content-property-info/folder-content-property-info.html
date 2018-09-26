@@ -3,40 +3,35 @@
               
                 <!-- List group -->
                 <ul class="list-group">
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
+                  <li *ngIf='selectedProperties &&
                              selectedProperties.Name'
                              class="list-group-item">
                              Name: {{selectedProperties !== null &&
                                      selectedProperties !== undefind ? 
                                      selectedProperties.Name: 
                                      ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
+                  <li *ngIf='selectedProperties &&
                              selectedProperties.CreationTime'
                              class="list-group-item">
                              Creation Time: {{selectedProperties !== null &&
                                               selectedProperties !== undefind ? 
                                               selectedProperties.CreationTime:
                                               ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
+                  <li *ngIf='selectedProperties &&
                              selectedProperties.ModificationTime'
                             class="list-group-item">
                             Modification Time: {{selectedProperties !== null &&
                                                  selectedProperties !== undefind ?
                                                  selectedProperties.ModificationTime:
                                                  ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
+                  <li *ngIf='selectedProperties &&
                              selectedProperties.Path'
                              class="list-group-item">
                              Path: {{selectedProperties !== null &&
                                      selectedProperties !== undefind ?
                                      selectedProperties.Path:
                                      ""}}</li>
-                  <li *ngIf='selectedProperties !== null &&
-                             selectedProperties !== undefind &&
+                  <li *ngIf='selectedProperties  &&
                              selectedProperties.Size' 
                              class="list-group-item">Size: {{selectedProperties !== null &&
                                                      selectedProperties !== undefind ?
@@ -44,6 +39,5 @@
                                                      ""}}</li>
                 </ul>
 
-                <p *ngIf='selectedProperties === null ||
-                          selectedProperties === undefind'> Create folder or add file and click on them in order to see thier properites </p>
+                <p *ngIf='selectedProperties'> Create folder or add file and click on them in order to see thier properites </p>
             </div>

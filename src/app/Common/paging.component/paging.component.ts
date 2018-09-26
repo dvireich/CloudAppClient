@@ -17,12 +17,12 @@ export class PagingNav {
 
     updateVisiblePageNumbers() {
         let arrayOfIncreasingNumbers = this.fillPipe.transform(this._numberOfPages);
-        if(this._currentPage + 5 > this._numberOfPages){
+        if(this.currentPage + 5 > this._numberOfPages){
             let start = this._numberOfPages -5 < 0 ? 0 : this._numberOfPages -5;
-            this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(start, this._numberOfPages);
+            this.visiblePageNumbers = arrayOfIncreasingNumbers.slice(start, this._numberOfPages);
         }
         else{
-            this._visiblePageNumbers = arrayOfIncreasingNumbers.slice(this._currentPage -1, this._currentPage + 4);
+            this.visiblePageNumbers = arrayOfIncreasingNumbers.slice(this.currentPage -1, this.currentPage + 4);
         }
     }
 
@@ -30,27 +30,27 @@ export class PagingNav {
         return this._numberOfPages;
     }
 
-    private _currentPage: number = 1;
-    private _visiblePageNumbers: number[];
+     currentPage: number = 1;
+     visiblePageNumbers: number[];
     private _numberOfPages: number;
     private fillPipe = new FillPipe();
 
 
     onPageChange(pageNum: number) {
-        this._currentPage = pageNum;
+        this.currentPage = pageNum;
         this.pageChange.emit(pageNum);
         this.updateVisiblePageNumbers();
     }
 
     onNextPage() {
-        this._currentPage = this._currentPage === this.numberOfPages ? this._currentPage : this._currentPage + 1;
-        this.pageChange.emit(this._currentPage);
+        this.currentPage = this.currentPage === this.numberOfPages ? this.currentPage : this.currentPage + 1;
+        this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
     }
 
     onPrevPage() {
-        this._currentPage = this._currentPage === 1 ? this._currentPage : this._currentPage - 1;
-        this.pageChange.emit(this._currentPage);
+        this.currentPage = this.currentPage === 1 ? this.currentPage : this.currentPage - 1;
+        this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
     }
 }

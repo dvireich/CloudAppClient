@@ -47,7 +47,7 @@ export class UploadProgressRow implements OnDestroy {
         return this._uploadData;
     }
 
-    private buttonName: string = "Cancel";
+    buttonName: string = "Cancel";
 
     onButtonClick() {
         this.folderContentService.clearUpload(this._uploadData.requestId);

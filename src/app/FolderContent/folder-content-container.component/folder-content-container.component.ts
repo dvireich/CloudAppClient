@@ -69,10 +69,10 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
-    private selectedProperties: ISelecableProperties = null;
+    selectedProperties: ISelecableProperties = null;
     
     //Search text
-    private searchInputText: string;
+    searchInputText: string;
 
     //selectable-grid
     private _selectableGrid: SelectableGrid;
@@ -97,6 +97,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     private _loading: boolean;
     public set loading(value: boolean) {
         this._loading = value;
+    }
+    public get loading(): boolean {
+        return this._loading;
     }
     //ContexMenu
     showContexMenu: boolean;

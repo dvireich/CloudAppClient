@@ -15,7 +15,7 @@ import { IContexMenuCoordinates } from "../../../../Common/contex-menu.component
 
 export class SelectableComponent implements AfterViewInit {
     private _text: string;
-    private textToShow: string;
+    textToShow: string;
     @Input() type: folderContentType;
     @Input() path: string;
     @Input() modificationTime: string;
@@ -29,9 +29,9 @@ export class SelectableComponent implements AfterViewInit {
     @Output() EnterFolderByDbClick: EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
     @Output() SelectionChanged: EventEmitter<ISelecableProperties> = new EventEmitter<ISelecableProperties>();
     color: string = "LightGrey";
-    private notSelected: boolean = true;
+    notSelected: boolean = true;
 
-    private getImgSrc(): string {
+    getImgSrc(): string {
         return this.type === folderContentType.file ? "http://www.haipic.com/icon/38089/38089.png" :
             "https://dumielauxepices.net/sites/default/files/folder-icons-transparent-613037-9176493.png"
     }

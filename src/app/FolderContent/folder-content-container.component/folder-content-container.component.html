@@ -1,7 +1,7 @@
 <folder-content-nav-bar
 [inputText]='searchInputText'
 (SearchClick)='onSearchClick($event)'
-(CancelClick)='onSearchClear($event)'>
+(CancelClick)='onSearchClear()'>
 </folder-content-nav-bar>
 
 <folder-content-nav-bar-path-break
@@ -18,11 +18,11 @@
         <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
 
                 <selectable-grid
-                [listOfFileFolderNames] = '_listOfFileFolderNames'
+                [listOfFileFolderNames] = 'listOfFileFolderNames'
                 (RegisterInParent) = 'registerSelectableGrid($event)'
                 (SelectionChanged) = 'onSelectionChanged($event)'
-                (ApplyIgnoreDisableSelection) = 'SetIgnoreDisableSelection($event)'
-                (ApplyParentIgnoreOnRightClick) = 'SetIgnoreOnRightClick($event)'
+                (ApplyIgnoreDisableSelection) = 'SetIgnoreDisableSelection()'
+                (ApplyParentIgnoreOnRightClick) = 'SetIgnoreOnRightClick()'
                 (ShowContexMenu) = 'showContexMenuOnCoordinates($event)'
                 (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
                 </selectable-grid>
@@ -63,4 +63,4 @@
 </div>
 </div>
 <uploads-grid></uploads-grid>
-<loader *ngIf='_loading'></loader>
+<loader *ngIf='loading'></loader>

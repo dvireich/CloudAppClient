@@ -1,24 +1,24 @@
 <nav aria-label="Page navigation" class="disable_text_highlighting">
     <ul class="pagination">
-      <li [ngClass]='{ "disabled" : _currentPage === 1}'>
+      <li [ngClass]='{ "disabled" : currentPage === 1}'>
         <a class="pointer" (click)='onPrevPage()' aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
-      <li *ngIf='!_visiblePageNumbers.includes(1)'>
+      <li *ngIf='!visiblePageNumbers.includes(1)'>
         <a class="pointer" (click)='onPageChange(1)'>1</a></li>
-        <li *ngIf='!_visiblePageNumbers.includes(1) && 
-                   !_visiblePageNumbers.includes(2)' class="disabled">
+        <li *ngIf='!visiblePageNumbers.includes(1) && 
+                   !visiblePageNumbers.includes(2)' class="disabled">
           <a class="pointer">...</a></li>
-      <li *ngFor = 'let x of _visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : _currentPage === x}'
+      <li *ngFor = 'let x of visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : currentPage === x}'
       ><a class="pointer" (click)='onPageChange(x)'>{{x}}</a></li>
-      <li *ngIf='!_visiblePageNumbers.includes(numberOfPages) && 
-                 !_visiblePageNumbers.includes(numberOfPages -1)'
+      <li *ngIf='!visiblePageNumbers.includes(numberOfPages) && 
+                 !visiblePageNumbers.includes(numberOfPages -1)'
                   class="disabled">
       <a class="pointer">...</a></li>
-      <li *ngIf='!_visiblePageNumbers.includes(numberOfPages)'>
+      <li *ngIf='!visiblePageNumbers.includes(numberOfPages)'>
         <a class="pointer" (click)='onPageChange(numberOfPages)'>{{numberOfPages}}</a></li>
-      <li [ngClass]='{ "disabled" : _currentPage === numberOfPages}'>
+      <li [ngClass]='{ "disabled" : currentPage === numberOfPages}'>
         <a class="pointer" (click)='onNextPage()' aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>

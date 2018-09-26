@@ -11,7 +11,7 @@
       <div class="input-group" style="margin-top: 8px;">
         <input type="text" class="form-control" placeholder="Search for..." [(ngModel)]="inputText" (keyup.enter)= 'onSearchClick(inputText)'>
           <span class="input-group-btn">
-            <button [disabled]='inputText === null || inputText === undefind || inputText.length ===0' (click)='onSearchClick(inputText)' class="btn btn-search" type="button"><i class="fa fa-search fa-fw"></i> Search</button>
+            <button [disabled]='!inputText || inputText.length ===0' (click)='onSearchClick(inputText)' class="btn btn-search" type="button"><i class="fa fa-search fa-fw"></i> Search</button>
             <button (click)='onCancelClick()' class="btn btn-search" type="button"> Clear</button>
           </span>
     </div>

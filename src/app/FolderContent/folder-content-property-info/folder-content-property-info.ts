@@ -8,4 +8,6 @@ import { ISelecableProperties } from "../Model/ISelecableProperties";
 })
 export class FolderContentPropertyInfo{
     @Input() selectedProperties: ISelecableProperties;
+
+    isselectedProperties
 }

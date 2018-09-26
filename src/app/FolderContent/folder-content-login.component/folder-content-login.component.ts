@@ -16,12 +16,15 @@ export class FolderContentLogin implements IFolderContentLoginView{
     }
 
 
-    private usernameInputText: string;
-    private passwordInputText: string;
+    usernameInputText: string;
+    passwordInputText: string;
 
     private _isLoading: boolean;
     public set isLoading(value: boolean) {
         this._isLoading = value;
+    }
+    public get isLoading(): boolean {
+        return this._isLoading;
     }
     private _userNameMessage: string;
     public set userNameMessage(value: string) {

@@ -37,11 +37,11 @@ export class UploadsGrid implements OnDestroy, OnInit {
 }
 
     @Input() maxColumns: number = 4;
-    private uploads: IUploadData[];
-    private uploadsToMaxColumns: IUploadData[][];
-    private showUploadContainter: boolean = true;
-    private height: string = "auto";
-    private visibility: string = "hidden";
+    uploads: IUploadData[];
+    uploadsToMaxColumns: IUploadData[][];
+    showUploadContainter: boolean = true;
+    height: string = "auto";
+    visibility: string = "hidden";
 
     onCreateUpload() {
         this.UpdateUploadFromService();

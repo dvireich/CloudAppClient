@@ -11,11 +11,11 @@ import { PathBreak } from "../../Common/nav-bar.component/path-break";
 export class FolderContentNavBarPathBreak {
    
     private _path: string;
-    private _pathBreaks: IPathBreak[];
+    pathBreaks: IPathBreak[];
     
     @Input() public set Path(value: string) {
         this._path = value;
-        this._pathBreaks = this.breakPathIntoPathBreaks(this._path);
+        this.pathBreaks = this.breakPathIntoPathBreaks(this._path);
     }
 
     @Output() PathBarClick: EventEmitter<string> = new EventEmitter<string>();

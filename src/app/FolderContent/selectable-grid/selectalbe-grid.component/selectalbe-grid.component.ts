@@ -19,7 +19,7 @@ export class SelectableGrid implements AfterViewInit {
         this.RegisterInParent.emit(this);
     }
 
-    private listOfListsOfNames: IFolderContent[][] = [];
+    listOfListsOfNames: IFolderContent[][] = [];
     private _listOfFileFolderNames: IFolder;
     private _listOfFileFoldersObj: SelectableComponent[] = new Array<SelectableComponent>();
 

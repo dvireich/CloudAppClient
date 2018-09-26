@@ -24,11 +24,11 @@ export class MessageBox implements OnInit, AfterViewInit {
     @Output() onButton1Click: EventEmitter<DialogResult> = new EventEmitter<DialogResult>();
     @Output() onButton2Click: EventEmitter<DialogResult> = new EventEmitter<DialogResult>();
 
-    private button1Visible: boolean;
-    private button2Visible: boolean;
+    button1Visible: boolean;
+    button2Visible: boolean;
 
-    private button1Name: string = "button1";
-    private button2Name: string = "button2";
+    button1Name: string = "button1";
+    button2Name: string = "button2";
 
     setButtonsVisibility(){
         if(this.buttons ===  MessageBoxButton.YesNo){

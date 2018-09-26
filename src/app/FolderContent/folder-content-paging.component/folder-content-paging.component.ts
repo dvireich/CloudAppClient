@@ -12,11 +12,11 @@ export class FolderContentPagingNav{
         folderContentService.subscriberToPageChangedToAction(this, this.onNumOfPagesChanged.bind(this));
     }
 
-    private _numOfPages: number = 1;
+    numOfPages: number = 1;
     @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
 
     onNumOfPagesChanged(numOfPages: number){
-        this._numOfPages = numOfPages;
+        this.numOfPages = numOfPages;
     }
 
     onPageChanged(pageNum: number){

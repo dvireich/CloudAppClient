@@ -26,7 +26,7 @@ export class Inputbox implements AfterViewInit{
     
 
     okButtonDisabled : boolean;
-    private inputText : string = "";
+    inputText : string = "";
     submit(input: string){
         this.onSubmit.emit(input);
     }
