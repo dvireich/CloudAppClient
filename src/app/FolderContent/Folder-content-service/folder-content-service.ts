@@ -23,7 +23,7 @@ export class FolderContnentService {
   }
 
   private FolderContentRepositoryUrl: string = null;
-  private FolderContentAuthenticationUrl = "http://192.168.1.25/CloudAppServer/Authentication";
+  private FolderContentAuthenticationUrl = "http://37.122.157.141/CloudAppServer/Authentication";
   private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
