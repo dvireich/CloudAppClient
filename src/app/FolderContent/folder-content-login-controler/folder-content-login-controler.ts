@@ -86,9 +86,15 @@ export class FolderContentLoginContoler {
             this._view.userNameMessage = "User name connot be empty"
             valid = false;
         }
+        else{
+            this._view.userNameMessage = "";
+        }
         if(password === null || password ===undefined || password.length === 0){
             this._view.passwordMessage = "password connot be empty"
             valid = false;
+        }
+        else{
+            this._view.passwordMessage = "";
         }
 
         return valid;
