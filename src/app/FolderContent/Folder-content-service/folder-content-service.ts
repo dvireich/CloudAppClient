@@ -428,7 +428,7 @@ getContaningFolderNameFromPath(path: string): string {
     var parser = new xml2js.Parser();
     parser.parseString(err.error, (error, result) => {
       if (error) {
-        errorMessage = `An error occurred: ${err.error.message}`;
+        errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
       } else {
         errorMessage = result['string']['_'];
       }
@@ -450,7 +450,7 @@ getContaningFolderNameFromPath(path: string): string {
       var parser = new xml2js.Parser();
       parser.parseString(err.error, (error, result) => {
         if (error) {
-          errorMessage = `An error occurred: ${err.error.message}`;
+          errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
 
         } else {
           errorMessage = result['string']['_'];
