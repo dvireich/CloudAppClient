@@ -31,7 +31,7 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://192.168.1.25/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://37.122.157.141/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {

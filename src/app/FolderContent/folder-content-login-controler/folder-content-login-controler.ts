@@ -24,21 +24,27 @@ export class FolderContentLoginContoler {
     }
 
     registerUser(userName: string, password: string) {
+        if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
         this._view.isLoading = true;
         this.folderContentService.registerUser(userName, password, this.onError.bind(this)).subscribe(
             registered => {
             this._view.isLoading = false;
+            this._view.userNameMessage = "";
+            this._view.passwordMessage = "";
             this._view.showMessage("Successfully Registered", MessageBoxType.Information, MessageBoxButton.Ok, "Error: Register", () => { });    
             }
                 ,
             error => {
                 this._view.isLoading = false;
+                this._view.userNameMessage = "";
+                this._view.passwordMessage = "";
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Register", () => { });
             }
         )
     }
 
     login(userName: string, password: string) {
+        if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
         this._view.isLoading = true;
         this.folderContentService.login(userName, password,this.onError.bind(this)).subscribe(
             response => {
@@ -46,6 +52,8 @@ export class FolderContentLoginContoler {
                 this.waitForServiceToInitialize();
             },
             error => {
+                this._view.userNameMessage = "";
+                this._view.passwordMessage = "";
                 this._view.isLoading = false;
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { });
             }
@@ -70,5 +78,19 @@ export class FolderContentLoginContoler {
 
     private onError(error: string){
         this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { })
+    }
+
+    private validateEmptyUserNameAndPassword(userName: string, password: string) : boolean{
+        let valid = true;
+        if(userName === null || userName ===undefined || userName.length === 0){
+            this._view.userNameMessage = "User name connot be empty"
+            valid = false;
+        }
+        if(password === null || password ===undefined || password.length === 0){
+            this._view.passwordMessage = "password connot be empty"
+            valid = false;
+        }
+
+        return valid;
     }
 }
