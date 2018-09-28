@@ -31,7 +31,7 @@ export class FolderContentLoginContoler {
             this._view.isLoading = false;
             this._view.userNameMessage = "";
             this._view.passwordMessage = "";
-            this._view.showMessage("Successfully Registered", MessageBoxType.Information, MessageBoxButton.Ok, "Error: Register", () => { });    
+            this._view.showMessage("Successfully Registered", MessageBoxType.Information, MessageBoxButton.Ok, "Register", () => { });    
             }
                 ,
             error => {
