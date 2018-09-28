@@ -426,13 +426,21 @@ getContaningFolderNameFromPath(path: string): string {
     // The backend returned an unsuccessful response code.
     // The response body may contain clues as to what went wrong,
     var parser = new xml2js.Parser();
-    parser.parseString(err.error, (error, result) => {
-      if (error) {
-        errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-      } else {
-        errorMessage = result['string']['_'];
+      if(typeof err.error !== "string"){
+        parser.parseString(err.error, (error, result) => {
+          if (error) {
+  
+            console.log(err.error);
+            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+  
+          } else {
+            errorMessage = result['string']['_'];
+          }
+        });
       }
-    });
+      else{
+        errorMessage = <string>err.error;
+      } 
   }
   console.error("handleError " + errorMessage);
   return throwError(errorMessage);
@@ -448,14 +456,21 @@ getContaningFolderNameFromPath(path: string): string {
       // The backend returned an unsuccessful response code.
       // The response body may contain clues as to what went wrong,
       var parser = new xml2js.Parser();
-      parser.parseString(err.error, (error, result) => {
-        if (error) {
-          errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-
-        } else {
-          errorMessage = result['string']['_'];
-        }
-      });
+      if(typeof err.error !== "string"){
+        parser.parseString(err.error, (error, result) => {
+          if (error) {
+  
+            console.log(err.error);
+            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+  
+          } else {
+            errorMessage = result['string']['_'];
+          }
+        });
+      }
+      else{
+        errorMessage = <string>err.error;
+      } 
     }
     console.error("hanldeErrorWithErrorHandler " + errorMessage);
     errorHanlder(errorMessage);
