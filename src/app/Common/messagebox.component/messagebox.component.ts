@@ -53,6 +53,11 @@ export class MessageBox implements OnInit, AfterViewInit {
             this.button1Visible = true;
             this.button2Visible = false;
         }
+
+        if(this.buttons ===  MessageBoxButton.None){
+            this.button1Visible = false;
+            this.button2Visible = false;
+        }
     }
 
     button1Click(){

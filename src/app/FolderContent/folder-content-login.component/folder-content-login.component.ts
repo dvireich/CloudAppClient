@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FolderContentLoginContoler } from "../folder-content-login-controler/folder-content-login-controler";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
@@ -10,11 +10,11 @@ import { IFolderContentLoginView } from "../folder-content-login-controler/ifold
     templateUrl: 'folder-content-login.component.html',
     styleUrls: ['folder-content-login.component.css']
 })
-export class FolderContentLogin implements IFolderContentLoginView{
-    constructor(private controler: FolderContentLoginContoler){
+export class FolderContentLogin implements IFolderContentLoginView, OnInit {
+
+    constructor(private controler: FolderContentLoginContoler) {
         controler.initializeView(this);
     }
-
 
     usernameInputText: string;
     passwordInputText: string;
@@ -60,11 +60,15 @@ export class FolderContentLogin implements IFolderContentLoginView{
     messageBoxOnButton1Click: (result: DialogResult) => void;
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
-    onLoginClick(username: string, password: string){
+    ngOnInit(): void {
+        this.controler.blockMobileDevice();
+    }
+    
+    onLoginClick(username: string, password: string) {
         this.controler.login(username, password);
     }
 
-    onRegisterClick(username: string, password: string){
+    onRegisterClick(username: string, password: string) {
         this.controler.registerUser(username, password);
     }
 

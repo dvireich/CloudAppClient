@@ -1,5 +1,6 @@
 export enum MessageBoxButton{
 YesNo,
 OkCancel,
-Ok
+Ok,
+None
 }
