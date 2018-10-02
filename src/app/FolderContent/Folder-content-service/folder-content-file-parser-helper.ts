@@ -10,6 +10,7 @@ export class FolderContentFileParserHelper{
         onReadCallback: (readResult: string, readCount: number, cont: ()=> void) => void,
         onFinishCallback: ()=> void, 
         onErrorCallbck:(error)=> void) {
+
         var fileSize = file.size;
         var chunkSize = Math.pow(4, 7); // bytes
         var offset = 0;
@@ -18,8 +19,9 @@ export class FolderContentFileParserHelper{
     
         var readEventHandler = function (evt) {
           if (evt.target.error == null) {
-            offset += evt.target.result.length;
-            onReadCallback(evt.target.result, offset, ()=> {chunkReaderBlock(offset, chunkSize, file);}); // callback for handling read chunk
+            // offset += evt.target.result.length;
+            offset += chunkSize;
+            onReadCallback(evt.target.result, offset, ()=> {chunkReaderBlock(offset , chunkSize, file);}); // callback for handling read chunk
           } else {
             console.log("Read error: " + evt.target.error);
             onErrorCallbck(evt.target.error);

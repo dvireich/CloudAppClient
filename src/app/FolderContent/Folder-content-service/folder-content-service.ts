@@ -23,9 +23,7 @@ export class FolderContnentService {
   constructor(private http: HttpClient, private folderContentFileHelper: FolderContentFileParserHelper) {
   }
 
-
   private FolderContentRepositoryUrl: string = null;
-  private FolderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
   private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
@@ -158,13 +156,7 @@ export class FolderContnentService {
       cont();
     }
   }
-  private updateFile(requestId: number,
-    fileName: string,
-    path: string,
-    fileType: string,
-    file: any,
-    onError: (message: string) => void) {
-
+  private updateFile(requestId: number, fileName: string, path: string, fileType: string, file: any, onError: (message: string) => void) {
     //Return a callback for the file parser helper to perform when parser read another chunk of data
     return (parserResult, readSoFar, cont) => {
       let uploadData = this.rquestIdToProgress.get(requestId);
@@ -219,16 +211,6 @@ export class FolderContnentService {
     return this.http.post(renameUrl, { Name: name, Path: path, Type: type, NewName: newName }).pipe(
       catchError(this.handleError)
     );
-  }
-
-  registerUser(name: string, password: string, onError: (message: string) => void) {
-    let authenticationRegisterUrl = `${this.FolderContentAuthenticationUrl}/Register`;
-    return this.http.post(authenticationRegisterUrl, { UserName: name, Password: password }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
-  }
-
-  login(userName: string, password: string, onError: (message: string) => void) {
-    let authenticateUrl = `${this.FolderContentAuthenticationUrl}/Authenticate/username=${userName}&password=${password}`;
-    return this.http.get<string>(authenticateUrl).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
   }
 
   logout() {
@@ -315,7 +297,6 @@ export class FolderContnentService {
         }
       )
   }
-
 
   fixPath(path: string): string {
     return path.replace(new RegExp('/', 'g'), ',');

@@ -1,12 +1,13 @@
 
 import { Injectable } from "@angular/core";
 import { IFolderContentLoginView } from "./ifolder-content-login-view";
-import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 import { Router } from "@angular/router";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { catchError } from "rxjs/operators";
 import { Observable, of  } from "rxjs";
+import { AuthenticationService } from "../authentication-service/authentication-service";
+import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 
 @Injectable({
     providedIn: "root"
@@ -15,8 +16,9 @@ export class FolderContentLoginContoler {
     _view: IFolderContentLoginView;
 
     constructor(
-        private folderContentService: FolderContnentService,
-        private router: Router
+        private authenticationService: AuthenticationService,
+        private router: Router,
+        private folderContentService: FolderContnentService
     ) { }
 
     initializeView(view: IFolderContentLoginView) {
@@ -26,7 +28,7 @@ export class FolderContentLoginContoler {
     registerUser(userName: string, password: string) {
         if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
         this._view.isLoading = true;
-        this.folderContentService.registerUser(userName, password, this.onError.bind(this)).subscribe(
+        this.authenticationService.registerUser(userName, password, this.onError.bind(this)).subscribe(
             registered => {
             this._view.isLoading = false;
             this._view.userNameMessage = "";
@@ -46,7 +48,7 @@ export class FolderContentLoginContoler {
     login(userName: string, password: string) {
         if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
         this._view.isLoading = true;
-        this.folderContentService.login(userName, password,this.onError.bind(this)).subscribe(
+        this.authenticationService.login(userName, password,this.onError.bind(this)).subscribe(
             response => {
                 this.folderContentService.initializeFolderContentUrl(response);
                 this.waitForServiceToInitialize();
