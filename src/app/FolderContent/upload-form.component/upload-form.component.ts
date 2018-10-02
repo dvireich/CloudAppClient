@@ -35,15 +35,13 @@ export class UploadForm {
     let reader = new FileReader();
     if (event.target.files && event.target.files.length > 0) {
       let file = event.target.files[0];
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        this.form.get('avatar').setValue({
-          filename: file.name,
-          filetype: file.type,
-          value: reader.result,
-          size: file.size
-        })
-      };
+      this.form.get('avatar').setValue({
+        filename: file.name,
+        filetype: file.type,
+        value: reader.result,
+        size: file.size,
+        file: file
+      })
     }
   }
 
@@ -56,7 +54,8 @@ export class UploadForm {
       newFileNameWithExtention,
       formModel.avatar.filetype,
       formModel.avatar.value,
-      formModel.avatar.size
+      formModel.avatar.size,
+      formModel.avatar.file
     ))
    }
 

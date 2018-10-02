@@ -5,6 +5,7 @@ export class UploadArgs implements IUploadArgs{
         public fileNameWithExtention: string, 
         public fileType: string,
         public fileStream: string,
-        public fileSize: number){}
+        public fileSize: number,
+        public file: any){}
 
 }

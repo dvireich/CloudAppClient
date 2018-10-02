@@ -13,17 +13,19 @@ import { FolderContent } from "../Model/FolderContent";
 import { IFile } from "../Model/IFile";
 import { IUploadData } from "../Model/IUploadData";
 import { UploadData } from "../Model/UploadData";
+import { FolderContentFileParserHelper } from "./folder-content-file-parser-helper";
 
 @Injectable({
   providedIn: "root"
 })
 export class FolderContnentService {
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private folderContentFileHelper: FolderContentFileParserHelper) {
   }
 
+
   private FolderContentRepositoryUrl: string = null;
-  private FolderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
+  private FolderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
   private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
@@ -31,7 +33,7 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -118,28 +120,73 @@ export class FolderContnentService {
     return this.http.get<boolean>(pingUrl);
   }
 
-  createFile(fileName: string, path: string, fileType: string, value: string, size: number, cont: () => void, onError: (message: string) => void) {
+  createFile(fileName: string, path: string, fileType: string, value: string, size: number, file: any, cont: () => void, onError: (message: string) => void) {
     return this.getReuestId().pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(
       requestId => {
         let uploadData = new UploadData(fileName, requestId, 0);
         this.rquestIdToProgress.set(requestId, uploadData);
         this.onCreateUpload();
         let createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
-        let chunks = this.splitString(this.substringFirstCommnaFormString(value), Math.pow(4, 7), true);
         this.http.post(createFileUrl, {
           Name: fileName,
           Path: path,
           FileType: fileType,
           NewValue: '',
           RequestId: requestId,
-          NumOfChunks: chunks.length,
-          Size: size
+          Size: size,
+          Sent: 0
         }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
-          this.updateFile(requestId, fileName, path, fileType, chunks, 0, cont, onError)
+          let onUploadFinish = this.onUploadFinish(requestId, cont);
+          let onUploadError = onError;
+          let onRead = this.updateFile(requestId, fileName, path, fileType, file, onError);
+          this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
         },
           error => onError(error))
       },
       error => onError(error));
+  }
+
+  private onUploadFinish(requestId: number, cont: () => void) {
+    //Return a callback for the file parser helper to perform when upload is finish
+    return () => {
+      let uploadData = this.rquestIdToProgress.get(requestId);
+      if (uploadData !== null && uploadData !== undefined) {
+        uploadData.progress = 100;
+        this.onUploadProgressUpdate();
+      }
+      this.onFinishUpload()
+      cont();
+    }
+  }
+  private updateFile(requestId: number,
+    fileName: string,
+    path: string,
+    fileType: string,
+    file: any,
+    onError: (message: string) => void) {
+
+    //Return a callback for the file parser helper to perform when parser read another chunk of data
+    return (parserResult, readSoFar, cont) => {
+      let uploadData = this.rquestIdToProgress.get(requestId);
+      if (uploadData === null || uploadData === undefined) return;
+
+      uploadData.progress = readSoFar > 0 ? Math.floor((readSoFar / file.size) * 100) : 100;
+      this.onUploadProgressUpdate();
+
+      let updateFileUrl = `${this.FolderContentRepositoryUrl}/UpdateFileContent`;
+      this.http.post(updateFileUrl, {
+        Name: fileName,
+        Path: path,
+        FileType: fileType,
+        NewValue: this.substringFirstCommnaFormString(parserResult),
+        RequestId: requestId,
+        Sent: readSoFar,
+        Size: file.size
+      }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
+        cont()
+      },
+        error => onError(error))
+    }
   }
 
   clearUpload(requestId: number): void {
@@ -150,40 +197,6 @@ export class FolderContnentService {
       this.rquestIdToProgress.delete(requestId);
       this.onCreateUpload();
     });
-  }
-
-  private updateFile(requestId: number,
-    fileName: string,
-    path: string,
-    fileType: string,
-    chunks: string[],
-    index: number,
-    cont: () => void,
-    onError: (message: string) => void) {
-
-    let uploadData = this.rquestIdToProgress.get(requestId);
-    if (uploadData === null || uploadData === undefined) return;
-
-    uploadData.progress = chunks.length > 0 ? Math.floor((index / chunks.length) * 100) : 100;
-    this.onUploadProgressUpdate();
-    if (index >= chunks.length) {
-      this.onFinishUpload()
-      cont();
-      return;
-    };
-
-    let updateFileUrl = `${this.FolderContentRepositoryUrl}/UpdateFileContent`;
-    this.http.post(updateFileUrl, {
-      Name: fileName,
-      Path: path,
-      FileType: fileType,
-      NewValue: chunks[index],
-      NewValueIndex: index,
-      RequestId: requestId
-    }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
-      this.updateFile(requestId, fileName, path, fileType, chunks, index + 1, cont, onError);
-    },
-      error => onError(error))
   }
 
 
@@ -228,8 +241,8 @@ export class FolderContnentService {
     path = this.fixPath(path);
     let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfPages`;
 
-    this.http.post(numberOfPagesUrl, { Name: name, Path: path}, { responseType: 'text' }).pipe(
-      map(xml =>{
+    this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+      map(xml => {
         let numberOfPages = 1;
         let parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
@@ -244,7 +257,7 @@ export class FolderContnentService {
       }),
       catchError(this.handleError)).subscribe(
         pageNum => {
-          if(pageNum < 0) return;
+          if (pageNum < 0) return;
           this.onPageChange(pageNum)
         }
       )
@@ -275,171 +288,149 @@ export class FolderContnentService {
       }),
       tap(data => data),//console.log('All: ' + JSON.stringify(data))),
       catchError(this.handleError));
-      }
+  }
 
-downloadFile(name: string, path: string){
-  path = this.fixPath(path)
-  let getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFileRequestId`;
-  this.http.post(getFileRequestIdUrl, { Name: name, Path: path}, { responseType: 'text' }).pipe(
-    map(xml =>{
-      let requestId = -1;
-      let parser = new xml2js.Parser();
-      parser.parseString(xml, (error, result) => {
-        if (error) {
-          this.handleError(error);
+  downloadFile(name: string, path: string) {
+    path = this.fixPath(path)
+    let getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFileRequestId`;
+    this.http.post(getFileRequestIdUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+      map(xml => {
+        let requestId = -1;
+        let parser = new xml2js.Parser();
+        parser.parseString(xml, (error, result) => {
+          if (error) {
+            this.handleError(error);
 
-        } else {
-          requestId = +result['int']['_'];
+          } else {
+            requestId = +result['int']['_'];
+          }
+        });
+        return requestId;
+      }),
+      catchError(this.handleError)).subscribe(
+        requestId => {
+          if (requestId < 0) return;
+          let downloadFileUrl = `${this.FolderContentRepositoryUrl}/GetFile/requestId="${requestId}"`;
+          window.open(downloadFileUrl);
         }
-      });
-      return requestId;
-    }),
-    catchError(this.handleError)).subscribe(
-      requestId => {
-        if(requestId < 0) return;
-        let downloadFileUrl = `${this.FolderContentRepositoryUrl}/GetFile/requestId="${requestId}"`;
-        window.open(downloadFileUrl);
-      }
-    )
-}
+      )
+  }
 
 
-fixPath(path: string): string {
-  return path.replace(new RegExp('/', 'g'), ',');
-}
+  fixPath(path: string): string {
+    return path.replace(new RegExp('/', 'g'), ',');
+  }
 
-createFolder(name: string, path: string) {
-  let createFolderUrl = `${this.FolderContentRepositoryUrl}/CreateFolder`;
-  return this.http.post(createFolderUrl, { Name: name, Path: path }).pipe(
-    catchError(this.handleError)
-  );
-}
+  createFolder(name: string, path: string) {
+    let createFolderUrl = `${this.FolderContentRepositoryUrl}/CreateFolder`;
+    return this.http.post(createFolderUrl, { Name: name, Path: path }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-search(name: string, page: number) : Observable < IFolder > {
-  let searchUrl = `${this.FolderContentRepositoryUrl}/Search`;
-  return this.http.post(searchUrl, { Name: name, Page: page }, { responseType: 'text' }).pipe(
-    map(xml => {
-      let jsonStr = "";
-      let parser = new xml2js.Parser();
-      parser.parseString(xml, (error, result) => {
-        if (error) {
-          this.handleError(error);
+  search(name: string, page: number): Observable<IFolder> {
+    let searchUrl = `${this.FolderContentRepositoryUrl}/Search`;
+    return this.http.post(searchUrl, { Name: name, Page: page }, { responseType: 'text' }).pipe(
+      map(xml => {
+        let jsonStr = "";
+        let parser = new xml2js.Parser();
+        parser.parseString(xml, (error, result) => {
+          if (error) {
+            this.handleError(error);
 
-        } else {
-          jsonStr = result['string']['_'];
+          } else {
+            jsonStr = result['string']['_'];
+          }
+        });
+        let ifolder = <IFolder>JSON.parse(jsonStr);
+        if (ifolder.Content === undefined || ifolder.Content === null) {
+          ifolder.Content = new Array<FolderContent>();
         }
-      });
-      let ifolder = <IFolder>JSON.parse(jsonStr);
-      if (ifolder.Content === undefined || ifolder.Content === null) {
-        ifolder.Content = new Array<FolderContent>();
+
+        ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
+        return ifolder;
+      }),
+      tap(data => data),//console.log('All: ' + JSON.stringify(data))),
+      catchError(this.handleError));
+  }
+
+
+  copy(folderContentToCopy: IFolderContent, folderToCopyTo: IFolder) {
+    let copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
+    return this.http.post(copyFolderUrl, {
+      FolderContentName: folderContentToCopy.Name,
+      FolderContentPath: folderContentToCopy.Path,
+      FolderContentType: folderContentToCopy.Type,
+      CopyToName: folderToCopyTo.Name,
+      CopyToPath: folderToCopyTo.Path
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  createPath(name: string, path: string) {
+    return (path === undefined || path === null || path === '') ?
+      name :
+      `${name}/${path}`;
+  }
+
+  getContaningFolderPathFromPath(path: string): string {
+    //base case
+    if (path === 'home/') return '';
+    //other cases
+    let splitted = path.split('/');
+    let contaningFolderPathArray = splitted.slice(0, splitted.length - 1);
+    let contaningFolderPath = contaningFolderPathArray.reduce((prev, currVal) => {
+      if (prev === '') {
+        return currVal;
       }
+      return prev + '/' + currVal;
+    }, "");
+    return contaningFolderPath;
+  }
 
-      ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
-      return ifolder;
-    }),
-    tap(data => data),//console.log('All: ' + JSON.stringify(data))),
-    catchError(this.handleError));
-    }
-
-
-copy(folderContentToCopy: IFolderContent, folderToCopyTo: IFolder) {
-  let copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
-  return this.http.post(copyFolderUrl, {
-    FolderContentName: folderContentToCopy.Name,
-    FolderContentPath: folderContentToCopy.Path,
-    FolderContentType: folderContentToCopy.Type,
-    CopyToName: folderToCopyTo.Name,
-    CopyToPath: folderToCopyTo.Path
-  }).pipe(
-    catchError(this.handleError)
-  );
-}
-
-createPath(name: string, path: string) {
-  return (path === undefined || path === null || path === '') ?
-    name :
-    `${name}/${path}`;
-}
-
-getContaningFolderPathFromPath(path: string): string {
-  //base case
-  if (path === 'home/') return '';
-  //other cases
-  let splitted = path.split('/');
-  let contaningFolderPathArray = splitted.slice(0, splitted.length - 1);
-  let contaningFolderPath = contaningFolderPathArray.reduce((prev, currVal) => {
-    if (prev === '') {
-      return currVal;
-    }
-    return prev + '/' + currVal;
-  }, "");
-  return contaningFolderPath;
-}
-
-getContaningFolderNameFromPath(path: string): string {
-  //base case
-  if (path === 'home/' || path === '') return 'home';
-  //other cases
-  let splitted = path.split('/');
-  let contaningFolderName = splitted.reverse().shift();
-  return contaningFolderName;
-}
+  getContaningFolderNameFromPath(path: string): string {
+    //base case
+    if (path === 'home/' || path === '') return 'home';
+    //other cases
+    let splitted = path.split('/');
+    let contaningFolderName = splitted.reverse().shift();
+    return contaningFolderName;
+  }
 
   private mapToAppropriateFolderContentObj(element: IFolderContent) {
-  let name = element.Name;
-  let path = element.Path;
-  let type = element.Type;
-  let creationTime = element.CreationTime;
-  let modificationTime = element.ModificationTime;
+    let name = element.Name;
+    let path = element.Path;
+    let type = element.Type;
+    let creationTime = element.CreationTime;
+    let modificationTime = element.ModificationTime;
 
-  if (type === folderContentType.file) {
-    let elementFile = element as IFile;
-    let size = +elementFile.Size;
-    let sizeInMb = Math.floor(size / (1024 * 1024));
-    let file = new FileObj();
-    file.Name = name;
-    file.Path = path;
-    file.CreationTime = creationTime;
-    file.ModificationTime = modificationTime;
-    file.Size = `${sizeInMb} MB`;
-    return file;
-  }
+    if (type === folderContentType.file) {
+      let elementFile = element as IFile;
+      let size = +elementFile.Size;
+      let sizeInMb = Math.floor(size / (1024 * 1024));
+      let file = new FileObj();
+      file.Name = name;
+      file.Path = path;
+      file.CreationTime = creationTime;
+      file.ModificationTime = modificationTime;
+      file.Size = `${sizeInMb} MB`;
+      return file;
+    }
 
-  if (type === folderContentType.folder) {
-    let folder = new FolderObj();
-    folder.Name = name;
-    folder.Path = path;
-    folder.CreationTime = creationTime;
-    folder.ModificationTime = modificationTime;
-    return folder;
+    if (type === folderContentType.folder) {
+      let folder = new FolderObj();
+      folder.Name = name;
+      folder.Path = path;
+      folder.CreationTime = creationTime;
+      folder.ModificationTime = modificationTime;
+      return folder;
+    }
+    console.log("Not able to map object: " + name + " " + path + " " + type);
+    throw new Error("Not able to map object: " + name + " " + path + " " + type);
   }
-  console.log("Not able to map object: " + name + " " + path + " " + type);
-  throw new Error("Not able to map object: " + name + " " + path + " " + type);
-}
 
   private handleError(err: HttpErrorResponse) {
-  let errorMessage = '';
-  if (err.error instanceof ErrorEvent) {
-    // A client-side or network error occurred. Handle it accordingly.
-    errorMessage = `An error occurred: ${err.error.message}`;
-  } else {
-    // The backend returned an unsuccessful response code.
-    // The response body may contain clues as to what went wrong,
-    var parser = new xml2js.Parser();
-    parser.parseString(err.error, (error, result) => {
-      if (error) {
-        errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-      } else {
-        errorMessage = result['string']['_'];
-      }
-    });
-  }
-  console.error("handleError " + errorMessage);
-  return throwError(errorMessage);
-}
-
-  private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
-  return (err: HttpErrorResponse) => {
     let errorMessage = '';
     if (err.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
@@ -450,18 +441,40 @@ getContaningFolderNameFromPath(path: string): string {
       var parser = new xml2js.Parser();
       parser.parseString(err.error, (error, result) => {
         if (error) {
-
-          errorMessage = err.error;
-          // errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
-
+          errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
         } else {
           errorMessage = result['string']['_'];
         }
       });
     }
-    console.error("hanldeErrorWithErrorHandler " + errorMessage);
-    errorHanlder(errorMessage);
+    console.error("handleError " + errorMessage);
     return throwError(errorMessage);
   }
-}
+
+  private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
+    return (err: HttpErrorResponse) => {
+      let errorMessage = '';
+      if (err.error instanceof ErrorEvent) {
+        // A client-side or network error occurred. Handle it accordingly.
+        errorMessage = `An error occurred: ${err.error.message}`;
+      } else {
+        // The backend returned an unsuccessful response code.
+        // The response body may contain clues as to what went wrong,
+        var parser = new xml2js.Parser();
+        parser.parseString(err.error, (error, result) => {
+          if (error) {
+
+            errorMessage = err.error;
+            // errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+
+          } else {
+            errorMessage = result['string']['_'];
+          }
+        });
+      }
+      console.error("hanldeErrorWithErrorHandler " + errorMessage);
+      errorHanlder(errorMessage);
+      return throwError(errorMessage);
+    }
+  }
 }

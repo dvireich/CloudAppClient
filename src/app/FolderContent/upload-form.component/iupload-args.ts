@@ -3,4 +3,5 @@ export interface IUploadArgs{
     fileType: string;
     fileStream: string;
     fileSize: number;
+    file: any;
 }
