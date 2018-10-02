@@ -158,7 +158,7 @@ export class FolderContnentService {
   }
   private updateFile(requestId: number, fileName: string, path: string, fileType: string, file: any, onError: (message: string) => void) {
     //Return a callback for the file parser helper to perform when parser read another chunk of data
-    return (parserResult, readSoFar, cont) => {
+    return (parserResult: string, readSoFar: number, cont: () => void) => {
       let uploadData = this.rquestIdToProgress.get(requestId);
       if (uploadData === null || uploadData === undefined) return;
 
