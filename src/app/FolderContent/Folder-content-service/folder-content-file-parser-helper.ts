@@ -21,15 +21,18 @@ export class FolderContentFileParserHelper{
           if (evt.target.error == null) {
             // offset += evt.target.result.length;
             offset += chunkSize;
-            onReadCallback(evt.target.result, offset, ()=> {chunkReaderBlock(offset , chunkSize, file);}); // callback for handling read chunk
+            // callback for handling read chunk
+            onReadCallback(evt.target.result, offset, ()=> {
+              if (offset >= fileSize) {
+                console.log("Done reading file");
+                onFinishCallback();
+                return;
+              }
+              chunkReaderBlock(offset , chunkSize, file);
+            }); 
           } else {
             console.log("Read error: " + evt.target.error);
             onErrorCallbck(evt.target.error);
-            return;
-          }
-          if (offset >= fileSize) {
-            console.log("Done reading file");
-            onFinishCallback();
             return;
           }
         }
