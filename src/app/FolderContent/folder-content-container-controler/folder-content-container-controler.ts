@@ -225,7 +225,7 @@ export class FolderContentContainerControler {
             uploadArgs.fileStream,
             uploadArgs.fileSize,
             uploadArgs.file,
-            this.updateFolderContentWithCurrentPage,
+            this.updateFolderContentWithCurrentPage.bind(this),
             onError);
     }
 

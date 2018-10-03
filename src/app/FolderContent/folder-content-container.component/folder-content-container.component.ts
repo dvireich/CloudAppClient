@@ -450,7 +450,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     onSubmitUpload(uploadArgs: IUploadArgs) {
-        this.controler.addFile(uploadArgs, this.onErrorUploadFile);
+        this.controler.addFile(uploadArgs, this.onErrorUploadFile.bind(this));
         this.onStartAddFile();
     }
 
