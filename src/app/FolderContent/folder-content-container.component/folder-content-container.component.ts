@@ -15,6 +15,7 @@ import { IFolderContentContainerView } from "../folder-content-container-control
 import { IFolder } from "../Model/IFolder";
 import { IContexMenuCoordinates } from "../../Common/contex-menu.component/icontex-menu-coordinates";
 import { ISelecableProperties } from "../Model/ISelecableProperties";
+import { FolderContentNavBar } from "../folder-content-nav-bar/folder-content-nav-bar";
 
 @Component({
     selector: "folder-content-container",
@@ -71,8 +72,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     private ignoreOnRightClick: boolean;
     selectedProperties: ISelecableProperties = null;
     
-    //Search text
-    searchInputText: string;
+    //folder-content-nav-bar
+    private _folderContentNavBar: FolderContentNavBar;
 
     //selectable-grid
     private _selectableGrid: SelectableGrid;
@@ -214,17 +215,19 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     private isFolder(): boolean {
         let selected = this.getSelected();
+        if(selected === null || selected === undefined) return false;
+        
         return selected.Type === folderContentType.folder;
     }
 
     enterFolder() {
         let selected = this.getSelected();
-        this.searchInputText = '';
+        this._folderContentNavBar.clearSearchText();
         this.controler.updateFolderContent(selected.Name, selected.Path, 1);
     }
 
     dbClickEnterFolder(args: EnterFolderArgs) {
-        this.searchInputText = '';
+        this._folderContentNavBar.clearSearchText();
         this.controler.updateFolderContent(args.Name, args.Path, 1);
     }
 
@@ -443,6 +446,10 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     registerSelectableGrid(selectableGrid: SelectableGrid) {
         this._selectableGrid = selectableGrid;
+    }
+
+    registerFolderContentNavBar(folderContentNavBar: FolderContentNavBar) {
+        this._folderContentNavBar = folderContentNavBar;
     }
 
     getSelected(): IFolderContent {

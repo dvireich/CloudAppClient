@@ -77,6 +77,8 @@ export class FolderContentContainerControler {
     }
 
     public canPaste(selected: IFolderContent) {
+        if(selected === null || selected === undefined) return false;
+        
         let clipboardObj = this.clipboard.peekClipBoardObj();
         return this.clipboard.popClipBoardOperation() !== null &&
             this.clipboard.popClipBoardOperation() !== undefined &&
