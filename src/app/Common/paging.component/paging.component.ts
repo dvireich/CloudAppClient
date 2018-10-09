@@ -37,18 +37,21 @@ export class PagingNav {
 
 
     onPageChange(pageNum: number) {
+        if( this.currentPage === this.numberOfPages || this.currentPage === pageNum || this.currentPage === 1) return;
         this.currentPage = pageNum;
         this.pageChange.emit(pageNum);
         this.updateVisiblePageNumbers();
     }
 
     onNextPage() {
+        if( this.currentPage === this.numberOfPages || this.currentPage === 1) return;
         this.currentPage = this.currentPage === this.numberOfPages ? this.currentPage : this.currentPage + 1;
         this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
     }
 
     onPrevPage() {
+        if( this.currentPage === this.numberOfPages || this.currentPage === 1) return;
         this.currentPage = this.currentPage === 1 ? this.currentPage : this.currentPage - 1;
         this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
