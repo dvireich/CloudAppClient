@@ -1,6 +1,6 @@
 <ol class="breadcrumb disable_text_highlighting navBarBreaks">
-        <button type="button" class="btn navbar-btn spaceToRight glyphicon glyphicon-refresh" (click)='onPathBreakClick(visiblePathBreaks.length -1)'>Refresh</button>
-        <button [disabled]='backButtonDisabled' type="button" class="btn navbar-btn spaceToRight glyphicon glyphicon-step-backward" (click)='onPathBreakClick(null)'>Back</button>
+        <button [title]="'Refresh'" type="button" class="btn navbar-btn spaceToRight glyphicon glyphicon-refresh" (click)='onPathBreakClick(visiblePathBreaks.length -1)'></button>
+        <button [title]="'Click to go back'" [disabled]='backButtonDisabled' type="button" class="btn navbar-btn spaceToRight glyphicon glyphicon-arrow-left" (click)='onPathBreakClick(null)'></button>
         <label class="spaceToRight">Current Path:</label>
         <li *ngFor='let pathBreak of visiblePathBreaks; index as i; last as isLast'>
                 <a class="cursor" [title]="pathBreak.pathBreak" *ngIf='!isLast && pathBreak.pathBreak !== "..."' (click)='onPathBreakClick(i)'>{{cutString(pathBreak.pathBreak)}}</a>
