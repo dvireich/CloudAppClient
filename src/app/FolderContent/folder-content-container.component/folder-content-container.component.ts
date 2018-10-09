@@ -147,9 +147,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             this.router.navigate(['login']);
             return;
         }
-        window.onbeforeunload = ()=>{
-            this.controler.logout();
-        }
+        // window.onbeforeunload = ()=>{
+        //     this.controler.logout();
+        // }
         this.controler.restoreState();
     }
 

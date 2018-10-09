@@ -31,7 +31,7 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -139,7 +139,10 @@ export class FolderContnentService {
           let onRead = this.updateFile(requestId, fileName, path, fileType, file, onError);
           this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
         },
-          error => onError(error))
+          error =>{
+            onError(error);
+            this.clearUpload(requestId);
+          }) 
       },
       error => onError(error));
   }
