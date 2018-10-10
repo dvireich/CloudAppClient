@@ -5,6 +5,8 @@ export interface IFolderContentLoginView{
     userNameMessage: string;
     passwordMessage: string;
     isLoading: boolean;
+    rememberMe: boolean;
+    needToShowComponent: boolean;
 
     showMessage :
         (message: string,

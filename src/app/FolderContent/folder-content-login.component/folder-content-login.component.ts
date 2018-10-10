@@ -14,6 +14,7 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
 
     constructor(private controler: FolderContentLoginContoler) {
         controler.initializeView(this);
+        this.controler.applyRememberMeAction();
     }
 
     usernameInputText: string;
@@ -53,6 +54,23 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     public set messageBoxResult(value: DialogResult) {
         this._messageBoxResult = value;
     }
+
+    private _rememberMe: boolean = true;
+    public get rememberMe(): boolean {
+        return this._rememberMe;
+    }
+    public set rememberMe(value: boolean) {
+        this._rememberMe = value;
+    }
+    private _needToShowComponent: boolean = false;
+    public get needToShowComponent(): boolean {
+        return this._needToShowComponent;
+    }
+    public set needToShowComponent(value: boolean) {
+        this._needToShowComponent = value;
+    }
+
+
     needToShowMessageBox: boolean;
     messageBoxCaption: string;
     messageBoxMessageType: MessageBoxType;
@@ -108,5 +126,9 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
         caption: string,
         cont: () => void) {
         this.showMessageBox(message, type, buttons, caption, cont);
+    }
+
+    checkBoxChanged(current: boolean){
+        this.rememberMe = current;
     }
 }

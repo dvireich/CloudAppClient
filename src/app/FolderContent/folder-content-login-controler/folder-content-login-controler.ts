@@ -47,6 +47,14 @@ export class FolderContentLoginContoler {
 
     login(userName: string, password: string) {
         if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
+
+        if(this._view.rememberMe){
+            this.authenticationService.saveToLocalStorageUserNameAndPassword(userName, password);
+        }
+        else{
+            this.authenticationService.deleteFromLocalStorageUserNameAndPassword()
+        }
+        
         this._view.isLoading = true;
         this.authenticationService.login(userName, password,this.onError.bind(this)).subscribe(
             response => {
@@ -60,6 +68,19 @@ export class FolderContentLoginContoler {
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { });
             }
         )
+    }
+
+    applyRememberMeAction() : boolean{
+        let userName = localStorage.getItem("username");
+        let password = localStorage.getItem("password");
+
+        if(userName === undefined || userName === null || password === undefined || password === null) {
+            this._view.needToShowComponent = true;
+            return;
+        };
+        
+        this.login(userName, password);
+        return true;
     }
 
     waitForServiceToInitialize() {

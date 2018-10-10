@@ -14,13 +14,17 @@ import { IFile } from "../Model/IFile";
 import { IUploadData } from "../Model/IUploadData";
 import { UploadData } from "../Model/UploadData";
 import { FolderContentFileParserHelper } from "./folder-content-file-parser-helper";
+import { AuthenticationService } from "../authentication-service/authentication-service";
 
 @Injectable({
   providedIn: "root"
 })
 export class FolderContnentService {
 
-  constructor(private http: HttpClient, private folderContentFileHelper: FolderContentFileParserHelper) {
+  constructor(
+    private http: HttpClient, 
+    private folderContentFileHelper: FolderContentFileParserHelper, 
+    private authenticationService: AuthenticationService) {
   }
 
   private FolderContentRepositoryUrl: string = null;
@@ -31,7 +35,7 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -220,6 +224,7 @@ export class FolderContnentService {
     let logoutUrl = `${this.FolderContentRepositoryUrl}/Logout`;
     this.http.get<string>(logoutUrl).subscribe(logout => logout);
     this.FolderContentRepositoryUrl = null;
+    this.authenticationService.deleteFromLocalStorageUserNameAndPassword();
   }
 
   UpdateNumberOfPagesForFolder(name: string, path: string): void {

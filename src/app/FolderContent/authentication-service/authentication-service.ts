@@ -8,7 +8,7 @@ import { Observable, throwError } from 'rxjs';
     providedIn: "root"
   })
 export class AuthenticationService{
-    private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
+    private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
 
     constructor(private http: HttpClient) {
     }
@@ -21,6 +21,16 @@ export class AuthenticationService{
         let authenticateUrl = `${this.folderContentAuthenticationUrl}/Authenticate/username=${userName}&password=${password}`;
         return this.http.get<string>(authenticateUrl).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
       }
+
+      deleteFromLocalStorageUserNameAndPassword(){
+        localStorage.removeItem("username");
+        localStorage.removeItem("password");
+    }
+
+    saveToLocalStorageUserNameAndPassword(userName: string, password: string){
+      localStorage.setItem("username", userName);
+      localStorage.setItem("password", password);
+  }
 
       private handleError(err: HttpErrorResponse) {
         let errorMessage = '';
