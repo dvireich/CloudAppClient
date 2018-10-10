@@ -48,13 +48,7 @@ export class FolderContentLoginContoler {
     login(userName: string, password: string) {
         if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
 
-        if(this._view.rememberMe){
-            this.authenticationService.saveToLocalStorageUserNameAndPassword(userName, password);
-        }
-        else{
-            this.authenticationService.deleteFromLocalStorageUserNameAndPassword()
-        }
-        
+        this.saveUserNameAndPassword(userName, password);
         this._view.isLoading = true;
         this.authenticationService.login(userName, password,this.onError.bind(this)).subscribe(
             response => {
@@ -70,13 +64,30 @@ export class FolderContentLoginContoler {
         )
     }
 
+    saveUserNameAndPassword(userName: string, password: string){
+        this.authenticationService.saveToSessionStorageUserNameAndPassword(userName, password);
+        
+        if(this._view.rememberMe){
+            this.authenticationService.saveToLocalStorageUserNameAndPassword(userName, password);
+        }
+        else{
+            this.authenticationService.deleteFromLocalStorageUserNameAndPassword()
+        }
+    }
+
     applyRememberMeAction() : boolean{
-        let userName = localStorage.getItem("username");
-        let password = localStorage.getItem("password");
+        let userName = sessionStorage.getItem("username");
+        let password = sessionStorage.getItem("password");
 
         if(userName === undefined || userName === null || password === undefined || password === null) {
-            this._view.needToShowComponent = true;
-            return;
+
+            userName = localStorage.getItem("username");
+            password = localStorage.getItem("password");
+
+            if(userName === undefined || userName === null || password === undefined || password === null) {
+                this._view.needToShowComponent = true;
+                return;
+            }
         };
         
         this.login(userName, password);

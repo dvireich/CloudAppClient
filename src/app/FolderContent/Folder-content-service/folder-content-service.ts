@@ -35,7 +35,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    // this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -225,6 +226,7 @@ export class FolderContnentService {
     this.http.get<string>(logoutUrl).subscribe(logout => logout);
     this.FolderContentRepositoryUrl = null;
     this.authenticationService.deleteFromLocalStorageUserNameAndPassword();
+    this.authenticationService.deleteFromSessionStorageUserNameAndPassword();
   }
 
   UpdateNumberOfPagesForFolder(name: string, path: string): void {
