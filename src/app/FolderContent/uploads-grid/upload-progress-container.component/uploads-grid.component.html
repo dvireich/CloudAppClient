@@ -1,20 +1,18 @@
-  <div class="panel panel-default uploadsMain" [style.visibility] = 'visibility'>
-            <div class="panel-heading">Uploads: 
-                    <div class="btn-group" role="group" style="position: absolute;right: 0;top: 0;">
-                            <button type="button" class="btn btn-default"
-                            (click)="changeUploadContainerWindow()">-</button>
+<div ngDraggable class="panel panel-default uploadsMain" [style.visibility]='visibility'>
+        <div class="panel-heading">Uploads:
+                <div class="btn-group" role="group" style="position: absolute;right: 0;top: 0;">
+                        <button type="button" class="btn btn-default" (click)="changeUploadContainerWindow()">-</button>
 
-                            <button type="button" class="btn btn-default" 
-                            (click)="close()">x</button>
-                    </div>      
-            </div>
-                         
-  
-      <div class="panel-body upoadsBody" style="padding-bottom: 0;padding-top: 0;" 
-          [style.height] = 'height' >
-              
-        
-          <div *ngFor='let upload of uploads' class="row">
-              <upload-progress-row [uploadData]='upload'></upload-progress-row>
-      </div>
-    </div>
+                        <button type="button" class="btn btn-default" (click)="close()">x</button>
+                </div>
+        </div>
+
+
+        <div class="panel-body upoadsBody" style="padding-bottom: 0;padding-top: 0;" [style.height]='height'>
+
+
+                <div *ngFor='let upload of uploads' class="row">
+                        <upload-progress-row [uploadData]='upload'></upload-progress-row>
+                </div>
+        </div>
+</div>
