@@ -79,7 +79,7 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
     ngOnInit(): void {
-        this.controler.blockMobileDevice();
+        // this.controler.blockMobileDevice();
     }
     
     onLoginClick(username: string, password: string) {
