@@ -207,8 +207,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     showContexMenuOnCoordinates(coordinates: IContexMenuCoordinates) {
-        this.contexMenuX = coordinates.pageX;
-        this.contexMenuY = coordinates.pageY;
+        console.log(coordinates);
+        this.contexMenuX = coordinates.pageX - window.pageXOffset;
+        this.contexMenuY = coordinates.pageY - window.pageYOffset;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentRClick();
         this.showContexMenu = true;
     }
@@ -238,9 +239,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         }
 
         if(this.controler.isSearchResult()) return;
-        
-        this.contexMenuX = event.pageX;
-        this.contexMenuY = event.pageY;
+    
+        this.contexMenuX = event.pageX - window.pageXOffset;
+        this.contexMenuY = event.pageY - window.pageYOffset;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
         this.showContexMenu = true;
     }

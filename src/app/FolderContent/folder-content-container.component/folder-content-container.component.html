@@ -2,20 +2,22 @@
 (RegisterInParent)='registerFolderContentNavBar($event)'
 (SearchClick)='onSearchClick($event)'
 (CancelClick)='onSearchClear()'>
-</folder-content-nav-bar>
+</folder-content-nav-bar>                        
 
+<div class="row">
 <folder-content-nav-bar-path-break
 [Path] = 'navBarPath'
 (PathBarClick) = 'navBarPathBreakClick($event)'>
 </folder-content-nav-bar-path-break>
+</div>
 
 <div class="row" style="margin:0">
 
-<div class="col-md-2 noSpaceToLeft">
+<div class="col-md-2 col-xs-2 col-sm-2 col-lg-2 noSpaceToLeft">
     <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
 </div>
 
-<div class="col-md-9 noSpaceToLeft">
+<div class="col-md-9 col-xs-9 col-sm-9 col-lg-9 noSpaceToLeft">
         <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
 
                 <selectable-grid
