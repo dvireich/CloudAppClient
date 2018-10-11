@@ -35,8 +35,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    // this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    // this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -192,6 +192,16 @@ export class FolderContnentService {
   clearUpload(requestId: number): void {
     let clearUploadUrl = `${this.FolderContentRepositoryUrl}/ClearUpload`;
     this.http.post(clearUploadUrl, requestId).pipe(
+      catchError(this.handleError)
+    ).subscribe(data => {
+      this.rquestIdToProgress.delete(requestId);
+      this.onCreateUpload();
+    });
+  }
+
+  cancelUpload(requestId: number): void {
+    let cancelUploadUrl = `${this.FolderContentRepositoryUrl}/CancelUpload`;
+    this.http.post(cancelUploadUrl, requestId).pipe(
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);

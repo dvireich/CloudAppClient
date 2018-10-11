@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContextmenuComponent } from './contex-menu.component/context-menu.component';
 import { NavagationBar } from './nav-bar.component/nav-bar.component';
 import { Loader } from './loader.component/loader.component';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AngularDraggableModule
   ],
   declarations: [
     ContextmenuComponent,
@@ -37,7 +39,8 @@ import { Loader } from './loader.component/loader.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    Loader
+    Loader,
+    AngularDraggableModule
   ]
 })
 export class SharedModule { }

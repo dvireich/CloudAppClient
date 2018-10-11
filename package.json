@@ -24,6 +24,7 @@
     "@angular/platform-browser": "^6.1.0",
     "@angular/platform-browser-dynamic": "^6.1.0",
     "@angular/router": "^6.1.0",
+    "angular2-draggable": "^2.1.4",
     "bootstrap": "^3.3.7",
     "buffer": "^5.2.1",
     "core-js": "^2.5.4",
