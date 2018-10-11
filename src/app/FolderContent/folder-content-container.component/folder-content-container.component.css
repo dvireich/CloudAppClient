@@ -20,14 +20,14 @@
     width:100%;
     float:left;
     z-index: 1;
-    height : 84vh;
+    height : 88vh;
     word-break: break-word;
     
 }
 
 .noSpaceToLeft{
     padding: 0;
-    height : 84vh;
+    height : 88vh;
 }
 
 .scroll-area{
