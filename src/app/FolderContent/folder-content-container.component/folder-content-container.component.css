@@ -36,20 +36,6 @@
     overflow-y:auto;
   }
 
-  .uploadsMain{
-    z-index: 1;
-    position: absolute;
-    bottom: 0; 
-    width: 400px;
-    /* height: 200px; */
-    margin-bottom:0;
-  }
-
-  .upoadsBody{
-    height: 200px;
-    overflow-x:hidden;
-  }
-
   .noSpaceButton{
     margin-bottom: 0;
     height: 100%;
