@@ -20,14 +20,14 @@
     width:100%;
     float:left;
     z-index: 1;
-    height : 88vh;
+    height : 100vh;
     word-break: break-word;
     
 }
 
 .noSpaceToLeft{
     padding: 0;
-    height : 88vh;
+    height : 100vh;
 }
 
 .scroll-area{
@@ -52,4 +52,5 @@
 
   .noSpaceButton{
     margin-bottom: 0;
+    height: 100%;
 }
