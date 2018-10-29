@@ -8,8 +8,8 @@ import { Observable, throwError } from 'rxjs';
   providedIn: "root"
 })
 export class AuthenticationService {
-  private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
-  // private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
+  //private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
+  private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
 
   constructor(private http: HttpClient) {
   }
