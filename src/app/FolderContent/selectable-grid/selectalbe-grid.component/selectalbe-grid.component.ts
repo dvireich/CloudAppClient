@@ -7,7 +7,7 @@ import { EnterFolderArgs } from "./select-able.component/enterFolderArgs";
 import { FolderObj } from "../../Model/FolderObj";
 import { folderContentType } from "../../Model/folderContentType";
 import { FileObj } from "../../Model/FileObj";
-import { IContexMenuCoordinates } from "../../../Common/contex-menu.component/icontex-menu-coordinates";
+import { IContexMenuCoordinates } from "../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
 
 
 @Component({

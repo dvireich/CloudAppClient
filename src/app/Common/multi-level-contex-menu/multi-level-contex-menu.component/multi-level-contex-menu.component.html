@@ -1,0 +1,6 @@
+<div *ngFor='let level of allLevels; let levelIndex = index'>
+    <div *ngFor='let subs of level; let subsIndex = index'>
+            <app-contextmenu *ngIf='subs.show' [x]='x + levelIndex*150' [y]='y' [contexMentuItems]='subs.contaxMenuItem'></app-contextmenu>
+    </div>
+    
+</div>

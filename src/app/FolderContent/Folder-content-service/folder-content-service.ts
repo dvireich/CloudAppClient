@@ -15,6 +15,7 @@ import { IUploadData } from "../Model/IUploadData";
 import { UploadData } from "../Model/UploadData";
 import { FolderContentFileParserHelper } from "./folder-content-file-parser-helper";
 import { AuthenticationService } from "../authentication-service/authentication-service";
+import { sortType,} from "../Model/sortType";
 
 @Injectable({
   providedIn: "root"
@@ -35,8 +36,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    // this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    // this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -265,6 +266,34 @@ export class FolderContnentService {
       )
   }
 
+  GetSortForFolder(name: string, path: string) {
+    path = this.fixPath(path);
+    let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetSortType`;
+
+    return this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+      map(xml => {
+        let sortType: sortType = 0;
+        let parser = new xml2js.Parser();
+        parser.parseString(xml, (error, result) => {
+          if (error) {
+            this.handleError(error);
+
+          } else {
+            sortType = +result['int']['_'];
+          }
+        });
+        return sortType;
+      }),
+      catchError(this.handleError))
+  }
+
+  updateFolderMetadata(name: string, path: string, sortType: sortType){
+    let updateFolderMetadataUrl =  `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
+    return this.http.post(updateFolderMetadataUrl, { Name: name, Path: path, SortType: sortType }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   getFolder(name: string, path: string, page: number): Observable<IFolder> {
     path = this.fixPath(path);
     let folderUrl = `${this.FolderContentRepositoryUrl}/GetPage`;
@@ -421,10 +450,12 @@ export class FolderContnentService {
 
     if (type === folderContentType.folder) {
       let folder = new FolderObj();
+      let elementFolder = element as IFolder;
       folder.Name = name;
       folder.Path = path;
       folder.CreationTime = creationTime;
       folder.ModificationTime = modificationTime;
+      folder.SortType = elementFolder.SortType;
       return folder;
     }
     console.log("Not able to map object: " + name + " " + path + " " + type);

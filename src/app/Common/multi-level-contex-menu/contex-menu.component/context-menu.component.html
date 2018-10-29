@@ -4,9 +4,13 @@
                 <div *ngFor='let contextMenuItem of contexMentuItems; first as isFirst'>
                         <ul class="items" *ngIf='(contextMenuItem.needToshow() || contextMenuItem.showAllways)'>
                                 <hr class="hr" *ngIf='!isFirst' />
-                                <li class="li" (click)="contextMenuItem.onClick()">{{contextMenuItem.name}}</li>
+                                <li class="li" 
+                                (click)="contextMenuItem.onClick()" 
+                                (mouseover)='onMouseOver(contextMenuItem)'>
+                                {{contextMenuItem.name}} 
+                                <span style="float: right;" *ngIf='contextMenuItem.subs' class="glyphicon glyphicon-chevron-right"></span>
+                                </li>   
                         </ul>
                 </div>
-
         </div>
 </div>

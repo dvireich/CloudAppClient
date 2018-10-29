@@ -7,15 +7,16 @@ import { DialogResult } from "../../Common/messagebox.component/messageboxResult
 import { NavigationStart, Router } from "@angular/router";
 import { SelectableGrid } from "../selectable-grid/selectalbe-grid.component/selectalbe-grid.component";
 import { EnterFolderArgs } from "../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
-import { IContexMentuItem } from "../../Common/contex-menu.component/icontex-mentu-item";
-import { ContexMentuItem } from "../../Common/contex-menu.component/contex-mentu-item";
 import { IUploadArgs } from "../upload-form.component/iupload-args";
 import { FolderContentContainerControler } from "../folder-content-container-controler/folder-content-container-controler";
 import { IFolderContentContainerView } from "../folder-content-container-controler/ifolder-content-container-view";
 import { IFolder } from "../Model/IFolder";
-import { IContexMenuCoordinates } from "../../Common/contex-menu.component/icontex-menu-coordinates";
 import { ISelecableProperties } from "../Model/ISelecableProperties";
 import { FolderContentNavBar } from "../folder-content-nav-bar/folder-content-nav-bar";
+import { IContexMentuItem } from "../../Common/multi-level-contex-menu/contex-menu.component/icontex-mentu-item";
+import { IContexMenuCoordinates } from "../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
+import { ContexMentuItem } from "../../Common/multi-level-contex-menu/contex-menu.component/contex-mentu-item";
+import { sortType } from "../Model/sortType";
 
 @Component({
     selector: "folder-content-container",
@@ -206,6 +207,22 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.showContexMenu = false;
     }
 
+    onSortByNameContexMenuClick(){
+        this.controler.updateCurrentFolderMetadata(sortType.name);
+    }
+
+    onSortByCreationDateContexMenuClick(){
+        this.controler.updateCurrentFolderMetadata(sortType.dateCreated);
+    }
+
+    onSortByModificationDateContexMenuClick(){
+        this.controler.updateCurrentFolderMetadata(sortType.dateModified);
+    }
+
+    onSortByTypeContexMenuClick(){
+        this.controler.updateCurrentFolderMetadata(sortType.type);
+    }
+
     showContexMenuOnCoordinates(coordinates: IContexMenuCoordinates) {
         console.log(coordinates);
         this.contexMenuX = coordinates.pageX - window.pageXOffset;
@@ -329,7 +346,48 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
         return [createNewFolderToEvent,
             pasteToEvent,
+            this.createSortByContexMenu(),
             addFileToEvent];
+    }
+
+    createSortByContexMenu(){
+        let sortByName = new ContexMentuItem();
+        sortByName.onClick = this.onSortByNameContexMenuClick.bind(this);
+        sortByName.name = "Name";
+        sortByName.needToshow = () => true;
+        sortByName.showAllways = true;
+
+        let sortByType = new ContexMentuItem();
+        sortByType.onClick = this.onSortByTypeContexMenuClick.bind(this);
+        sortByType.name = "Type";
+        sortByType.needToshow = () => true;
+        sortByType.showAllways = true;
+
+        let sortByCreationDate = new ContexMentuItem();
+        sortByCreationDate.onClick = this.onSortByCreationDateContexMenuClick.bind(this);
+        sortByCreationDate.name = "Creation Date";
+        sortByCreationDate.needToshow = () => true;
+        sortByCreationDate.showAllways = true;
+
+        let sortByModificationDate = new ContexMentuItem();
+        sortByModificationDate.onClick = this.onSortByModificationDateContexMenuClick.bind(this);
+        sortByModificationDate.name = "Modification Date";
+        sortByModificationDate.needToshow = () => true;
+        sortByModificationDate.showAllways = true;
+
+        let changeSortToEvent = new ContexMentuItem();
+        changeSortToEvent.onClick = ()=>{};
+        changeSortToEvent.name = "Sort by";
+        changeSortToEvent.needToshow = () => true;
+        changeSortToEvent.showAllways = true;
+        changeSortToEvent.subs = [
+            sortByName,
+            sortByType,
+            sortByCreationDate,
+            sortByModificationDate
+        ]
+
+        return changeSortToEvent;
     }
 
     canPaste(): boolean {

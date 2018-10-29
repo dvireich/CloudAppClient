@@ -2,11 +2,13 @@ import { IFolder } from "./IFolder";
 import { FolderContent } from "./FolderContent";
 import { IFolderContent } from "./IFolderContent";
 import { folderContentType } from "./folderContentType";
+import { sortType } from "./sortType";
 
 
 export class FolderObj extends FolderContent implements IFolder{
-    
+
     Content : IFolderContent[] = new Array<IFolderContent>();  
+    SortType: sortType;
     
     constructor(){
         super();

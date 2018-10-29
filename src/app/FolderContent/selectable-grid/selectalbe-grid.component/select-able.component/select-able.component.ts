@@ -3,7 +3,7 @@ import { folderContentType } from "../../../Model/folderContentType";
 import { EnterFolderArgs } from "./enterFolderArgs";
 import { ISelecableProperties } from "../../../Model/ISelecableProperties";
 import { SelecableProperties } from "../../../Model/selecableProperties";
-import { IContexMenuCoordinates } from "../../../../Common/contex-menu.component/icontex-menu-coordinates";
+import { IContexMenuCoordinates } from "../../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
 
 
 

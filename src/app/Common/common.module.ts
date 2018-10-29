@@ -6,10 +6,10 @@ import { FillPipe } from './fillPipe';
 import { PagingNav } from './paging.component/paging.component';
 import { TakePipe } from './takePipe';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ContextmenuComponent } from './contex-menu.component/context-menu.component';
 import { NavagationBar } from './nav-bar.component/nav-bar.component';
 import { Loader } from './loader.component/loader.component';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-level-contex-menu.module';
 
 @NgModule({
   imports: [
@@ -19,7 +19,6 @@ import { AngularDraggableModule } from 'angular2-draggable';
     AngularDraggableModule
   ],
   declarations: [
-    ContextmenuComponent,
     MessageBox,
     Inputbox,
     NavagationBar,
@@ -29,7 +28,7 @@ import { AngularDraggableModule } from 'angular2-draggable';
     Loader
   ],
   exports: [
-    ContextmenuComponent,
+    MultiLevelContexMenuModule,
     MessageBox,
     Inputbox,
     NavagationBar,

@@ -13,6 +13,8 @@ import { Observable } from "rxjs";
 import { FolderObj } from "../Model/FolderObj";
 import { IUploadArgs } from "../upload-form.component/iupload-args";
 import { FolderContentStateService } from "../folder-content-state-service/folder-content-state-service";
+import { sortType } from "../Model/sortType";
+import { catchError } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root"
@@ -25,37 +27,59 @@ export class FolderContentContainerControler {
         private clipboard: FolderContentClipBoard,
         private folderContentStateService: FolderContentStateService) {
 
-        folderContentService.subscriberToFinishUploadToAction(this, this.updateFolderContentWithCurrentPage.bind(this));  
+        folderContentService.subscriberToFinishUploadToAction(this, this.updateFolderContentWithCurrentPage.bind(this));
     }
     //Public methods:
 
-    public initializeView(view: IFolderContentContainerView){
+    public initializeView(view: IFolderContentContainerView) {
         this._view = view;
     }
 
-    public logout(){
+    public logout() {
         this.folderContentService.logout();
     }
 
     public updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
         this._view.loading = true;
         this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
-        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
-            folder => {
-                this._view.listOfFileFolderNames = folder;
-                this._view.navBarPath = this.getCurrentPath();
-                this._view.loading = false;
+        this.folderContentService.GetSortForFolder(folderName, folderPath).subscribe(
+            sortType => {
+                this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
+                    folder => {
+                        this.sortFolderContent(sortType, folder);
+                        this._view.listOfFileFolderNames = folder;
+                        this._view.navBarPath = this.getCurrentPath();
+                        this._view.loading = false;
+                    },
+                    error => {
+                        this._view.loading = false;
+                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update folder content", () => { })
+                    });
             },
             error => {
                 this._view.loading = false;
-                this._view.messageBoxText = <any>error
+                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get sort type", () => { })
+            }
+        )
+    }
+
+    public updateCurrentFolderMetadata(sortType: sortType) {
+        this._view.loading = true;
+        let currentFolder = this.getCurrentFolder();
+        this.folderContentService.updateFolderMetadata(currentFolder.Name, currentFolder.Path, sortType).subscribe(
+            success => {
+                this.updateFolderContentWithCurrentPage();
+            },
+            error => {
+                this._view.loading = false;
+                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update", () => { })
             });
     }
 
-    public search(name: string, page: number){
+    public search(name: string, page: number) {
         this._view.loading = true;
         this.folderContentService.search(name, page).subscribe(
-            folder =>{
+            folder => {
                 this.folderContentService.UpdateNumberOfPagesForFolder("search", name);
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for:${name}`;
@@ -65,7 +89,7 @@ export class FolderContentContainerControler {
     }
 
     public updateThisFolderContentAfterOperation(pageNum: number) {
-        if(this.isSearchResult()){
+        if (this.isSearchResult()) {
             let searchString = this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath());
             this.search(searchString, pageNum);
             return;
@@ -77,8 +101,8 @@ export class FolderContentContainerControler {
     }
 
     public canPaste(selected: IFolderContent) {
-        if(selected === null || selected === undefined) return false;
-        
+        if (selected === null || selected === undefined) return false;
+
         let clipboardObj = this.clipboard.peekClipBoardObj();
         return this.clipboard.popClipBoardOperation() !== null &&
             this.clipboard.popClipBoardOperation() !== undefined &&
@@ -104,17 +128,42 @@ export class FolderContentContainerControler {
         this.folderContentStateService.setCurrentFolderState(this.getCurrentFolder(), this._view.currentPage);
     }
 
-    public restoreState(): void{
+    public restoreState(): void {
         let state = this.folderContentStateService.restoreFolderState()
         this._view.currentPage = state.currentPage;
         this.updateFolderContent(state.currentFolderName, state.currentFolderPath, state.currentPage);
     }
 
-    public canActive(){
+    public canActive() {
         return this.folderContentService.isInitialized();
     }
 
     //Private methods:
+
+    private sortFolderContent(sort: sortType, folder: IFolder): void {
+        let list = folder.Content;
+        if (list === null || list === undefined) return;
+
+        list.sort((fc1: IFolderContent, fc2: IFolderContent) => {
+            if (sort === sortType.name) {
+                if (fc1.Name > fc2.Name) return 1;
+                if (fc1.Name < fc2.Name) return -1;
+            }
+            if (sort === sortType.dateCreated) {
+                if (fc1.CreationTime > fc2.CreationTime) return 1;
+                if (fc1.CreationTime < fc2.CreationTime) return -1;
+            }
+            if (sort === sortType.dateModified) {
+                if (fc1.ModificationTime > fc2.ModificationTime) return 1;
+                if (fc1.ModificationTime < fc2.ModificationTime) return -1;
+            }
+            if (sort === sortType.type) {
+                if (fc1.Type > fc2.Type) return 1;
+                if (fc1.Type < fc2.Type) return -1;
+            }
+            return 0;
+        })
+    }
 
     private getCurrentPath(): string {
         if (this._view.listOfFileFolderNames == undefined) {
@@ -125,8 +174,8 @@ export class FolderContentContainerControler {
     }
 
 
-    public isSearchResult(): boolean{
-        if(this._view.listOfFileFolderNames === undefined || this._view.listOfFileFolderNames === null){
+    public isSearchResult(): boolean {
+        if (this._view.listOfFileFolderNames === undefined || this._view.listOfFileFolderNames === null) {
             return false;
         }
         return this._view.listOfFileFolderNames.Type === folderContentType.folderPageResult;
@@ -153,7 +202,7 @@ export class FolderContentContainerControler {
         return result;
     }
 
-    private updateFolderContentWithCurrentPage(){
+    private updateFolderContentWithCurrentPage() {
         this.updateThisFolderContentAfterOperation(this._view.currentPage);
     };
 
@@ -167,7 +216,7 @@ export class FolderContentContainerControler {
                     data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
                     error => {
                         this._view.loading = false;
-                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", ()=>{})
+                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", () => { })
                     }
                 );
             }
@@ -176,7 +225,7 @@ export class FolderContentContainerControler {
                     data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
                     error => {
                         this._view.loading = false;
-                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", ()=>{})
+                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Delete", () => { })
                     }
                 );
             }
@@ -270,5 +319,5 @@ export class FolderContentContainerControler {
                 this._view.loading = false;
                 this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
             })
-    }   
+    }
 }
