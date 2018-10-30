@@ -307,7 +307,7 @@ export class FolderContentContainerControler {
                     respOfDelete.subscribe(data => this.updateThisFolderContentAfterOperation(this._view.currentPage),
                         error => {
                             this._view.loading = false;
-                            this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
+                            this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: delete old folder", () => { });
                         });
                 }
                 else {
