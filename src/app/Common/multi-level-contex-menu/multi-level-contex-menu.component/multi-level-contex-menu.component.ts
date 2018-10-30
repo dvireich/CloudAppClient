@@ -82,13 +82,19 @@ export class MultiLevelContexMenu{
                 multiLevelContexMenuItem.contaxMenuItem.forEach(item =>
                 {
                     //Add function for open the subs
-                    item.onOverIn = ()=>{
+                    const openSubsOnLevel = ()=>{
                         if(item.subs === null || item.subs === undefined){
                          this.closeAllLevelSubs(level + 1);
                          return;
                         };
                         this.openSubs(level + 1, item.subs)
-                    }
+                    };
+
+                    item.onOverIn = openSubsOnLevel;
+
+                    //Replace the item.onClick if the item has subs since he wont need it
+                    if(item.subs === null || item.subs === undefined) return;
+                    item.onClick = openSubsOnLevel;
                 })
             })
         }
