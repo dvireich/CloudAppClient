@@ -1,9 +1,10 @@
 <div class="panel panel-default uploadsMain" [style.visibility]='visibility'>
         <div class="panel-heading">Uploads:
                 <div class="btn-group" role="group" style="position: absolute;right: 0;top: 0;">
-                        <button type="button" class="btn btn-default" (click)="changeUploadContainerWindow()">-</button>
-
-                        <button type="button" class="btn btn-default" (click)="close()">x</button>
+                        <button type="button" class="btn btn-default" (click)="changeUploadContainerWindow()">
+                                <span *ngIf='showUploadContainter' class="glyphicon glyphicon-menu-down"></span>
+                                <span *ngIf='!showUploadContainter' class="glyphicon glyphicon-menu-up"></span></button>
+                        <button type="button" class="btn btn-default" (click)="close()"><span class="glyphicon glyphicon-remove"></span></button>
                 </div>
         </div>
 
