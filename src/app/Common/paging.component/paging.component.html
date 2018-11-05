@@ -1,6 +1,6 @@
 <nav aria-label="Page navigation" class="disable_text_highlighting">
     <ul class="pagination">
-      <li [ngClass]='{ "disabled" : currentPage === 1}'>
+      <li [class.disabled]='currentPage === 1'>
         <a class="pointer" (click)='onPrevPage()' aria-label="Previous">
           <span aria-hidden="true">&laquo;</span>
         </a>
@@ -9,13 +9,13 @@
         <a class="pointer" (click)='onPageChange(1)'>1</a></li>
         <li *ngIf='!visiblePageNumbersContainsNumbers(1, 2)' class="disabled">
           <a class="pointer">...</a></li>
-      <li *ngFor = 'let x of visiblePageNumbers; let i = index' [ngClass]='{ "disabled" : currentPage === x}'
+      <li *ngFor = 'let x of visiblePageNumbers; let i = index' [class.disabled]='currentPage === x'
       ><a class="pointer" (click)='onPageChange(x)'>{{x}}</a></li>
       <li *ngIf='!visiblePageNumbersContainsNumbers(numberOfPages , numberOfPages -1)' class="disabled">
       <a class="pointer">...</a></li>
       <li *ngIf='!visiblePageNumbersContainsNumbers(numberOfPages)'>
         <a class="pointer" (click)='onPageChange(numberOfPages)'>{{numberOfPages}}</a></li>
-      <li [ngClass]='{ "disabled" : currentPage === numberOfPages}'>
+      <li [class.disabled]=' currentPage === numberOfPages'>
         <a class="pointer" (click)='onNextPage()' aria-label="Next">
           <span aria-hidden="true">&raquo;</span>
         </a>

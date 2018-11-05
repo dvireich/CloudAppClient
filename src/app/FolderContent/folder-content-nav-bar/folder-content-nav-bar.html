@@ -11,7 +11,7 @@
       <a class="navbar-brand" href="">My Could</a>
     </div>
 
-    <div id="navbar" class="navbar-collapse collapse" [ngClass]="{ 'show': navbarOpen }">
+    <div id="navbar" class="navbar-collapse collapse" [class.show]="navbarOpen">
       <ul class="nav navbar-nav">
         <li class="active"><a routerLinkActive='active' [routerLink]="['/workspace']">workspace</a></li>
         <li><a routerLinkActive='active' [routerLink]="['/login']">Logout</a></li>
