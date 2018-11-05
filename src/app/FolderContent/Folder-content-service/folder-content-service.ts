@@ -241,7 +241,6 @@ export class FolderContnentService {
   }
 
   UpdateNumberOfPagesForFolder(name: string, path: string): void {
-    path = this.fixPath(path);
     let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfPages`;
 
     this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
@@ -267,7 +266,6 @@ export class FolderContnentService {
   }
 
   GetSortForFolder(name: string, path: string) {
-    path = this.fixPath(path);
     let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetSortType`;
 
     return this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
@@ -295,7 +293,6 @@ export class FolderContnentService {
   }
 
   getFolder(name: string, path: string, page: number): Observable<IFolder> {
-    path = this.fixPath(path);
     let folderUrl = `${this.FolderContentRepositoryUrl}/GetPage`;
     return this.http.post(folderUrl, { Name: name, Path: path, Page: page }, { responseType: 'text' }).pipe(
       map(xml => {
@@ -322,7 +319,6 @@ export class FolderContnentService {
   }
 
   downloadFile(name: string, path: string) {
-    path = this.fixPath(path)
     let getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFileRequestId`;
     this.http.post(getFileRequestIdUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
       map(xml => {
@@ -345,10 +341,6 @@ export class FolderContnentService {
           window.open(downloadFileUrl);
         }
       )
-  }
-
-  fixPath(path: string): string {
-    return path.replace(new RegExp('/', 'g'), ',');
   }
 
   createFolder(name: string, path: string) {
