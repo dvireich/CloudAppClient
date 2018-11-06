@@ -9,6 +9,7 @@
                                 (mouseover)='onMouseOver(contextMenuItem)'>
                                 {{contextMenuItem.name}} 
                                 <span style="float: right;" *ngIf='contextMenuItem.subs' class="glyphicon glyphicon-chevron-right"></span>
+                                <span style="float: right;" *ngIf='!contextMenuItem.subs && contextMenuItem.styleClasses' [ngClass]="contextMenuItem.styleClasses"></span>
                                 </li>   
                         </ul>
                 </div>

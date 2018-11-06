@@ -278,42 +278,49 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         deleteToEvent.name = "Delete";
         deleteToEvent.needToshow = () => true;
         deleteToEvent.showAllways = true;
+        deleteToEvent.styleClasses = ["glyphicon", "glyphicon-trash"];
 
         let renameToEvent = new ContexMentuItem();
         renameToEvent.onClick = this.onRenameContexMenuClick.bind(this);
         renameToEvent.name = "Rename";
         renameToEvent.needToshow = () => true;
         renameToEvent.showAllways = true;
+        renameToEvent.styleClasses = ["glyphicon", "glyphicon-retweet"];
 
         let copyToEvent = new ContexMentuItem();
         copyToEvent.onClick = this.onCopyContexMenuClick.bind(this);
         copyToEvent.name = "Copy";
         copyToEvent.needToshow = () => true;
         copyToEvent.showAllways = true;
+        copyToEvent.styleClasses = ["glyphicon", "glyphicon-copy"];
 
         let cutToEvent = new ContexMentuItem();
         cutToEvent.onClick = this.onCutContexMenuClick.bind(this);
         cutToEvent.name = "Cut";
         cutToEvent.needToshow = () => true;
         cutToEvent.showAllways = true;
+        cutToEvent.styleClasses = ["glyphicon ", "glyphicon-duplicate"];
 
         let pasteToEvent = new ContexMentuItem();
         pasteToEvent.onClick = this.onPasteContexMenuClick.bind(this);
         pasteToEvent.name = "Paste";
         pasteToEvent.needToshow = (() => { return (this.isFolder() && this.canPaste()); }).bind(this);
         pasteToEvent.showAllways = false;
+        pasteToEvent.styleClasses = ["glyphicon",  "glyphicon-paste"];
 
         let enterToEvent = new ContexMentuItem();
         enterToEvent.onClick = this.enterFolder.bind(this);
         enterToEvent.name = "Enter";
         enterToEvent.needToshow = this.isFolder.bind(this);;
         enterToEvent.showAllways = false;
+        enterToEvent.styleClasses = ["glyphicon", "glyphicon-level-up"];
 
         let downloadToEvent = new ContexMentuItem();
         downloadToEvent.onClick = this.onDownloadFileClick.bind(this);
         downloadToEvent.name = "Download";
         downloadToEvent.needToshow = (() => { return (!this.isFolder()); }).bind(this);
         downloadToEvent.showAllways = false;
+        downloadToEvent.styleClasses = ["glyphicon", "glyphicon-cloud-download"];
 
 
         return [deleteToEvent,
@@ -331,18 +338,21 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         createNewFolderToEvent.name = "Create New Folder";
         createNewFolderToEvent.needToshow = () => true;
         createNewFolderToEvent.showAllways = true;
+        createNewFolderToEvent.styleClasses = ["glyphicon", "glyphicon-folder-open"];
 
         let pasteToEvent = new ContexMentuItem();
         pasteToEvent.onClick = this.onPasteContexMenuClick.bind(this);
         pasteToEvent.name = "Paste";
         pasteToEvent.needToshow = this.canPaste.bind(this);
         pasteToEvent.showAllways = false;
+        pasteToEvent.styleClasses = ["glyphicon", "glyphicon-paperclip"];
 
         let addFileToEvent = new ContexMentuItem();
         addFileToEvent.onClick = this.onAddFile.bind(this);
         addFileToEvent.name = "Add File";
         addFileToEvent.needToshow = () => true;
         addFileToEvent.showAllways = true;
+        addFileToEvent.styleClasses = ["glyphicon", "glyphicon-cloud-upload"];
 
         return [createNewFolderToEvent,
             pasteToEvent,

@@ -1,6 +1,7 @@
 import { IContexMentuItem } from "./icontex-mentu-item";
 
 export class ContexMentuItem implements IContexMentuItem{
+    styleClasses: string[];
     onOverIn: () => void;
     onOverOut: () => void;
     name: string;   

@@ -5,4 +5,5 @@ export interface IContexMentuItem{
     needToshow : ()=> boolean
     showAllways: boolean;
     subs: IContexMentuItem[];
+    styleClasses: string[];
 }
