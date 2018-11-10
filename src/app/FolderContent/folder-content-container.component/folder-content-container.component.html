@@ -2,69 +2,74 @@
 
 <div class="row" style="margin:0; height: 100vh;">
 
-        <folder-content-nav-bar
-        (RegisterInParent)='registerFolderContentNavBar($event)'
-        (SearchClick)='onSearchClick($event)'
-        (CancelClick)='onSearchClear()'>
-</folder-content-nav-bar>  
-                      
+        <div class="row" style="margin:0;">
+                <folder-content-nav-bar 
+                (RegisterInParent)='registerFolderContentNavBar($event)'
+                (SearchClick)='onSearchClick($event)'
+                (CancelClick)='onSearchClear()'>
+                </folder-content-nav-bar>  
+        </div>
 
-<folder-content-nav-bar-path-break
-[Path] = 'navBarPath'
-(PathBarClick) = 'navBarPathBreakClick($event)'>
-</folder-content-nav-bar-path-break>
+        <div class="row" style="margin:0;">
+                <folder-content-nav-bar-path-break
+                [Path] = 'navBarPath'
+                (PathBarClick) = 'navBarPathBreakClick($event)'>
+                </folder-content-nav-bar-path-break>
+        </div>             
 
-<div class="col-md-2 col-xs-4 col-sm-4 col-lg-2 noSpaceToLeft">
-    <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
-</div>
-
-<div class="col-md-10 col-xs-8 col-sm-8 col-lg-10 noSpaceToLeft">
-        <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
-
-                <selectable-grid
-                [listOfFileFolderNames] = 'listOfFileFolderNames'
-                (RegisterInParent) = 'registerSelectableGrid($event)'
-                (SelectionChanged) = 'onSelectionChanged($event)'
-                (ApplyIgnoreDisableSelection) = 'SetIgnoreDisableSelection()'
-                (ApplyParentIgnoreOnRightClick) = 'SetIgnoreOnRightClick()'
-                (ShowContexMenu) = 'showContexMenuOnCoordinates($event)'
-                (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
-                </selectable-grid>
-
-                <div *ngIf = 'showContexMenu'>
-                    <multi-level-contex-menu [x] = 'contexMenuX' 
-                                     [y] = 'contexMenuY'
-                                     [contexMentuItems] = 'contexMenuItems'>
-                    </multi-level-contex-menu>
-                </div>
-            </div>
-            <div class="bottomCenterPossition">
-                    <folder-content-paging-nav
-                    (pageChange)='onPageChanged($event)'
-                    ></folder-content-paging-nav>
-            </div>
-
-            <div *ngIf ='neddToShowInputBox'>
-                    <input-box [placeHolder] = "inputBoxPlaceHolder"
-                               [header] = "inputBoxHeader"
-                               [okButtonName] = "inputBoxOkButtonName"
-                               [onCancel] = "inputBoxOnCancel.bind(this)"
-                               (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
-            </div>
-            <div *ngIf = 'needToShowMessageBox'>
-                    <message-box [text] = 'messageBoxText'
-                                 [buttons] = 'messageBoxButtons'
-                                 [caption] = 'messageBoxCaption'
-                                 [messageIcon] = 'messageBoxMessageType'
-                                 (onButton1Click) = "messageBoxOnButton1Click($event)"
-                                 (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
-            </div>
-            <div *ngIf='needToShowUploadBox'>
-                        <upload-form 
-                        (onCancel)='uploadBoxCancel($event)'
-                        (onSubmit)='onSubmitUpload($event)'></upload-form>
-            </div>
-</div>
+        <div class="row" style="margin:0; height: 79vh;">
+                <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2 noSpaceToLeft" style="margin:0; height:100%;">
+                        <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
+                    </div>
+                    
+                    <div class="col-md-10 col-xs-8 col-sm-8 col-lg-10 noSpaceToLeft" style="margin:0; height:100%;">
+                            <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
+                    
+                                    <selectable-grid
+                                    [listOfFileFolderNames] = 'listOfFileFolderNames'
+                                    (RegisterInParent) = 'registerSelectableGrid($event)'
+                                    (SelectionChanged) = 'onSelectionChanged($event)'
+                                    (ApplyIgnoreDisableSelection) = 'SetIgnoreDisableSelection()'
+                                    (ApplyParentIgnoreOnRightClick) = 'SetIgnoreOnRightClick()'
+                                    (ShowContexMenu) = 'showContexMenuOnCoordinates($event)'
+                                    (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
+                                    </selectable-grid>
+                    
+                                    <div *ngIf = 'showContexMenu'>
+                                        <multi-level-contex-menu [x] = 'contexMenuX' 
+                                                         [y] = 'contexMenuY'
+                                                         [contexMentuItems] = 'contexMenuItems'>
+                                        </multi-level-contex-menu>
+                                    </div>
+                                </div>
+                                <div class="bottomCenterPossition">
+                                        <folder-content-paging-nav
+                                        (pageChange)='onPageChanged($event)'
+                                        ></folder-content-paging-nav>
+                                </div>
+                    
+                                <div *ngIf ='neddToShowInputBox'>
+                                        <input-box [placeHolder] = "inputBoxPlaceHolder"
+                                                   [header] = "inputBoxHeader"
+                                                   [okButtonName] = "inputBoxOkButtonName"
+                                                   [onCancel] = "inputBoxOnCancel.bind(this)"
+                                                   (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
+                                </div>
+                                <div *ngIf = 'needToShowMessageBox'>
+                                        <message-box [text] = 'messageBoxText'
+                                                     [buttons] = 'messageBoxButtons'
+                                                     [caption] = 'messageBoxCaption'
+                                                     [messageIcon] = 'messageBoxMessageType'
+                                                     (onButton1Click) = "messageBoxOnButton1Click($event)"
+                                                     (onButton2Click) = "messageBoxOnButton2Click($event)"></message-box>
+                                </div>
+                                <div *ngIf='needToShowUploadBox'>
+                                            <upload-form 
+                                            (onCancel)='uploadBoxCancel($event)'
+                                            (onSubmit)='onSubmitUpload($event)'></upload-form>
+                                </div>
+                    </div>
+        </div>
 </div>
 <uploads-grid></uploads-grid>
 <loader *ngIf='loading'></loader>
