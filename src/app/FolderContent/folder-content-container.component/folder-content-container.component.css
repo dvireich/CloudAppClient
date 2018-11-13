@@ -40,3 +40,39 @@
     margin-bottom: 0;
     height: 100%;
 }
+
+
+
+.table {
+    display: table;
+}
+
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+.body {
+    height: 100%;
+}
+
+.body-content-outer-wrapper {
+    height: 100%;
+}
+
+.body-content-inner-wrapper {
+    height: 100%;
+    position: relative;
+    overflow: auto;
+}
+
+.body-content {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
