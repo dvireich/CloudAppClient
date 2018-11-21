@@ -1,12 +1,20 @@
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
+import { LoginTabs } from "../folder-content-login.component/login-mode";
 
 export interface IFolderContentLoginView{
     userNameMessage: string;
     passwordMessage: string;
+    registerUserNameMessage: string;
+    registerPasswordMessage: string;
+    registerRecoveryQuestionMessage: string;
+    registerRecoveryAnswerMessage: string;
+    usernameInputText: string;
+    passwordInputText: string;
     isLoading: boolean;
     rememberMe: boolean;
     needToShowComponent: boolean;
+    loginTab: LoginTabs;
 
     showMessage :
         (message: string,

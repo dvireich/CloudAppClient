@@ -4,6 +4,7 @@ import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType
 import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
 import { IFolderContentLoginView } from "../folder-content-login-controler/ifolder-content-login-view";
+import { LoginTabs } from "./login-mode";
 
 @Component({
     selector: 'login',
@@ -17,8 +18,30 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
         this.controler.applyRememberMeAction();
     }
 
+    loginTabStyles: string[];
+    registerTabStyles: string[];
+    showRegisterForm: boolean = false;
+    showLoginForm: boolean = true;
+
+    private _loginTab: LoginTabs;
+    public get loginTab(): LoginTabs {
+        return this._loginTab;
+    }
+    public set loginTab(value: LoginTabs) {
+        this._loginTab = value;
+        this.loginTabStyles = this.getLoginTabStyleClasses();
+        this.registerTabStyles = this.getRegisterTabStyleClasses();
+        this.showRegisterForm = value === LoginTabs.register;
+        this.showLoginForm = value === LoginTabs.login;
+    }
+
     usernameInputText: string;
     passwordInputText: string;
+
+    registerUserNameInputText: string;
+    registerPasswordInputText: string;
+    registerRecoveryQuestionInputText: string;
+    registerRecoveryAnswerInputText: string;
 
     private _isLoading: boolean;
     public set isLoading(value: boolean) {
@@ -27,6 +50,36 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     public get isLoading(): boolean {
         return this._isLoading;
     }
+    private _registerUserNameMessage: string;
+    public get registerUserNameMessage(): string {
+        return this._registerUserNameMessage;
+    }
+    public set registerUserNameMessage(value: string) {
+        this._registerUserNameMessage = value;
+    }
+    private _registerPasswordMessage: string;
+    public get registerPasswordMessage(): string {
+        return this._registerPasswordMessage;
+    }
+    public set registerPasswordMessage(value: string) {
+        this._registerPasswordMessage = value;
+    }
+    private _registerRecoveryQuestionMessage: string;
+    public get registerRecoveryQuestionMessage(): string {
+        return this._registerRecoveryQuestionMessage;
+    }
+    public set registerRecoveryQuestionMessage(value: string) {
+        this._registerRecoveryQuestionMessage = value;
+    }
+
+    private _registerRecoveryAnswerMessage: string;
+    public get registerRecoveryAnswerMessage(): string {
+        return this._registerRecoveryAnswerMessage;
+    }
+    public set registerRecoveryAnswerMessage(value: string) {
+        this._registerRecoveryAnswerMessage = value;
+    }
+
     private _userNameMessage: string;
     public set userNameMessage(value: string) {
         this._userNameMessage = value;
@@ -79,15 +132,15 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
     ngOnInit(): void {
-        // this.controler.blockMobileDevice();
+        this.loginTab = LoginTabs.login;
     }
     
     onLoginClick(username: string, password: string) {
         this.controler.login(username, password);
     }
 
-    onRegisterClick(username: string, password: string) {
-        this.controler.registerUser(username, password);
+    onRegisterClick(username: string, password: string, recoveryQuestion: string, recoveryAnswer: string) {
+        this.controler.registerUser(username, password, recoveryQuestion, recoveryAnswer);
     }
 
     onMessageBoxClick(action: (result: DialogResult) => void, cont: () => void) {
@@ -131,4 +184,24 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     checkBoxChanged(current: boolean){
         this.rememberMe = current;
     }
+
+    getLoginTabStyleClasses(){
+        if(this.loginTab == LoginTabs.login) return ['active'];
+        return ['notActive'];
+    }
+
+    getRegisterTabStyleClasses(){
+        if(this.loginTab == LoginTabs.register)  return ['active'];
+        return ['notActive'];
+    }
+
+    changeToLoginForm(){
+        this.loginTab = LoginTabs.login;
+    }
+
+    changeToRegisterForm(){
+        this.loginTab = LoginTabs.register;
+    }
+
+
 }

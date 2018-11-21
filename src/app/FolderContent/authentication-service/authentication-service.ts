@@ -13,9 +13,9 @@ export class AuthenticationService {
 
   constructor(private http: HttpClient) {
   }
-  registerUser(name: string, password: string, onError: (message: string) => void) {
+  registerUser(name: string, password: string, recoveryQuestion: string, recoveryAnswer: string,  onError: (message: string) => void) {
     let authenticationRegisterUrl = `${this.folderContentAuthenticationUrl}/Register`;
-    return this.http.post(authenticationRegisterUrl, { UserName: name, Password: password }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+    return this.http.post(authenticationRegisterUrl, { UserName: name, Password: password, SecurityQuestion: recoveryQuestion, SecurityAnswer: recoveryAnswer }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
   }
 
   login(userName: string, password: string, onError: (message: string) => void) {

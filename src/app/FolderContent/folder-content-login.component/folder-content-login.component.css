@@ -29,3 +29,18 @@
     color: white;
   }
 
+  .active{
+    background-color: white !important;
+    color: black;
+  }
+
+  .notActive{
+    background-color: darkgray !important;
+    color: white;
+    cursor: pointer;
+  }
+
+
+
+
+

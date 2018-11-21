@@ -8,6 +8,7 @@ import { catchError } from "rxjs/operators";
 import { Observable, of  } from "rxjs";
 import { AuthenticationService } from "../authentication-service/authentication-service";
 import { FolderContnentService } from "../Folder-content-service/folder-content-service";
+import { LoginTabs } from "../folder-content-login.component/login-mode";
 
 @Injectable({
     providedIn: "root"
@@ -25,15 +26,18 @@ export class FolderContentLoginContoler {
         this._view = view;
     }
 
-    registerUser(userName: string, password: string) {
-        if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
+    registerUser(userName: string, password: string, recoveryQuestion: string, recoveryAnswer: string) {
+        if(!this.validateRegisterFields(userName, password, recoveryQuestion, recoveryAnswer)) return;
         this._view.isLoading = true;
-        this.authenticationService.registerUser(userName, password, this.onError.bind(this)).subscribe(
+        this.authenticationService.registerUser(userName, password, recoveryQuestion, recoveryAnswer,  this.onError.bind(this)).subscribe(
             registered => {
             this._view.isLoading = false;
             this._view.userNameMessage = "";
             this._view.passwordMessage = "";
             this._view.showMessage("Successfully Registered", MessageBoxType.Information, MessageBoxButton.Ok, "Register", () => { });    
+            this._view.loginTab = LoginTabs.login;
+            this._view.usernameInputText = userName;
+            this._view.passwordInputText = password;
             }
                 ,
             error => {
@@ -46,7 +50,7 @@ export class FolderContentLoginContoler {
     }
 
     login(userName: string, password: string) {
-        if(!this.validateEmptyUserNameAndPassword(userName, password)) return;
+        if(!this.validateLoginFields(userName, password)) return;
 
         this.saveUserNameAndPassword(userName, password);
         this._view.isLoading = true;
@@ -114,7 +118,7 @@ export class FolderContentLoginContoler {
         this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { })
     }
 
-    private validateEmptyUserNameAndPassword(userName: string, password: string) : boolean{
+    private validateLoginFields(userName: string, password: string) : boolean{
         let valid = true;
         if(userName === null || userName ===undefined || userName.length === 0){
             this._view.userNameMessage = "User name connot be empty"
@@ -129,6 +133,40 @@ export class FolderContentLoginContoler {
         }
         else{
             this._view.passwordMessage = "";
+        }
+
+        return valid;
+    }
+
+    private validateRegisterFields(userName: string, password: string, recoveryQuestion: string, recoveryAnswer) : boolean{
+        let valid = true;
+        if(userName === null || userName ===undefined || userName.length === 0){
+            this._view.registerUserNameMessage = "User name connot be empty"
+            valid = false;
+        }
+        else{
+            this._view.registerUserNameMessage = "";
+        }
+        if(password === null || password ===undefined || password.length === 0){
+            this._view.registerPasswordMessage = "Password connot be empty"
+            valid = false;
+        }
+        else{
+            this._view.registerPasswordMessage = "";
+        }
+        if(recoveryQuestion === null || recoveryQuestion ===undefined || recoveryQuestion.length === 0){
+            this._view.registerRecoveryQuestionMessage = "Recovery question connot be empty"
+            valid = false;
+        }
+        else{
+            this._view.registerRecoveryQuestionMessage = "";
+        }
+        if(recoveryAnswer === null || recoveryAnswer ===undefined || recoveryAnswer.length === 0){
+            this._view.registerRecoveryAnswerMessage = "Recovery answer connot be empty"
+            valid = false;
+        }
+        else{
+            this._view.registerRecoveryAnswerMessage = "";
         }
 
         return valid;
