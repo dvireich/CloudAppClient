@@ -10,7 +10,6 @@ import { NavagationBar } from './nav-bar.component/nav-bar.component';
 import { Loader } from './loader.component/loader.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-level-contex-menu.module';
-
 @NgModule({
   imports: [
     CommonModule,

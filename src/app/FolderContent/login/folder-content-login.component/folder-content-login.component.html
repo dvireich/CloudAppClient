@@ -4,10 +4,12 @@
             <div id="login-row">
                 <div id="login-column" class="col-md-6 center">
                     <div class="login-box col-md-12">
-                            <ul class="nav nav-tabs nav-justified">
-                                    <li role="presentation" [ngClass]="loginTabStyles"><a [ngClass]="loginTabStyles" (click)="changeToLoginForm()">Login</a></li>
-                                    <li role="presentation" [ngClass]="registerTabStyles"><a [ngClass]="registerTabStyles" (click)="changeToRegisterForm()">Register</a></li>
-                                  </ul>
+                         <ul class="nav nav-tabs nav-justified">
+                                <li role="presentation" [ngClass]="loginTabStyles"><a [ngClass]="loginTabStyles" (click)="changeToLoginForm()">Login</a></li>
+                                <li role="presentation" [ngClass]="registerTabStyles"><a [ngClass]="registerTabStyles" (click)="changeToRegisterForm()">Register</a></li>
+                         </ul>
+
+
                         <form id="login-form" class="form" [hidden] ='!showLoginForm'>
                             <h3 class="text-center text-info">D-Drive Login</h3>
                             <div class="form-group">
@@ -21,8 +23,8 @@
                                 <span class="help-block" style="color:red">{{_passwordMessage}}</span>
                             </div>
                             <div class="form-group">
-                                <input (click)='onLoginClick(usernameInputText,passwordInputText)' type="button" class="btn btn-default btn-md buttonPossition"
-                                    value="Login">
+                                <input (click)='onLoginClick(usernameInputText,passwordInputText)' type="button" class="btn btn-default btn-md buttonPossition" value="Login">
+                                    <input type="button" name="forgot-password" (click)='onForgotPasswordClick()' id="forgot-password" class="btn btn-default btn-md buttonPossition" value="Forgot password">
                             </div>
                             <div class="form-group">
                                 <label class="text-info">
@@ -30,6 +32,8 @@
                                 </label>
                             </div>
                         </form>
+
+                        
                         <form id="register-form" class="form" [hidden] ='!showRegisterForm'>
                                 <h3 class="text-center text-info">D-Drive Register</h3>
                                 <div class="form-group">
@@ -43,8 +47,8 @@
                                             <span class="help-block" style="color:red"> {{_registerRecoveryQuestionMessage}}</span>
                                         </div>
                                         <div class="form-group">
-                                                <label for="recoveryQuestion" class="text-info">Recovery Answer:</label><br>
-                                                <input [(ngModel)]="registerRecoveryAnswerInputText" type="text" name="recoveryQuestion" id="recoveryQuestion" class="form-control" (keyup.enter)='onRegisterClick(registerUserNameInputText,registerPasswordInputText, registerRecoveryQuestionInputText, registerRecoveryAnswerInputText)'>
+                                                <label for="recoveryAnswer" class="text-info">Recovery Answer:</label><br>
+                                                <input [(ngModel)]="registerRecoveryAnswerInputText" type="text" name="recoveryAnswer" id="recoveryAnswer" class="form-control" (keyup.enter)='onRegisterClick(registerUserNameInputText,registerPasswordInputText, registerRecoveryQuestionInputText, registerRecoveryAnswerInputText)'>
                                                 <span class="help-block" style="color:red"> {{_registerRecoveryAnswerMessage}}</span>
                                             </div>
                                         <div class="form-group">
@@ -66,6 +70,7 @@
         </div>
     </div>
 </div>
+<div *ngIf="showForgotPassword"><forgot-password [userName]="usernameInputText" (cancel)="onRestorePasswordCancel($event)"></forgot-password></div>
 <div *ngIf='needToShowMessageBox'>
     <message-box [text]='messageBoxText' [buttons]='messageBoxButtons' [caption]='messageBoxCaption' [messageIcon]='messageBoxMessageType'
         (onButton1Click)="messageBoxOnButton1Click($event)" (onButton2Click)="messageBoxOnButton2Click($event)"></message-box>

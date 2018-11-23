@@ -1,6 +1,6 @@
-import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { LoginTabs } from "../folder-content-login.component/login-mode";
+import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
+import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
 
 export interface IFolderContentLoginView{
     userNameMessage: string;

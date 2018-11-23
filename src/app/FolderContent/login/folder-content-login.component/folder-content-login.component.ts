@@ -1,10 +1,10 @@
 import { Component, OnInit } from "@angular/core";
-import { FolderContentLoginContoler } from "../folder-content-login-controler/folder-content-login-controler";
-import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
-import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
-import { IFolderContentLoginView } from "../folder-content-login-controler/ifolder-content-login-view";
 import { LoginTabs } from "./login-mode";
+import { DialogResult } from "../../../Common/messagebox.component/messageboxResult";
+import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
+import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
+import { IFolderContentLoginView } from "../folder-content-login-controler/ifolder-content-login-view";
+import { FolderContentLoginContoler } from "../folder-content-login-controler/folder-content-login-controler";
 
 @Component({
     selector: 'login',
@@ -22,6 +22,7 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
     registerTabStyles: string[];
     showRegisterForm: boolean = false;
     showLoginForm: boolean = true;
+    showForgotPassword: boolean = false;
 
     private _loginTab: LoginTabs;
     public get loginTab(): LoginTabs {
@@ -201,6 +202,19 @@ export class FolderContentLogin implements IFolderContentLoginView, OnInit {
 
     changeToRegisterForm(){
         this.loginTab = LoginTabs.register;
+    }
+
+    onRestorePasswordCancel(){
+        this.showForgotPassword = false;
+    }
+
+    onForgotPasswordClick(){
+        if(this.usernameInputText === null || this.usernameInputText === undefined || this.usernameInputText.length === 0){
+            this._userNameMessage = "User name cant be empty"
+            return;
+        } 
+        this._userNameMessage = "";
+        this.showForgotPassword = true;
     }
 
 

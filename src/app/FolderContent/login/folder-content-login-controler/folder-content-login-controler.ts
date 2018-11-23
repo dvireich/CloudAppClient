@@ -2,13 +2,13 @@
 import { Injectable } from "@angular/core";
 import { IFolderContentLoginView } from "./ifolder-content-login-view";
 import { Router } from "@angular/router";
-import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
 import { catchError } from "rxjs/operators";
 import { Observable, of  } from "rxjs";
-import { AuthenticationService } from "../authentication-service/authentication-service";
-import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 import { LoginTabs } from "../folder-content-login.component/login-mode";
+import { AuthenticationService } from "../../authentication-service/authentication-service";
+import { FolderContnentService } from "../../Folder-content-service/folder-content-service";
+import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
+import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
 
 @Injectable({
     providedIn: "root"

@@ -8,8 +8,8 @@ import { Observable, throwError } from 'rxjs';
   providedIn: "root"
 })
 export class AuthenticationService {
-  //private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
-  private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
+  private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
+  //private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
 
   constructor(private http: HttpClient) {
   }
@@ -21,6 +21,16 @@ export class AuthenticationService {
   login(userName: string, password: string, onError: (message: string) => void) {
     let authenticateUrl = `${this.folderContentAuthenticationUrl}/Authenticate/username=${userName}&password=${password}`;
     return this.http.get<string>(authenticateUrl).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+  }
+
+  getSecurityQuestion(userName: string) : Observable<string>{
+    let securityQuestionUrl = `${this.folderContentAuthenticationUrl}/Authenticate/SecurityQuestion/username=${userName}`;
+    return this.http.get<string>(securityQuestionUrl).pipe(catchError(this.handleError));
+  }
+
+  restorePassword(userName: string, securityAnswer: string){
+    let restorePasswordUrl = `${this.folderContentAuthenticationUrl}/Authenticate/RestorePassword/username=${userName}&securityAnswer=${securityAnswer}`;
+    return this.http.get<string>(restorePasswordUrl).pipe(catchError(this.handleError));
   }
 
   deleteFromLocalStorageUserNameAndPassword() {
@@ -44,6 +54,7 @@ export class AuthenticationService {
   }
 
   private handleError(err: HttpErrorResponse) {
+    console.log(err);
     let errorMessage = '';
     if (err.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
@@ -54,7 +65,7 @@ export class AuthenticationService {
       var parser = new xml2js.Parser();
       parser.parseString(err.error, (error, result) => {
         if (error) {
-          errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+          errorMessage = err.error;
         } else {
           errorMessage = result['string']['_'];
         }
