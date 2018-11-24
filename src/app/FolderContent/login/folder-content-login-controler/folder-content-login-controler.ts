@@ -63,7 +63,7 @@ export class FolderContentLoginContoler {
                 this._view.userNameMessage = "";
                 this._view.passwordMessage = "";
                 this._view.isLoading = false;
-                if(onLoginFail !== null || onLoginFail !== undefined){
+                if(onLoginFail !== null && onLoginFail !== undefined){
                     onLoginFail();
                 }
                 else{

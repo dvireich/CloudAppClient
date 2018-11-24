@@ -455,6 +455,7 @@ export class FolderContnentService {
   }
 
   private handleError(err: HttpErrorResponse) {
+    console.log(err);
     let errorMessage = '';
     if (err.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.
@@ -477,6 +478,7 @@ export class FolderContnentService {
 
   private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
     return (err: HttpErrorResponse) => {
+      console.log(err);
       let errorMessage = '';
       if (err.error instanceof ErrorEvent) {
         // A client-side or network error occurred. Handle it accordingly.
