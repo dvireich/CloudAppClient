@@ -24,7 +24,7 @@
                             </div>
                             <div class="form-group">
                                 <input (click)='onLoginClick(usernameInputText,passwordInputText)' type="button" class="btn btn-default btn-md buttonPossition" value="Login">
-                                    <input type="button" name="forgot-password" (click)='onForgotPasswordClick()' id="forgot-password" class="btn btn-default btn-md buttonPossition" value="Forgot password">
+                                    <input type="button" name="forgot-password" (click)='onForgotPasswordClick()' id="forgot-password" class="btn btn-default btn-md buttonPossition" value="Forgot password ?">
                             </div>
                             <div class="form-group">
                                 <label class="text-info">
@@ -42,12 +42,12 @@
                                         <span class="help-block" style="color:red"> {{_registerUserNameMessage}}</span>
                                     </div>
                                     <div class="form-group">
-                                            <label for="recoveryQuestion" class="text-info">Recovery Question:</label><br>
+                                            <label for="recoveryQuestion" class="text-info">Security Question:</label><br>
                                             <input [(ngModel)]="registerRecoveryQuestionInputText" type="text" name="recoveryQuestion" id="recoveryQuestion" class="form-control" (keyup.enter)='onRegisterClick(registerUserNameInputText,registerPasswordInputText, registerRecoveryQuestionInputText, registerRecoveryAnswerInputText)'>
                                             <span class="help-block" style="color:red"> {{_registerRecoveryQuestionMessage}}</span>
                                         </div>
                                         <div class="form-group">
-                                                <label for="recoveryAnswer" class="text-info">Recovery Answer:</label><br>
+                                                <label for="recoveryAnswer" class="text-info">Security Answer:</label><br>
                                                 <input [(ngModel)]="registerRecoveryAnswerInputText" type="text" name="recoveryAnswer" id="recoveryAnswer" class="form-control" (keyup.enter)='onRegisterClick(registerUserNameInputText,registerPasswordInputText, registerRecoveryQuestionInputText, registerRecoveryAnswerInputText)'>
                                                 <span class="help-block" style="color:red"> {{_registerRecoveryAnswerMessage}}</span>
                                             </div>

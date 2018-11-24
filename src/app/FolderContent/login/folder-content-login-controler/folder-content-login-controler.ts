@@ -49,7 +49,7 @@ export class FolderContentLoginContoler {
         )
     }
 
-    login(userName: string, password: string) {
+    login(userName: string, password: string, onLoginFail: ()=>void = null) {
         if(!this.validateLoginFields(userName, password)) return;
 
         this.saveUserNameAndPassword(userName, password);
@@ -63,7 +63,12 @@ export class FolderContentLoginContoler {
                 this._view.userNameMessage = "";
                 this._view.passwordMessage = "";
                 this._view.isLoading = false;
-                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { });
+                if(onLoginFail !== null || onLoginFail !== undefined){
+                    onLoginFail();
+                }
+                else{
+                    this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Login", () => { });
+                }
             }
         )
     }
@@ -94,7 +99,11 @@ export class FolderContentLoginContoler {
             }
         };
         
-        this.login(userName, password);
+        this.login(userName, password, ()=>{
+            this.authenticationService.deleteFromLocalStorageUserNameAndPassword();
+            this.authenticationService.deleteFromSessionStorageUserNameAndPassword();
+            this._view.needToShowComponent = true;
+        });
         return true;
     }
 
@@ -140,29 +149,29 @@ export class FolderContentLoginContoler {
 
     private validateRegisterFields(userName: string, password: string, recoveryQuestion: string, recoveryAnswer) : boolean{
         let valid = true;
-        if(userName === null || userName ===undefined || userName.length === 0){
-            this._view.registerUserNameMessage = "User name connot be empty"
+        if(this.isNullOrUndefind(userName) || this.isEmptyOrWhitespace(userName)){
+            this._view.registerUserNameMessage = "User name connot be empty or whitespace"
             valid = false;
         }
         else{
             this._view.registerUserNameMessage = "";
         }
-        if(password === null || password ===undefined || password.length === 0){
-            this._view.registerPasswordMessage = "Password connot be empty"
+        if(this.isNullOrUndefind(password) || this.isEmptyOrWhitespace(password)){
+            this._view.registerPasswordMessage = "Password connot be empty or whitespace"
             valid = false;
         }
         else{
             this._view.registerPasswordMessage = "";
         }
-        if(recoveryQuestion === null || recoveryQuestion ===undefined || recoveryQuestion.length === 0){
-            this._view.registerRecoveryQuestionMessage = "Recovery question connot be empty"
+        if(this.isNullOrUndefind(recoveryQuestion) || this.isEmptyOrWhitespace(recoveryQuestion)){
+            this._view.registerRecoveryQuestionMessage = "Recovery question connot be empty or whitespace"
             valid = false;
         }
         else{
             this._view.registerRecoveryQuestionMessage = "";
         }
-        if(recoveryAnswer === null || recoveryAnswer ===undefined || recoveryAnswer.length === 0){
-            this._view.registerRecoveryAnswerMessage = "Recovery answer connot be empty"
+        if(this.isNullOrUndefind(recoveryAnswer) || this.isEmptyOrWhitespace(recoveryAnswer)){
+            this._view.registerRecoveryAnswerMessage = "Recovery answer connot be empty or whitespace"
             valid = false;
         }
         else{
@@ -170,6 +179,14 @@ export class FolderContentLoginContoler {
         }
 
         return valid;
+    }
+
+    private isNullOrUndefind(str: string): boolean{
+        return str === undefined || str === null;
+    }
+
+    private isEmptyOrWhitespace(str: string){
+        return (str.length === 0 || !str.trim());
     }
 
     private isMobileDevice() : boolean {
