@@ -77,6 +77,7 @@ export class AuthenticationService {
 
   private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
     return (err: HttpErrorResponse) => {
+      console.log(err);
       let errorMessage = '';
       if (err.error instanceof ErrorEvent) {
         // A client-side or network error occurred. Handle it accordingly.
