@@ -30,7 +30,7 @@
                                         <div class="col-md-10 col-xs-8 col-sm-8 col-lg-10 noSpaceToLeft" style="margin:0; height:100%; min-height: 100%">
                                                 <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
                                                         
-                                                        <select [(ngModel)]='numberOfElementsOnPage' id="numberOfElementsOnPage" (change)="onNumberOfElementsOnPageChange(numberOfElementsOnPage)" style="margin-left: 50%">
+                                                        <select [(ngModel)]='numberOfElementsOnPage' id="numberOfElementsOnPage" (change)="onNumberOfElementsOnPageChange(numberOfElementsOnPage)" style="left: 50%; position: fixed">
                                                            <option *ngFor='let numOfElementOnPageOption of numberOfElementsOnPageOptions' [ngValue]="numOfElementOnPageOption" [selected]='numberOfElementsOnPage === numOfElementOnPageOption'>{{numOfElementOnPageOption}}</option>
                                                         </select>
 

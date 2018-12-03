@@ -8,11 +8,9 @@
 }
 
 .bottomCenterPossition{
-    position: absolute;
+    position: fixed;
     bottom: 0; 
-    margin: 0;
     left: 50%;
-    margin-right: -50%;
 }
 
 .infoPanel{

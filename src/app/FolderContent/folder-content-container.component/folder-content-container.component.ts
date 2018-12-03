@@ -547,6 +547,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     onNumberOfElementsOnPageChange(numElementOnPage){
+        this.currentPage = 1;
         this.controler.updateCurrentFolderMetadata(this.currentSortType, numElementOnPage)
     }
 }
