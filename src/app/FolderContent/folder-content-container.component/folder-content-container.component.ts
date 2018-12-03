@@ -95,6 +95,12 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
     navBarPathBreakClick: (fullPath: string) => void = this.navBarOnPathBreakClick;
 
+    //Number of elements per page
+    numberOfElementsOnPage: number;
+    numberOfElementsOnPageOptions: number[];
+
+    //sortType
+    currentSortType: sortType;
     //loader
     private _loading: boolean;
     public set loading(value: boolean) {
@@ -148,10 +154,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             this.router.navigate(['login']);
             return;
         }
-        // window.onbeforeunload = ()=>{
-        //     this.controler.logout();
-        // }
         this.controler.restoreState();
+        this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
     }
 
     onDeleteContexMenuClick() {
@@ -208,19 +212,19 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     onSortByNameContexMenuClick(){
-        this.controler.updateCurrentFolderMetadata(sortType.name);
+        this.controler.updateCurrentFolderMetadata(sortType.name, this.numberOfElementsOnPage);
     }
 
     onSortByCreationDateContexMenuClick(){
-        this.controler.updateCurrentFolderMetadata(sortType.dateCreated);
+        this.controler.updateCurrentFolderMetadata(sortType.dateCreated,this.numberOfElementsOnPage);
     }
 
     onSortByModificationDateContexMenuClick(){
-        this.controler.updateCurrentFolderMetadata(sortType.dateModified);
+        this.controler.updateCurrentFolderMetadata(sortType.dateModified, this.numberOfElementsOnPage);
     }
 
     onSortByTypeContexMenuClick(){
-        this.controler.updateCurrentFolderMetadata(sortType.type);
+        this.controler.updateCurrentFolderMetadata(sortType.type, this.numberOfElementsOnPage);
     }
 
     showContexMenuOnCoordinates(coordinates: IContexMenuCoordinates) {
@@ -536,5 +540,13 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     onSearchClear(){
         this.controler.updateFolderContent('home', '', 1);
+    }
+
+    getNumberOfelementOnPageOptions(): number[]{
+        return [20, 50, 100, 200];
+    }
+
+    onNumberOfElementsOnPageChange(numElementOnPage){
+        this.controler.updateCurrentFolderMetadata(this.currentSortType, numElementOnPage)
     }
 }

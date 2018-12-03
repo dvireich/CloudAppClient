@@ -36,8 +36,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    //this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -285,9 +285,33 @@ export class FolderContnentService {
       catchError(this.handleError))
   }
 
-  updateFolderMetadata(name: string, path: string, sortType: sortType){
+  GetNumberOfElementsOnPage(name: string, path: string) {
+    let numberOfElementsPerPageUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfElementsOnPage`;
+
+    return this.http.post(numberOfElementsPerPageUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+      map(xml => {
+        let numberOfElementsPerPage: number = 0;
+        let parser = new xml2js.Parser();
+        parser.parseString(xml, (error, result) => {
+          if (error) {
+            this.handleError(error);
+
+          } else {
+            numberOfElementsPerPage = +result['int']['_'];
+          }
+        });
+        return numberOfElementsPerPage;
+      }),
+      catchError(this.handleError))
+  }
+
+  updateFolderMetadata(name: string, path: string, sortType: sortType, numOfElementOnPage: number){
     let updateFolderMetadataUrl =  `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
-    return this.http.post(updateFolderMetadataUrl, { Name: name, Path: path, SortType: sortType }).pipe(
+    return this.http.post(updateFolderMetadataUrl, 
+      { Name: name, 
+        Path: path, 
+        SortType: sortType, 
+        NumberOfPagesPerPage: numOfElementOnPage}).pipe(
       catchError(this.handleError)
     );
   }

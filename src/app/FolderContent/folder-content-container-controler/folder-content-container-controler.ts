@@ -44,17 +44,27 @@ export class FolderContentContainerControler {
         this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
         this.folderContentService.GetSortForFolder(folderName, folderPath).subscribe(
             sortType => {
-                this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
-                    folder => {
-                        this.sortFolderContent(sortType, folder);
-                        this._view.listOfFileFolderNames = folder;
-                        this._view.navBarPath = this.getCurrentPath();
-                        this._view.loading = false;
+                this._view.currentSortType = sortType;
+                this.folderContentService.GetNumberOfElementsOnPage(folderName, folderPath).subscribe(
+                    numberOfElementOnPage => {
+                        this._view.numberOfElementsOnPage = numberOfElementOnPage;
+                        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
+                            folder => {
+                                this.sortFolderContent(sortType, folder);
+                                this._view.listOfFileFolderNames = folder;
+                                this._view.navBarPath = this.getCurrentPath();
+                                this._view.loading = false;
+                            },
+                            error => {
+                                this._view.loading = false;
+                                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update folder content", () => { })
+                            });
                     },
-                    error => {
+                    error =>{
                         this._view.loading = false;
-                        this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update folder content", () => { })
-                    });
+                                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get number of elements on page", () => { })
+                    }
+                )
             },
             error => {
                 this._view.loading = false;
@@ -63,10 +73,10 @@ export class FolderContentContainerControler {
         )
     }
 
-    public updateCurrentFolderMetadata(sortType: sortType) {
+    public updateCurrentFolderMetadata(sortType: sortType, numOfElementOnPage: number) {
         this._view.loading = true;
         let currentFolder = this.getCurrentFolder();
-        this.folderContentService.updateFolderMetadata(currentFolder.Name, currentFolder.Path, sortType).subscribe(
+        this.folderContentService.updateFolderMetadata(currentFolder.Name, currentFolder.Path, sortType, numOfElementOnPage).subscribe(
             success => {
                 this.updateFolderContentWithCurrentPage();
             },
