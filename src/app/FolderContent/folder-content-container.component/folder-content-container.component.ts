@@ -543,11 +543,20 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     getNumberOfelementOnPageOptions(): number[]{
+        if(this.controler.isSearchResult()){
+            this.numberOfElementsOnPage = 20;
+            return [20];
+        }
+        console.log("Not Is search resutls");
         return [20, 50, 100, 200];
     }
 
     onNumberOfElementsOnPageChange(numElementOnPage){
         this.currentPage = 1;
         this.controler.updateCurrentFolderMetadata(this.currentSortType, numElementOnPage)
+    }
+
+    updateNumberOfElementsOnPageOptions(){
+        this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
     }
 }

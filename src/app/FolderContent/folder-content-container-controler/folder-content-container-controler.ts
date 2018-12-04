@@ -53,6 +53,7 @@ export class FolderContentContainerControler {
                                 this.sortFolderContent(sortType, folder);
                                 this._view.listOfFileFolderNames = folder;
                                 this._view.navBarPath = this.getCurrentPath();
+                                this._view.updateNumberOfElementsOnPageOptions();
                                 this._view.loading = false;
                             },
                             error => {
@@ -93,6 +94,7 @@ export class FolderContentContainerControler {
                 this.folderContentService.UpdateNumberOfPagesForFolder("search", name);
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for:${name}`;
+                this._view.updateNumberOfElementsOnPageOptions();
                 this._view.loading = false;
             }
         );
