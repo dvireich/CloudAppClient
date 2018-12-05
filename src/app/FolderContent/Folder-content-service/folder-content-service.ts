@@ -36,8 +36,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    //this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -240,10 +240,10 @@ export class FolderContnentService {
     this.authenticationService.deleteFromSessionStorageUserNameAndPassword();
   }
 
-  UpdateNumberOfPagesForFolder(name: string, path: string): void {
+  UpdateNumberOfPagesForFolder(name: string, path: string, searchMode: boolean): void {
     let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfPages`;
 
-    this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+    this.http.post(numberOfPagesUrl, { Name: name, Path: path, SearchMode: searchMode }, { responseType: 'text' }).pipe(
       map(xml => {
         let numberOfPages = 1;
         let parser = new xml2js.Parser();
@@ -285,10 +285,10 @@ export class FolderContnentService {
       catchError(this.handleError))
   }
 
-  GetNumberOfElementsOnPage(name: string, path: string) {
+  GetNumberOfElementsOnPage(name: string, path: string, searchMode : boolean) {
     let numberOfElementsPerPageUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfElementsOnPage`;
 
-    return this.http.post(numberOfElementsPerPageUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
+    return this.http.post(numberOfElementsPerPageUrl, { Name: name, Path: path, SearchMode: searchMode }, { responseType: 'text' }).pipe(
       map(xml => {
         let numberOfElementsPerPage: number = 0;
         let parser = new xml2js.Parser();

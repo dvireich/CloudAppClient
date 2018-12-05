@@ -547,7 +547,6 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             this.numberOfElementsOnPage = 20;
             return [20];
         }
-        console.log("Not Is search resutls");
         return [20, 50, 100, 200];
     }
 

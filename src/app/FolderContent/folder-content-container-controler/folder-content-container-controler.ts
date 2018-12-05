@@ -41,37 +41,67 @@ export class FolderContentContainerControler {
 
     public updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
         this._view.loading = true;
-        this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath);
+        let cancelLoading = ()=> {this._view.loading = false;};
+        this.UpdateSortForFolder(folderName, folderPath, pageNum,
+            () => {
+                this.updateFolder(folderName, folderPath, pageNum, this._view.currentSortType,
+                    () => {
+                        this.UpdateNumberOfElementsOnPage(folderName, folderPath, pageNum, cancelLoading, cancelLoading)
+                    },
+                    cancelLoading)
+            },
+            cancelLoading)
+    }
+
+    private UpdateSortForFolder(folderName: string, folderPath: string, pageNum: number, onSuccess: () => void, onError: () => void): void {
         this.folderContentService.GetSortForFolder(folderName, folderPath).subscribe(
             sortType => {
                 this._view.currentSortType = sortType;
-                this.folderContentService.GetNumberOfElementsOnPage(folderName, folderPath).subscribe(
-                    numberOfElementOnPage => {
-                        this._view.numberOfElementsOnPage = numberOfElementOnPage;
-                        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
-                            folder => {
-                                this.sortFolderContent(sortType, folder);
-                                this._view.listOfFileFolderNames = folder;
-                                this._view.navBarPath = this.getCurrentPath();
-                                this._view.updateNumberOfElementsOnPageOptions();
-                                this._view.loading = false;
-                            },
-                            error => {
-                                this._view.loading = false;
-                                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update folder content", () => { })
-                            });
-                    },
-                    error =>{
-                        this._view.loading = false;
-                                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get number of elements on page", () => { })
-                    }
-                )
+                if (onSuccess !== null && onSuccess != undefined) {
+                    onSuccess();
+                }
             },
             error => {
-                this._view.loading = false;
+                if (onError !== null && onError != undefined) {
+                    onError();
+                }
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get sort type", () => { })
-            }
-        )
+            });
+    }
+
+    private UpdateNumberOfElementsOnPage(folderName: string, folderPath: string, pageNum: number, onSuccess: () => void, onError: () => void): void {
+        this.folderContentService.GetNumberOfElementsOnPage(folderName, folderPath, this.isSearchResult()).subscribe(
+            numberOfElementOnPage => {
+                this._view.numberOfElementsOnPage = numberOfElementOnPage;
+                if (onSuccess !== null && onSuccess != undefined) {
+                    onSuccess();
+                }
+            },
+            error => {
+                if (onError !== null && onError != undefined) {
+                    onError();
+                }
+                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get number of elements on page", () => { })
+            });
+    }
+
+    private updateFolder(folderName: string, folderPath: string, pageNum: number, sortType: sortType, onSuccess: () => void, onError: () => void): void {
+        this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
+            folder => {
+                this.sortFolderContent(sortType, folder);
+                this._view.listOfFileFolderNames = folder;
+                this._view.navBarPath = this.getCurrentPath();
+                this._view.updateNumberOfElementsOnPageOptions();
+                if (onSuccess !== null && onSuccess != undefined) {
+                    onSuccess();
+                }
+            },
+            error => {
+                if (onError !== null && onError != undefined) {
+                    onError();
+                }
+                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update folder content", () => { })
+            });
     }
 
     public updateCurrentFolderMetadata(sortType: sortType, numOfElementOnPage: number) {
@@ -91,7 +121,7 @@ export class FolderContentContainerControler {
         this._view.loading = true;
         this.folderContentService.search(name, page).subscribe(
             folder => {
-                this.folderContentService.UpdateNumberOfPagesForFolder("search", name);
+                this.folderContentService.UpdateNumberOfPagesForFolder(name, '', true);
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for:${name}`;
                 this._view.updateNumberOfElementsOnPageOptions();
