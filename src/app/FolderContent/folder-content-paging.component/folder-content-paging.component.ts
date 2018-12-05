@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { FolderContnentService } from "../services/Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../services/folder-content-service/folder-content-service";
 
 
 @Component({

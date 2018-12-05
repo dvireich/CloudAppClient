@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from "@angular/core";
 import { Router, NavigationStart } from "@angular/router";
 import { IUploadData } from "../../Model/IUploadData";
-import { FolderContnentService } from "../../services/Folder-content-service/folder-content-service";
 import { FolderContentStateService } from "../../services/folder-content-state-service/folder-content-state-service";
 import { UploadContainerState } from "../../services/folder-content-state-service/upload-container-state";
+import { FolderContnentService } from "../../services/folder-content-service/folder-content-service";
 
 
 

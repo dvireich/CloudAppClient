@@ -8,7 +8,7 @@ import { LoginTabs } from "../folder-content-login.component/login-mode";
 import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
 import { AuthenticationService } from "../../services/authentication-service/authentication-service";
-import { FolderContnentService } from "../../services/Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../../services/folder-content-service/folder-content-service";
 
 @Injectable({
     providedIn: "root"

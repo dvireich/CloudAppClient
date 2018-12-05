@@ -2,7 +2,7 @@ import { IFolderContentContainerView } from "./ifolder-content-container-view";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { catchError } from "rxjs/operators";
-import { FolderContnentService } from "../../services/Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../../services/folder-content-service/folder-content-service";
 import { FolderContentClipBoard } from "../../services/clipboard-service/folder-content-clipboard";
 import { FolderContentStateService } from "../../services/folder-content-state-service/folder-content-state-service";
 import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";

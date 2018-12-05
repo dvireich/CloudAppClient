@@ -1,4 +1,4 @@
-import { FolderContnentService } from "../../../services/Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../../../services/folder-content-service/folder-content-service";
 import { Component, Input, OnDestroy } from "@angular/core";
 import { IUploadData } from "../../../Model/IUploadData";
 
