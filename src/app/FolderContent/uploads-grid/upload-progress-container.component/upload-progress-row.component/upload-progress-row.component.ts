@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy } from "@angular/core";
 import { IUploadData } from "../../../Model/IUploadData";
-import { FolderContnentService } from "../../../Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../../../services/Folder-content-service/folder-content-service";
 
 @Component({
     selector: "upload-progress-row",

@@ -3,19 +3,18 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap, map } from 'rxjs/operators';
 import xml2js from "xml2js";
-
-import { IFolder } from "../Model/IFolder";
-import { FolderObj } from "../Model/FolderObj";
-import { FileObj } from "../Model/FileObj";
-import { folderContentType } from "../Model/folderContentType";
-import { IFolderContent } from "../Model/IFolderContent";
-import { FolderContent } from "../Model/FolderContent";
-import { IFile } from "../Model/IFile";
-import { IUploadData } from "../Model/IUploadData";
-import { UploadData } from "../Model/UploadData";
 import { FolderContentFileParserHelper } from "./folder-content-file-parser-helper";
 import { AuthenticationService } from "../authentication-service/authentication-service";
-import { sortType,} from "../Model/sortType";
+import { IUploadData } from "../../Model/IUploadData";
+import { UploadData } from "../../Model/UploadData";
+import { folderContentType } from "../../Model/folderContentType";
+import { sortType } from "../../Model/sortType";
+import { IFolder } from "../../Model/IFolder";
+import { FolderContent } from "../../Model/FolderContent";
+import { IFolderContent } from "../../Model/IFolderContent";
+import { IFile } from "../../Model/IFile";
+import { FolderObj } from "../../Model/FolderObj";
+import { FileObj } from "../../Model/FileObj";
 
 @Injectable({
   providedIn: "root"
@@ -36,8 +35,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    //this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {

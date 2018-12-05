@@ -1,9 +1,7 @@
 import { Component, ElementRef, ViewChild, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FolderContnentService } from '../Folder-content-service/folder-content-service';
 import { UploadArgs } from './upload-args';
 import { IUploadArgs } from './iupload-args';
-
 
 @Component({
   selector: 'upload-form',

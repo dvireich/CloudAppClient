@@ -5,10 +5,10 @@ import { Router } from "@angular/router";
 import { catchError } from "rxjs/operators";
 import { Observable, of  } from "rxjs";
 import { LoginTabs } from "../folder-content-login.component/login-mode";
-import { AuthenticationService } from "../../authentication-service/authentication-service";
-import { FolderContnentService } from "../../Folder-content-service/folder-content-service";
 import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
+import { AuthenticationService } from "../../services/authentication-service/authentication-service";
+import { FolderContnentService } from "../../services/Folder-content-service/folder-content-service";
 
 @Injectable({
     providedIn: "root"

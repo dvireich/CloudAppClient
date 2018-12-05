@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { IForgotPasswordView } from "./iforgot-password-view";
-import { AuthenticationService } from "../../../../authentication-service/authentication-service";
 import { MessageBoxType } from "../../../../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../../../../Common/messagebox.component/messageBoxButtons";
+import { AuthenticationService } from "../../../../services/authentication-service/authentication-service";
 
 @Injectable({
     providedIn: "root"

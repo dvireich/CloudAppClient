@@ -1,4 +1,3 @@
-import { FolderContnentService } from "../Folder-content-service/folder-content-service";
 import { IFolderContentContainerView } from "./ifolder-content-container-view";
 import { Injectable } from "@angular/core";
 import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
@@ -15,6 +14,7 @@ import { IUploadArgs } from "../upload-form.component/iupload-args";
 import { FolderContentStateService } from "../folder-content-state-service/folder-content-state-service";
 import { sortType } from "../Model/sortType";
 import { catchError } from "rxjs/operators";
+import { FolderContnentService } from "../services/Folder-content-service/folder-content-service";
 
 @Injectable({
     providedIn: "root"

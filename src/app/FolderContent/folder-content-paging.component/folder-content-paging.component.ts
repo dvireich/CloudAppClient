@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Output } from "@angular/core";
-import { FolderContnentService } from "../Folder-content-service/folder-content-service";
+import { FolderContnentService } from "../services/Folder-content-service/folder-content-service";
+
 
 @Component({
     selector: 'folder-content-paging-nav',
