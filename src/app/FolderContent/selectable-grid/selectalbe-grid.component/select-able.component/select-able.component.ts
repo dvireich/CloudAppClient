@@ -32,8 +32,8 @@ export class SelectableComponent implements AfterViewInit {
     notSelected: boolean = true;
 
     getImgSrc(): string {
-        return this.type === folderContentType.file ? "http://www.haipic.com/icon/38089/38089.png" :
-            "https://dumielauxepices.net/sites/default/files/folder-icons-transparent-613037-9176493.png"
+        return this.type === folderContentType.file ? "../../../../../api/Resources/file.png" :
+            "../../../../../api/Resources/folder.png"
     }
 
     
