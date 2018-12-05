@@ -124,7 +124,7 @@ export class FolderContentContainerControler {
             folder => {
                 this.folderContentService.UpdateNumberOfPagesForFolder(name, '', true);
                 this._view.listOfFileFolderNames = folder;
-                this._view.navBarPath = `search for:${name}`;
+                this._view.navBarPath = `search for: ${name}`;
                 this._view.updateNumberOfElementsOnPageOptions();
                 this._view.updateRefreshButtonState();
                 this._view.loading = false;
