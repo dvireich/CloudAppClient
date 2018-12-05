@@ -17,7 +17,7 @@ export interface IFolderContentContainerView{
     
 
     updateNumberOfElementsOnPageOptions: ()=>void;
-    updateRefreshButton: ()=>void;
+    updateRefreshButtonState: ()=>void;
     showMessage: (
         message: string, 
         type: MessageBoxType, 

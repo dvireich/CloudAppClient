@@ -562,7 +562,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
     }
 
-    updateRefreshButton(){
+    updateRefreshButtonState(){
         if(this.controler.isSearchResult()){
             this.disableRefresh = true;  
         }
