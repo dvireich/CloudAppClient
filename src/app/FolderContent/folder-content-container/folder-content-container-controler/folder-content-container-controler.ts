@@ -1,20 +1,21 @@
 import { IFolderContentContainerView } from "./ifolder-content-container-view";
 import { Injectable } from "@angular/core";
-import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
-import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
-import { IFolderContent } from "../Model/IFolderContent";
-import { folderContentType } from "../Model/folderContentType";
-import { FolderContentClipBoard } from "../clipboard-service/folder-content-clipboard";
-import { ClipBoardOperation } from "../clipboard-service/clip-board-operation";
-import { IFolder } from "../Model/IFolder";
 import { Observable } from "rxjs";
-import { FolderObj } from "../Model/FolderObj";
-import { IUploadArgs } from "../upload-form.component/iupload-args";
-import { sortType } from "../Model/sortType";
 import { catchError } from "rxjs/operators";
-import { FolderContnentService } from "../services/Folder-content-service/folder-content-service";
-import { FolderContentStateService } from "../services/folder-content-state-service/folder-content-state-service";
+import { FolderContnentService } from "../../services/Folder-content-service/folder-content-service";
+import { FolderContentClipBoard } from "../../services/clipboard-service/folder-content-clipboard";
+import { FolderContentStateService } from "../../services/folder-content-state-service/folder-content-state-service";
+import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
+import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
+import { sortType } from "../../Model/sortType";
+import { IFolderContent } from "../../Model/IFolderContent";
+import { IFolder } from "../../Model/IFolder";
+import { folderContentType } from "../../Model/folderContentType";
+import { FolderObj } from "../../Model/FolderObj";
+import { DialogResult } from "../../../Common/messagebox.component/messageboxResult";
+import { ClipBoardOperation } from "../../services/clipboard-service/clip-board-operation";
+import { IUploadArgs } from "../../upload-form.component/iupload-args";
+
 
 @Injectable({
     providedIn: "root"

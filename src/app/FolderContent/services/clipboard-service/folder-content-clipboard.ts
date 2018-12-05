@@ -1,6 +1,6 @@
-import { IFolderContent } from "../Model/IFolderContent";
 import { Injectable } from "@angular/core";
 import { ClipBoardOperation } from "./clip-board-operation";
+import { IFolderContent } from "../../Model/IFolderContent";
 
 @Injectable({
     providedIn: "root"

@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { FolderContentContainter } from './folder-content-container.component/folder-content-container.component';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from '../Common/common.module';
 import { SelectableGridModule } from './selectable-grid/selectable-grid.module';
@@ -10,6 +9,7 @@ import { FolderContentPropertyInfo } from './folder-content-property-info/folder
 import { FolderContentNavBarPathBreak } from './folder-content-nav-bar-path-break/folder-content-nav-bar-path-break';
 import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav-bar';
 import { LoginModule } from './login/login-module';
+import { FolderContentContainter } from './folder-content-container/folder-content-container.component/folder-content-container.component';
 
 
 @NgModule({

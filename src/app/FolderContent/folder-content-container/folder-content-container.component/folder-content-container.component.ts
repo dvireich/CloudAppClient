@@ -1,22 +1,23 @@
 import { Component, OnInit, HostListener } from "@angular/core";
-import { IFolderContent } from "../Model/IFolderContent";
-import { folderContentType } from "../Model/folderContentType";
-import { MessageBoxType } from "../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../Common/messagebox.component/messageBoxButtons";
-import { DialogResult } from "../../Common/messagebox.component/messageboxResult";
 import { NavigationStart, Router } from "@angular/router";
-import { SelectableGrid } from "../selectable-grid/selectalbe-grid.component/selectalbe-grid.component";
-import { EnterFolderArgs } from "../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
-import { IUploadArgs } from "../upload-form.component/iupload-args";
 import { FolderContentContainerControler } from "../folder-content-container-controler/folder-content-container-controler";
 import { IFolderContentContainerView } from "../folder-content-container-controler/ifolder-content-container-view";
-import { IFolder } from "../Model/IFolder";
-import { ISelecableProperties } from "../Model/ISelecableProperties";
-import { FolderContentNavBar } from "../folder-content-nav-bar/folder-content-nav-bar";
-import { IContexMentuItem } from "../../Common/multi-level-contex-menu/contex-menu.component/icontex-mentu-item";
-import { IContexMenuCoordinates } from "../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
-import { ContexMentuItem } from "../../Common/multi-level-contex-menu/contex-menu.component/contex-mentu-item";
-import { sortType } from "../Model/sortType";
+import { IFolder } from "../../Model/IFolder";
+import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
+import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
+import { sortType } from "../../Model/sortType";
+import { DialogResult } from "../../../Common/messagebox.component/messageboxResult";
+import { SelectableGrid } from "../../selectable-grid/selectalbe-grid.component/selectalbe-grid.component";
+import { FolderContentNavBar } from "../../folder-content-nav-bar/folder-content-nav-bar";
+import { ISelecableProperties } from "../../Model/ISelecableProperties";
+import { IContexMentuItem } from "../../../Common/multi-level-contex-menu/contex-menu.component/icontex-mentu-item";
+import { IContexMenuCoordinates } from "../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
+import { folderContentType } from "../../Model/folderContentType";
+import { ContexMentuItem } from "../../../Common/multi-level-contex-menu/contex-menu.component/contex-mentu-item";
+import { EnterFolderArgs } from "../../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
+import { IFolderContent } from "../../Model/IFolderContent";
+import { IUploadArgs } from "../../upload-form.component/iupload-args";
+
 
 @Component({
     selector: "folder-content-container",
