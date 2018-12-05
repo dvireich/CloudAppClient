@@ -47,6 +47,7 @@ export class FolderContentContainerControler {
                 this.updateFolder(folderName, folderPath, pageNum, this._view.currentSortType,
                     () => {
                         this.UpdateNumberOfElementsOnPage(folderName, folderPath, pageNum, cancelLoading, cancelLoading)
+                        this._view.updateRefreshButton();
                     },
                     cancelLoading)
             },
@@ -125,6 +126,7 @@ export class FolderContentContainerControler {
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for:${name}`;
                 this._view.updateNumberOfElementsOnPageOptions();
+                this._view.updateRefreshButton();
                 this._view.loading = false;
             }
         );

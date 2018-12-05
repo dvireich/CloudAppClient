@@ -72,6 +72,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     private ignoreDisableSelection: boolean;
     private ignoreOnRightClick: boolean;
     selectedProperties: ISelecableProperties = null;
+
+    //Disable refresh
+    disableRefresh: boolean = false;
     
     //folder-content-nav-bar
     private _folderContentNavBar: FolderContentNavBar;
@@ -557,5 +560,14 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     updateNumberOfElementsOnPageOptions(){
         this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
+    }
+
+    updateRefreshButton(){
+        if(this.controler.isSearchResult()){
+            this.disableRefresh = true;  
+        }
+        else{
+            this.disableRefresh = false;  
+        }
     }
 }

@@ -20,6 +20,7 @@ export class NavagationBar {
         this.checkIfNeedToDisableBackButton();
 
     } 
+    @Input() disableRefresh: boolean = false;
     @Output() PathBreakClick: EventEmitter<string> = new EventEmitter<string>();
 
     onPathBreakClick(pathBreakIndex: number) {

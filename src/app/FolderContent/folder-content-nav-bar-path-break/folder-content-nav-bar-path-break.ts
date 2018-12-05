@@ -17,6 +17,7 @@ export class FolderContentNavBarPathBreak {
         this._path = value;
         this.pathBreaks = this.breakPathIntoPathBreaks(this._path);
     }
+    @Input() DisableRefresh : boolean;
 
     @Output() PathBarClick: EventEmitter<string> = new EventEmitter<string>();
 
