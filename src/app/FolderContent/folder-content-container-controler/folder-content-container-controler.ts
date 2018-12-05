@@ -11,10 +11,10 @@ import { IFolder } from "../Model/IFolder";
 import { Observable } from "rxjs";
 import { FolderObj } from "../Model/FolderObj";
 import { IUploadArgs } from "../upload-form.component/iupload-args";
-import { FolderContentStateService } from "../folder-content-state-service/folder-content-state-service";
 import { sortType } from "../Model/sortType";
 import { catchError } from "rxjs/operators";
 import { FolderContnentService } from "../services/Folder-content-service/folder-content-service";
+import { FolderContentStateService } from "../services/folder-content-state-service/folder-content-state-service";
 
 @Injectable({
     providedIn: "root"

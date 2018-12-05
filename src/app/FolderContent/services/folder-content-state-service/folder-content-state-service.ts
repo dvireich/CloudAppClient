@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { IFolder } from "../Model/IFolder";
 import { IFolderState } from "./ifolder-state";
 import { FolderState } from "./folder-state";
 import { IUploadContainerState } from "./iupload-container-state";
+import { IFolder } from "../../Model/IFolder";
 
 @Injectable({
     providedIn: "root"
@@ -19,10 +19,11 @@ export class FolderContentStateService {
     }
 
     restoreFolderState(): IFolderState {
+        let currentPage = this.currentPage === undefined ? 1 : this.currentPage;
         if (this.currentFolder === null || this.currentFolder === undefined) {
             return new FolderState("home", "", 1);
         }
-        return new FolderState(this.currentFolder.Name, this.currentFolder.Path, this.currentPage);
+        return new FolderState(this.currentFolder.Name, this.currentFolder.Path, currentPage);
     }
 
     setUploadContainerState(uploadContainerState: IUploadContainerState) {
