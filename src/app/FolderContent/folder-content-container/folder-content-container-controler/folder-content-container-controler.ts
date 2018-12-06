@@ -48,11 +48,12 @@ export class FolderContentContainerControler {
                 this.updateFolder(folderName, folderPath, pageNum, this._view.currentSortType,
                     () => {
                         this.UpdateNumberOfElementsOnPage(folderName, folderPath, pageNum, cancelLoading, cancelLoading)
+                        this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath, this.isSearchResult());
                         this._view.updateRefreshButtonState();
                     },
-                    cancelLoading)
+                    cancelLoading);
             },
-            cancelLoading)
+            cancelLoading);
     }
 
     private UpdateSortForFolder(folderName: string, folderPath: string, pageNum: number, onSuccess: () => void, onError: () => void): void {
@@ -94,7 +95,7 @@ export class FolderContentContainerControler {
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = this.getCurrentPath();
                 this._view.updateNumberOfElementsOnPageOptions();
-                if (onSuccess !== null && onSuccess != undefined) {
+                if (onSuccess !== null && onSuccess !== undefined) {
                     onSuccess();
                 }
             },
@@ -127,6 +128,7 @@ export class FolderContentContainerControler {
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = `search for: ${name}`;
                 this._view.updateNumberOfElementsOnPageOptions();
+                this._view.numberOfElementsOnPage = 20;
                 this._view.updateRefreshButtonState();
                 this._view.loading = false;
             }

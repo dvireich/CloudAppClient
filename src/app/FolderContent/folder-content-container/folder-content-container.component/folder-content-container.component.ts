@@ -548,7 +548,6 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     getNumberOfelementOnPageOptions(): number[]{
         if(this.controler.isSearchResult()){
-            this.numberOfElementsOnPage = 20;
             return [20];
         }
         return [20, 50, 100, 200];
