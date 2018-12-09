@@ -35,8 +35,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    //this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -123,7 +123,7 @@ export class FolderContnentService {
     return this.http.get<boolean>(pingUrl);
   }
 
-  createFile(fileName: string, path: string, fileType: string, value: string, size: number, file: any, cont: () => void, onError: (message: string) => void) {
+  createFile(fileName: string, path: string, fileType: string, size: number, file: any, cont: () => void, onError: (message: string) => void) {
     return this.getReuestId().pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(
       requestId => {
         let uploadData = new UploadData(fileName, requestId, 0);

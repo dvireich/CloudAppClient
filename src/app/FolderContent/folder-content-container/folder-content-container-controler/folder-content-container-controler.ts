@@ -319,7 +319,6 @@ export class FolderContentContainerControler {
             uploadArgs.fileNameWithExtention,
             this.getCurrentPath(),
             uploadArgs.fileType,
-            uploadArgs.fileStream,
             uploadArgs.fileSize,
             uploadArgs.file,
             this.updateFolderContentWithCurrentPage.bind(this),

@@ -10,6 +10,7 @@ import { NavagationBar } from './nav-bar.component/nav-bar.component';
 import { Loader } from './loader.component/loader.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-level-contex-menu.module';
+import { DragAndDropFilesComponent } from './drag-drop.component/drag-drop.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -24,7 +25,8 @@ import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-leve
     FillPipe,
     PagingNav,
     TakePipe,
-    Loader
+    Loader,
+    DragAndDropFilesComponent
   ],
   exports: [
     MultiLevelContexMenuModule,
@@ -38,7 +40,8 @@ import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-leve
     FormsModule,
     ReactiveFormsModule,
     Loader,
-    AngularDraggableModule
+    AngularDraggableModule,
+    DragAndDropFilesComponent
   ]
 })
 export class SharedModule { }

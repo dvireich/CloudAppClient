@@ -1,4 +1,5 @@
 
+<div (dragover)="onDrag($event)" (dragleave)="onDrag($event)" (mouseup)="onDrop($event)" (mouseleave)="onDrop($event)" style="margin:0; height: 100%; min-height: 100%">
 <div class="row table" style="margin:0; height: 100%; min-height: 100%">
 
   <div class="table-row">
@@ -23,19 +24,26 @@
          <div class="table-cell body-content-outer-wrapper">
                 <div class="body-content-inner-wrapper">
                         <div class="body-content">
-                                 <div class="row" style="margin:0; height: 100%; min-height: 100%">
+                                 <div class="row" style="margin:0; height: 100%; min-height: 100%" (contextmenu)="onrightClick($event)">
                                         <div class="col-md-2 col-xs-4 col-sm-4 col-lg-2 noSpaceToLeft" style="margin:0; height:100%; min-height: 100%">
                                                 <folder-content-propery-info [selectedProperties]='selectedProperties'></folder-content-propery-info>
                                         </div>
                                             
                                         <div class="col-md-10 col-xs-8 col-sm-8 col-lg-10 noSpaceToLeft" style="margin:0; height:100%; min-height: 100%">
-                                                <div class="squareSelection scroll-area" (click)="disableSelection()" oncontextmenu="return false;" (contextmenu)="onrightClick($event)">
-                                                        
-                                                        <select [(ngModel)]='numberOfElementsOnPage' id="numberOfElementsOnPage" (change)="onNumberOfElementsOnPageChange(numberOfElementsOnPage)" style="left: 50%; position: fixed">
+                                                
+                                                <div #scrollArea class="squareSelection scroll-area" (click)="disableSelection()"  oncontextmenu="return false;"> 
+
+                                                        <select [hidden]='dragOver' [(ngModel)]='numberOfElementsOnPage' id="numberOfElementsOnPage" (change)="onNumberOfElementsOnPageChange(numberOfElementsOnPage)" style="left: 50%; position: fixed">
                                                            <option *ngFor='let numOfElementOnPageOption of numberOfElementsOnPageOptions' [ngValue]="numOfElementOnPageOption" [selected]='numberOfElementsOnPage === numOfElementOnPageOption'>{{numOfElementOnPageOption}}</option>
                                                         </select>
 
-                                                        <selectable-grid
+                                                        <div class="bottomCenterPossition" [hidden]='dragOver'>
+                                                                <folder-content-paging-nav
+                                                                (pageChange)='onPageChanged($event)'
+                                                                ></folder-content-paging-nav>
+                                                        </div>
+
+                                                        <selectable-grid [hidden]='dragOver'
                                                         [listOfFileFolderNames] = 'listOfFileFolderNames'
                                                         (RegisterInParent) = 'registerSelectableGrid($event)'
                                                         (SelectionChanged) = 'onSelectionChanged($event)'
@@ -44,20 +52,18 @@
                                                         (ShowContexMenu) = 'showContexMenuOnCoordinates($event)'
                                                         (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
                                                         </selectable-grid>
+
+                                                        <folder-content-drag-and-drop class="on-the-back" (onDropEnd)='onDrop($event)' *ngIf='dragOver'></folder-content-drag-and-drop>
                                         
                                                         <div *ngIf = 'showContexMenu'>
                                                             <multi-level-contex-menu [x] = 'contexMenuX' 
                                                                              [y] = 'contexMenuY'
                                                                              [contexMentuItems] = 'contexMenuItems'>
                                                             </multi-level-contex-menu>
-                                                        </div>
+                                                        </div>                                              
                                                     </div>
-                                                    <div class="bottomCenterPossition">
-                                                            <folder-content-paging-nav
-                                                            (pageChange)='onPageChanged($event)'
-                                                            ></folder-content-paging-nav>
-                                                    </div>
-                                        
+                                                
+
                                                     <div *ngIf ='neddToShowInputBox'>
                                                             <input-box [placeHolder] = "inputBoxPlaceHolder"
                                                                        [header] = "inputBoxHeader"
@@ -85,6 +91,7 @@
         </div>
   </div>
         
+</div>
 </div>
 <uploads-grid></uploads-grid>
 <loader *ngIf='loading'></loader>

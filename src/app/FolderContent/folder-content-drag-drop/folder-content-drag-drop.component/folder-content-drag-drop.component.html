@@ -1,0 +1,6 @@
+<drag-and-drop-files (onFilesDrop)="onDrop($event)" (onError)="onError($event)"></drag-and-drop-files>
+
+    <div *ngIf='needToShowMessageBox'>
+        <message-box [text]='messageBoxText' [buttons]='messageBoxButtons' [caption]='messageBoxCaption' [messageIcon]='messageBoxMessageType'
+            (onButton1Click)="messageBoxOnButton1Click($event)" (onButton2Click)="messageBoxOnButton2Click($event)"></message-box>
+    </div>

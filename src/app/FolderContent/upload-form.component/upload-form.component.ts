@@ -30,13 +30,11 @@ export class UploadForm {
   }
 
   onFileChange(event) {
-    let reader = new FileReader();
     if (event.target.files && event.target.files.length > 0) {
       let file = event.target.files[0];
       this.form.get('avatar').setValue({
         filename: file.name,
         filetype: file.type,
-        value: reader.result,
         size: file.size,
         file: file
       })
@@ -51,7 +49,6 @@ export class UploadForm {
     this.onSubmit.emit(new UploadArgs(
       newFileNameWithExtention,
       formModel.avatar.filetype,
-      formModel.avatar.value,
       formModel.avatar.size,
       formModel.avatar.file
     ))

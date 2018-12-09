@@ -10,6 +10,7 @@ import { FolderContentNavBarPathBreak } from './folder-content-nav-bar-path-brea
 import { FolderContentNavBar } from './folder-content-nav-bar/folder-content-nav-bar';
 import { LoginModule } from './login/login-module';
 import { FolderContentContainter } from './folder-content-container/folder-content-container.component/folder-content-container.component';
+import { FolderContentDragAndDrop } from './folder-content-drag-drop/folder-content-drag-drop.component/folder-content-drag-drop.component';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { FolderContentContainter } from './folder-content-container/folder-conte
     FolderContentPagingNav,
     FolderContentNavBarPathBreak,
     FolderContentPropertyInfo,
-    FolderContentNavBar
+    FolderContentNavBar,
+    FolderContentDragAndDrop
   ]
 })
 export class FolderContentModule { }

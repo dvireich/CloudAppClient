@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from "@angular/core";
+import { Component, OnInit, HostListener, ElementRef, ViewChild } from "@angular/core";
 import { NavigationStart, Router } from "@angular/router";
 import { FolderContentContainerControler } from "../folder-content-container-controler/folder-content-container-controler";
 import { IFolderContentContainerView } from "../folder-content-container-controler/ifolder-content-container-view";
@@ -28,9 +28,9 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     canDeactivate(): boolean {
         return confirm("Are you sure you want to leave?. If you will press ok you will be logout.")
     }
-    
+
     constructor(
-        private controler: FolderContentContainerControler, private router: Router) {
+        private controler: FolderContentContainerControler, private router: Router, private el: ElementRef) {
         controler.initializeView(this)
         router.events.subscribe(event => {
             if (event instanceof NavigationStart) {
@@ -39,6 +39,10 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         });
     }
 
+    @ViewChild('scrollArea', { read: ElementRef }) scrollAreaElement: ElementRef;
+
+    //Dran and drop
+    dragOver: boolean;
     //IFolderContentContainerView implementaion
     private _listOfFileFolderNames: IFolder;
 
@@ -76,7 +80,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     //Disable refresh
     disableRefresh: boolean = false;
-    
+
     //folder-content-nav-bar
     private _folderContentNavBar: FolderContentNavBar;
 
@@ -154,12 +158,12 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     messageBoxOnButton2Click: (result: DialogResult) => void;
 
     ngOnInit(): void {
-        if(!this.controler.canActive()){
+        if (!this.controler.canActive()) {
             this.router.navigate(['login']);
             return;
         }
         this.controler.restoreState();
-        this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
+        this.numberOfElementsOnPageOptions = this.getNumberOfelementOnPageOptions();
     }
 
     onDeleteContexMenuClick() {
@@ -215,24 +219,23 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.showContexMenu = false;
     }
 
-    onSortByNameContexMenuClick(){
+    onSortByNameContexMenuClick() {
         this.controler.updateCurrentFolderMetadata(sortType.name, this.numberOfElementsOnPage);
     }
 
-    onSortByCreationDateContexMenuClick(){
-        this.controler.updateCurrentFolderMetadata(sortType.dateCreated,this.numberOfElementsOnPage);
+    onSortByCreationDateContexMenuClick() {
+        this.controler.updateCurrentFolderMetadata(sortType.dateCreated, this.numberOfElementsOnPage);
     }
 
-    onSortByModificationDateContexMenuClick(){
+    onSortByModificationDateContexMenuClick() {
         this.controler.updateCurrentFolderMetadata(sortType.dateModified, this.numberOfElementsOnPage);
     }
 
-    onSortByTypeContexMenuClick(){
+    onSortByTypeContexMenuClick() {
         this.controler.updateCurrentFolderMetadata(sortType.type, this.numberOfElementsOnPage);
     }
 
     showContexMenuOnCoordinates(coordinates: IContexMenuCoordinates) {
-        console.log(coordinates);
         this.contexMenuX = coordinates.pageX - window.pageXOffset;
         this.contexMenuY = coordinates.pageY - window.pageYOffset;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentRClick();
@@ -241,8 +244,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     private isFolder(): boolean {
         let selected = this.getSelected();
-        if(selected === null || selected === undefined) return false;
-        
+        if (selected === null || selected === undefined) return false;
+
         return selected.Type === folderContentType.folder;
     }
 
@@ -263,8 +266,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             return;
         }
 
-        if(this.controler.isSearchResult()) return;
-    
+        if (this.controler.isSearchResult()) return;
+
         this.contexMenuX = event.pageX - window.pageXOffset;
         this.contexMenuY = event.pageY - window.pageYOffset;
         this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
@@ -314,7 +317,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         pasteToEvent.name = "Paste";
         pasteToEvent.needToshow = (() => { return (this.isFolder() && this.canPaste()); }).bind(this);
         pasteToEvent.showAllways = false;
-        pasteToEvent.styleClasses = ["glyphicon",  "glyphicon-paste"];
+        pasteToEvent.styleClasses = ["glyphicon", "glyphicon-paste"];
 
         let enterToEvent = new ContexMentuItem();
         enterToEvent.onClick = this.enterFolder.bind(this);
@@ -368,7 +371,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             addFileToEvent];
     }
 
-    createSortByContexMenu(){
+    createSortByContexMenu() {
         let sortByName = new ContexMentuItem();
         sortByName.onClick = this.onSortByNameContexMenuClick.bind(this);
         sortByName.name = "Name";
@@ -394,7 +397,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         sortByModificationDate.showAllways = true;
 
         let changeSortToEvent = new ContexMentuItem();
-        changeSortToEvent.onClick = ()=>{};
+        changeSortToEvent.onClick = () => { };
         changeSortToEvent.name = "Sort by";
         changeSortToEvent.needToshow = () => true;
         changeSortToEvent.showAllways = true;
@@ -538,36 +541,55 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.onStartAddFile();
     }
 
-    onSearchClick(nameToSearch: string){
+    onSearchClick(nameToSearch: string) {
         this.controler.search(nameToSearch, 1);
     }
 
-    onSearchClear(){
+    onSearchClear() {
         this.controler.updateFolderContent('home', '', 1);
     }
 
-    getNumberOfelementOnPageOptions(): number[]{
-        if(this.controler.isSearchResult()){
+    getNumberOfelementOnPageOptions(): number[] {
+        if (this.controler.isSearchResult()) {
             return [20];
         }
         return [20, 50, 100, 200];
     }
 
-    onNumberOfElementsOnPageChange(numElementOnPage){
+    onNumberOfElementsOnPageChange(numElementOnPage) {
         this.currentPage = 1;
         this.controler.updateCurrentFolderMetadata(this.currentSortType, numElementOnPage)
     }
 
-    updateNumberOfElementsOnPageOptions(){
-        this.numberOfElementsOnPageOptions  = this.getNumberOfelementOnPageOptions();
+    updateNumberOfElementsOnPageOptions() {
+        this.numberOfElementsOnPageOptions = this.getNumberOfelementOnPageOptions();
     }
 
-    updateRefreshButtonState(){
-        if(this.controler.isSearchResult()){
-            this.disableRefresh = true;  
+    updateRefreshButtonState() {
+        if (this.controler.isSearchResult()) {
+            this.disableRefresh = true;
         }
-        else{
-            this.disableRefresh = false;  
+        else {
+            this.disableRefresh = false;
         }
+    }
+
+    onDrop() {
+        this.dragOver = false;
+    }
+
+    onDrag(event) {
+        var rect = this.scrollAreaElement.nativeElement.getBoundingClientRect();
+        // Check the mouseEvent coordinates are outside of the rectangle
+        if (event.clientX >= rect.left && event.clientX <= rect.right &&
+            event.clientY >= rect.top && event.clientY <= rect.bottom) {
+                this.dragOver = true;
+                console.log('Inside rect');
+        }
+        else {
+            console.log('Drag is really out of area!');
+            this.dragOver = false;
+        }
+
     }
 }
