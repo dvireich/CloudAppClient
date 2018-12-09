@@ -33,6 +33,11 @@ export class DragAndDropFilesComponent {
     let files = evt.dataTransfer.files;
     let valid_files : File[] = [];
     let invalid_files : File[] = [];
+    if(files.length > 1){
+      this.onError.emit("More than one file been dragged. This is forbidden");
+      return;
+    }
+
     if(files.length > 0){
       for(let i = 0; i < files.length; i++){
         let file: File = files[i];

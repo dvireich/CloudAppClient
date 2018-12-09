@@ -588,6 +588,5 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         else {
             this.dragOver = false;
         }
-
     }
 }
