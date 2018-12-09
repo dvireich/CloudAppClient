@@ -589,4 +589,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
             this.dragOver = false;
         }
     }
+
+    onErrorDragAndDrop(message: string){
+        this.showMessage(message, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Drag and drop", ()=>{});
+    }
 }

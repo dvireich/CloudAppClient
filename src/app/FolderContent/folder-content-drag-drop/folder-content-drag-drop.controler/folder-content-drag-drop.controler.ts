@@ -18,9 +18,8 @@ export class FolderContentDragAndDropControler{
         this._view = view;
     }
 
-    addFile(file : File){
+    addFile(file : File, onError: (message: string) => void){
         let uploadArgs = new UploadArgs(file.name, file.type, file.size, file);
-        let onError = (errorMessage: string) => this._view.showMessage(errorMessage, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Drag and Drop", ()=>{});
-        this.folderContentContainerControler.addFile(uploadArgs, onError);
+        this.folderContentContainerControler.addFile(uploadArgs, onError.bind(this));
     }
 }

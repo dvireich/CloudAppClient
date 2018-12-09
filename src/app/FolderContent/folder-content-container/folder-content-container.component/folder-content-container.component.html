@@ -53,7 +53,7 @@
                                                         (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
                                                         </selectable-grid>
 
-                                                        <folder-content-drag-and-drop class="on-the-back" (onDropEnd)='onDrop($event)' *ngIf='dragOver'></folder-content-drag-and-drop>
+                                                        <folder-content-drag-and-drop class="on-the-back" (onDropEnd)='onDrop($event)' (onError)='onErrorDragAndDrop($event)' *ngIf='dragOver'></folder-content-drag-and-drop>
                                         
                                                         <div *ngIf = 'showContexMenu'>
                                                             <multi-level-contex-menu [x] = 'contexMenuX' 

@@ -16,62 +16,17 @@ export class FolderContentDragAndDrop implements IFolderContentDragAndDropView{
     }
 
     @Output() onDropEnd: EventEmitter<void> = new EventEmitter<void>();
+    @Output() onError: EventEmitter<string> = new EventEmitter<string>();
 
-    messageBoxText: string;
-    messageBoxResult: DialogResult;
-    needToShowMessageBox: boolean;
-    messageBoxCaption: string;
-    messageBoxMessageType: MessageBoxType;
-    messageBoxButtons: MessageBoxButton;
-    messageBoxOnButton1Click: (result: DialogResult) => void;
-    messageBoxOnButton2Click: (result: DialogResult) => void;
-
-    onMessageBoxClick(action: (result: DialogResult) => void, cont: () => void) {
-        let bindedAction = action.bind(this);
-        let bindedCont = cont.bind(this);
-        return (result: DialogResult) => {
-            bindedAction(result);
-            bindedCont();
-        }
-    }
-
-    onMessageBoxCancel(result: DialogResult) {
-        this.messageBoxResult = result;
-        this.needToShowMessageBox = false;
-    }
-
-    onMessageBoxOk(result: DialogResult) {
-        this.messageBoxResult = result;
-        this.needToShowMessageBox = false;
-    }
-
-    showMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: () => void = () => { }) {
-        this.messageBoxOnButton1Click = this.onMessageBoxClick(this.onMessageBoxOk, cont).bind(this);
-        this.messageBoxOnButton2Click = this.onMessageBoxClick(this.onMessageBoxCancel, cont).bind(this);
-        this.messageBoxMessageType = type;
-        this.messageBoxText = message;
-        this.messageBoxButtons = buttons;
-        this, this.messageBoxCaption = caption;
-        this.needToShowMessageBox = true;
-    }
-
-    showMessage(
-        message: string,
-        type: MessageBoxType,
-        buttons: MessageBoxButton,
-        caption: string,
-        cont: () => void) {
-        this.showMessageBox(message, type, buttons, caption, cont);
-    }
 
     onDrop(files: File[]){
         files.forEach(file => {
-            this.controler.addFile(file);
+            this.controler.addFile(file, this.onErrorHandler.bind(this));
         });
-        this.onDropEnd.emit();
     }
 
-    onError(message: string){
-        this.showMessage(message, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Drag and drop", ()=>{});
+    onErrorHandler(message: string){
+        this.onError.emit(message);
+        this.onDropEnd.emit();
     }
 }
