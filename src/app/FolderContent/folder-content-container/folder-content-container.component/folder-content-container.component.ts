@@ -584,10 +584,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         if (event.clientX >= rect.left && event.clientX <= rect.right &&
             event.clientY >= rect.top && event.clientY <= rect.bottom) {
                 this.dragOver = true;
-                console.log('Inside rect');
         }
         else {
-            console.log('Drag is really out of area!');
             this.dragOver = false;
         }
 

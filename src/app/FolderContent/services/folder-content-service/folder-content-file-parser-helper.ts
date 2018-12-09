@@ -24,7 +24,6 @@ export class FolderContentFileParserHelper{
             // callback for handling read chunk
             onReadCallback(evt.target.result, offset, ()=> {
               if (offset >= fileSize) {
-                console.log("Done reading file");
                 onFinishCallback();
                 return;
               }

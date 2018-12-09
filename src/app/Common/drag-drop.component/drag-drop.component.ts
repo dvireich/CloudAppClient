@@ -37,8 +37,6 @@ export class DragAndDropFilesComponent {
       for(let i = 0; i < files.length; i++){
         let file: File = files[i];
         let ext = file.name.split('.')[file.name.split('.').length - 1];
-        console.log(ext);
-        console.log(this.allowed_extensions.lastIndexOf(ext));
         if(this.allowed_extensions.length === 0 || this.allowed_extensions.lastIndexOf(ext) != -1){
           valid_files.push(file);
         }else{
