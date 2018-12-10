@@ -60,8 +60,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     currentSortType: sortType;
     loading: boolean;
     showContexMenu: boolean;
-    private contexMenuX: number;
-    private contexMenuY: number;
+    contexMenuX: number;
+    contexMenuY: number;
     needToShowInputBox: boolean;
     inputBoxHeader: string;
     inputBoxOkButtonName: string;
