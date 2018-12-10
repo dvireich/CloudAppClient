@@ -130,6 +130,10 @@ export class FolderContnentService {
         this.rquestIdToProgress.set(requestId, uploadData);
         this.onCreateUpload();
         let createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
+        let onUploadError = (message: string) =>{
+          onError(message);
+          this.clearUpload(requestId);
+        };
         this.http.post(createFileUrl, {
           Name: fileName,
           Path: path,
@@ -138,15 +142,13 @@ export class FolderContnentService {
           RequestId: requestId,
           Size: size,
           Sent: 0
-        }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
+        }).pipe(catchError(this.hanldeErrorWithErrorHandler(onUploadError))).subscribe(data => {
           let onUploadFinish = this.onUploadFinish(requestId, cont);
-          let onUploadError = onError;
-          let onRead = this.updateFile(requestId, fileName, path, fileType, file, onError);
+          let onRead = this.updateFile(requestId, fileName, path, fileType, file, onUploadError);
           this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
         },
           error =>{
-            onError(error);
-            this.clearUpload(requestId);
+            onUploadError(error);
           }) 
       },
       error => onError(error));

@@ -18,6 +18,7 @@ export class FolderContentDragAndDrop implements IFolderContentDragAndDropView{
     @Output() updateViewOnSuccess : EventEmitter<void> = new EventEmitter<void>();
 
     onDrop(files: File[]){
+        this.onDropEnd.emit();
         files.forEach(file => {
             this.controler.addFile(file, this.onErrorHandler.bind(this), this.onUpdateViewOnSuccess.bind(this), this.currentPath);
         });

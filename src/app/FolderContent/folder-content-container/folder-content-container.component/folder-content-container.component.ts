@@ -316,4 +316,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     showMessage( message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: () => void) {
         this.internalShowMessageBox(message, type, buttons, caption, cont);
     }
+
+    updateViewOnOperation(){
+        this.controler.updateFolderContentWithCurrentPage();
+    }
 }

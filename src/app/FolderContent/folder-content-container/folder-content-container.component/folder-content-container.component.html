@@ -58,7 +58,7 @@
                                                          (onError)='onErrorDragAndDrop($event)' 
                                                          (updateViewOnSuccess)='updateViewOnOperation($event)'
                                                          [currentPath] ='currentPath'
-                                                         *ngIf='dragOver'>
+                                                         [hidden]='!dragOver'>
                                                         </folder-content-drag-and-drop>
                                         
 
