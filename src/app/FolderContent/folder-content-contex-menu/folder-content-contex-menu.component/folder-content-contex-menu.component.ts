@@ -26,7 +26,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
     @Input() currentPath: string;
     @Input() x: number;
     @Input() y: number;
-    @Input() messageBoxResult: DialogResult;
+    
     @Input() public set contexMenuType(type: ContexMenuType) {
         if(type === ContexMenuType.folderContentContexMenu){
             this.contexMenuItems = this.getContexMentuItemsForFolderContentRClick();
@@ -275,7 +275,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
         return this.selectedFolderContentItem.Type === folderContentType.folder;
     }
 
-    showMessage(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: () => void) {
+    showMessage(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: (result: DialogResult) => void) {
         let args = new FolderContentMessageBoxArgs(message, type, buttons, caption, cont);
         this.showMessageBox.emit(args);
     }

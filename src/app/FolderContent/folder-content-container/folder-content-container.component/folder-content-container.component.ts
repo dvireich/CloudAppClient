@@ -155,21 +155,21 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.changeShowUploadBox(false);
     }
 
-    onMessageBoxClick(action: (result: DialogResult) => void, cont: () => void) {
+    onMessageBoxClick(action: (result: DialogResult) => void, cont: (result: DialogResult) => void) {
         let bindedAction = action.bind(this);
         let bindedCont = cont.bind(this);
         return (result: DialogResult) => {
             bindedAction(result);
-            bindedCont();
+            bindedCont(result);
         }
     }
 
-    onInputBoxClick(action: (input: string) => void, cont: () => void) {
+    onInputBoxClick(action: (input: string) => void, cont: (input: string) => void) {
         let bindedAction = action.bind(this);
         let bindedCont = cont.bind(this);
         return (input: string) => {
             bindedAction(input);
-            bindedCont();
+            bindedCont(input);
         }
     }
 
@@ -187,7 +187,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.internalShowMessageBox(args.message, args.type, args.buttons, args.caption, args.cont);
     }
 
-    internalShowMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: () => void = () => { }) {
+    internalShowMessageBox(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: (result: DialogResult) => void) {
 
         this.messageBoxOnButton1Click = this.onMessageBoxClick(this.onMessageBoxOk, cont).bind(this);
         this.messageBoxOnButton2Click = this.onMessageBoxClick(this.onMessageBoxCancel, cont).bind(this);
@@ -202,7 +202,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.internalShowInputBox(args.placeHolder, args.header, args.okBUttonName, args.onSubmit, args.onCancel, args.cont);
     }
 
-    private internalShowInputBox(placeHolder: string, header: string, okBUttonName: string, onSubmit: (input: string) => void, onCancel: () => void, cont: () => void) {
+    private internalShowInputBox(placeHolder: string, header: string, okBUttonName: string, onSubmit: (input: string) => void, onCancel: () => void, cont: (input: string) => void) {
         this.inputBoxPlaceHolder = placeHolder;
         this.inputBoxHeader = header;
         this.inputBoxOkButtonName = okBUttonName;
@@ -216,7 +216,7 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     onErrorUploadFile(error: string) {
-        this.internalShowMessageBox(`Error on upload file: ${error}`, MessageBoxType.Error, MessageBoxButton.Ok, "Upload File");
+        this.internalShowMessageBox(`Error on upload file: ${error}`, MessageBoxType.Error, MessageBoxButton.Ok, "Upload File", ()=>{});
     }
 
     onPageChanged(pageNum: number) {

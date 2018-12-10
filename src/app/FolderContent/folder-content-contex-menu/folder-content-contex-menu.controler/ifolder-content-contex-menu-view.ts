@@ -7,7 +7,6 @@ export interface IFolderContentContexMenuView{
     
     currentPage: number;
     currentPath: string;
-    messageBoxResult: DialogResult;
 
     showLoadingLayer: (show: boolean) => void;
     showMessage: (
@@ -15,5 +14,5 @@ export interface IFolderContentContexMenuView{
         type: MessageBoxType, 
         buttons: MessageBoxButton, 
         caption: string, 
-        cont: () => void) => void
+        cont: (reslut: DialogResult) => void) => void
 }

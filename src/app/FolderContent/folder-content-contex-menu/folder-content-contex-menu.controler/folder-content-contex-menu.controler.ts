@@ -31,8 +31,9 @@ export class FolderContentContexMenuControler{
     }
     
     public deleteFolderContent(selected: IFolderContent) {
-        this._view.showMessage("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", () => {
-            if (this._view.messageBoxResult === DialogResult.No) return;
+        this._view.showMessage("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", (result: DialogResult) => {
+            console.log(result);
+            if (result === DialogResult.No) return;
             this._view.showLoadingLayer(true);
             if (selected.Type === folderContentType.folder) {
                 this.folderContentService.deleteFolder(selected.Name, selected.Path, this._view.currentPage).subscribe(
