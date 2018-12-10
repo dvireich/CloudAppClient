@@ -7,6 +7,7 @@ import { MessageBoxButton } from "../../../Common/messagebox.component/messageBo
 export interface IFolderContentContainerView{
     listOfFileFolderNames: IFolder;
     currentPage: number;
+    currentPath: string;
     navBarPath: string;
     //Message box
     messageBoxResult: DialogResult;

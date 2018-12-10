@@ -1,5 +1,5 @@
 
-<div (dragover)="onDrag($event)" (dragleave)="onDrag($event)" (mouseup)="onDrop($event)" (mouseleave)="onDrop($event)" style="margin:0; height: 100%; min-height: 100%">
+<div (dragover)="onDrag($event)" (dragleave)="onDrag($event)" (mouseup)="onDrop()" (mouseleave)="onDrop()" style="margin:0; height: 100%; min-height: 100%">
 <div class="row table" style="margin:0; height: 100%; min-height: 100%">
 
   <div class="table-row">
@@ -53,18 +53,33 @@
                                                         (EnterFolderByDbClick) = 'dbClickEnterFolder($event)'>
                                                         </selectable-grid>
 
-                                                        <folder-content-drag-and-drop class="on-the-back" (onDropEnd)='onDrop($event)' (onError)='onErrorDragAndDrop($event)' *ngIf='dragOver'></folder-content-drag-and-drop>
+                                                        <folder-content-drag-and-drop class="on-the-back"
+                                                         (onDropEnd)='onDrop($event)' 
+                                                         (onError)='onErrorDragAndDrop($event)' 
+                                                         (updateViewOnSuccess)='updateViewOnOperation($event)'
+                                                         [currentPath] ='currentPath'
+                                                         *ngIf='dragOver'>
+                                                        </folder-content-drag-and-drop>
                                         
-                                                        <div *ngIf = 'showContexMenu'>
-                                                            <multi-level-contex-menu [x] = 'contexMenuX' 
-                                                                             [y] = 'contexMenuY'
-                                                                             [contexMentuItems] = 'contexMenuItems'>
-                                                            </multi-level-contex-menu>
-                                                        </div>                                              
+
+                                                        <folder-content-contex-menu [hidden] = '!showContexMenu'
+                                                        [x] = 'contexMenuX' 
+                                                        [y] = 'contexMenuY'
+                                                        [selectedFolderContentItem]='selectedFolderContentItem'
+                                                        [currentPage] = 'currentPage'
+                                                        [currentPath] = 'currentPath'
+                                                        [contexMenuType] = 'contexMenuType'
+                                                        (clearNavBarSearchText)='clearNavBarSearchText()'
+                                                        (showInputBox)='showInputBox($event)'
+                                                        (needToLoadingLayer)='showLoadingLayer($event)'
+                                                        (needToShowInputBox)='changeShowInputBox($event)'
+                                                        (showMessageBox)='showMessageBox($event)'
+                                                        (needToShowUploadBox)='changeShowUploadBox($event)'>
+                                                        </folder-content-contex-menu>                                             
                                                     </div>
                                                 
 
-                                                    <div *ngIf ='neddToShowInputBox'>
+                                                    <div *ngIf ='needToShowInputBox'>
                                                             <input-box [placeHolder] = "inputBoxPlaceHolder"
                                                                        [header] = "inputBoxHeader"
                                                                        [okButtonName] = "inputBoxOkButtonName"

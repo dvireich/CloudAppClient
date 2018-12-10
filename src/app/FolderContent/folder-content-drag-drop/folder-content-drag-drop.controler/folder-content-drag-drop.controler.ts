@@ -1,10 +1,7 @@
 import { FolderContnentService } from "../../services/folder-content-service/folder-content-service";
 import { IFolderContentDragAndDropView } from "./folder-content-drag-drop-view";
 import { Injectable } from "@angular/core";
-import { FolderContentContainerControler } from "../../folder-content-container/folder-content-container-controler/folder-content-container-controler";
 import { UploadArgs } from "../../upload-form.component/upload-args";
-import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
-import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
 
 @Injectable({
     providedIn: "root"
@@ -12,14 +9,21 @@ import { MessageBoxButton } from "../../../Common/messagebox.component/messageBo
 export class FolderContentDragAndDropControler{
 
     private _view: IFolderContentDragAndDropView;
-    constructor(private folderContentContainerControler: FolderContentContainerControler){}
+    constructor(private folderContentService: FolderContnentService){}
 
     public initializeView(view: IFolderContentDragAndDropView) {
         this._view = view;
     }
 
-    addFile(file : File, onError: (message: string) => void){
+    public addFile(file : File, onError: (errorMessage) => void, onSuccess: ()=> void, currentPath: string) {
         let uploadArgs = new UploadArgs(file.name, file.type, file.size, file);
-        this.folderContentContainerControler.addFile(uploadArgs, onError.bind(this));
+        this.folderContentService.createFile(
+            uploadArgs.fileNameWithExtention,
+            currentPath,
+            uploadArgs.fileType,
+            uploadArgs.fileSize,
+            uploadArgs.file,
+            onSuccess,
+            onError);
     }
 }
