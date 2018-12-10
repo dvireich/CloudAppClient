@@ -54,9 +54,9 @@
                                                         </selectable-grid>
 
                                                         <folder-content-drag-and-drop class="on-the-back"
-                                                         (onDropEnd)='onDrop($event)' 
+                                                         (onDropEnd)='onDrop()' 
                                                          (onError)='onErrorDragAndDrop($event)' 
-                                                         (updateViewOnSuccess)='updateViewOnOperation($event)'
+                                                         (updateViewOnSuccess)='updateViewOnOperation()'
                                                          [currentPath] ='currentPath'
                                                          [hidden]='!dragOver'>
                                                         </folder-content-drag-and-drop>
