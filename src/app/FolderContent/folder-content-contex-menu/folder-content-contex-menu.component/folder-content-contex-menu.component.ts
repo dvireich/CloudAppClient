@@ -21,6 +21,7 @@ import { ContexMenuType } from "../../helper-classes/contex-menu-type";
 export class FolderContentContexMenu implements IFolderContentContexMenuView {
     
     @Input() selectedFolderContentItem: IFolderContent;
+    @Input() showContexMenu: boolean;
     @Input() numberOfElementsOnPage: number;
     @Input() currentPage: number;
     @Input() currentPath: string;
