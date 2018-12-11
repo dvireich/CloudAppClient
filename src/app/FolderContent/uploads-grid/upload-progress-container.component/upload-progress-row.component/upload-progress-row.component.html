@@ -1,9 +1,9 @@
 <div class="well well-sm" style="width: 100%; margin: 0">
         <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-3 col-xs-3 col-sm-3 col-lg-3">
                         <h5 [title]="uploadData.fileName" class="p bottomCenterPossition">{{fixNameToShow(uploadData.fileName)}}</h5>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 col-xs-6 col-sm-6 col-lg-6">
                         <div class="progress">
                                 <div class="progress-bar bottomCenterPossition" role="progressbar" [attr.aria-valuenow]="uploadData.progress" aria-valuemin="0"
                                         aria-valuemax="100" [style.width]="(uploadData.progress/100)*100 + '%'">
@@ -11,7 +11,7 @@
                                 </div>
                         </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 col-xs-3 col-sm-3 col-lg-3">
                         <p class="p"><a (click)='onButtonClick()' class="btn btn-primary" role="button">{{buttonName}}</a></p>
                 </div>
         </div>
