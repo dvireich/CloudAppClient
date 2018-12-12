@@ -268,10 +268,7 @@ export class FolderContentContainerControler {
     private isVideo(filename) : boolean {
         var ext = this.getExtension(filename);
         switch (ext.toLowerCase()) {
-        case 'm4v':
-        case 'avi':
-        case 'mpg':
-        case 'mp4':
+        case 'm4v': case 'avi': case 'mp4': case 'mkv': case 'webm':case 'mov':
             return true;
         }
         return false;
