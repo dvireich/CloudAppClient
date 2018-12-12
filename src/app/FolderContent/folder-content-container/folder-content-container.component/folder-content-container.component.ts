@@ -350,7 +350,6 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     }
 
     onCloseVideo(){
-        console.log("hello");
         this.needToShowPopupVideo = false;
     }
 }
