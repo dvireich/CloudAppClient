@@ -13,6 +13,7 @@ import { Observable } from "rxjs";
 import { IFolder } from "../../Model/IFolder";
 import { IUploadArgs } from "../../upload-form.component/iupload-args";
 import { sortType } from "../../Model/sortType";
+import { VideoArgs } from "../../helper-classes/video-args";
 
 @Injectable({
     providedIn: "root"
@@ -144,7 +145,7 @@ export class FolderContentContexMenuControler{
             onError);
     }
 
-    updateFolderContentWithCurrentPage(){
+    public updateFolderContentWithCurrentPage(){
         this.folderContentContainerControler.updateFolderContentWithCurrentPage();
     }
 
@@ -181,7 +182,48 @@ export class FolderContentContexMenuControler{
         this.folderContentContainerControler.updateFolderContent(name, path, pageNum);
     }
 
-    getCurrentFolder(){
+    public getCurrentFolder(){
         return this.folderContentContainerControler.getCurrentFolder();
+    }
+
+    public openFile(selected: IFolderContent){
+        if(this.isVideo(selected.Name)){
+            this.openVideo(selected);
+        }
+    }
+
+    public canOpenFile(selected: IFolderContent){
+        return !this.isFolder(selected) && this.isVideo(selected.Name);
+    }
+    
+    public isFolder(selected: IFolderContent): boolean {
+        if (selected === null || selected === undefined) return false;
+
+        return selected.Type === folderContentType.folder;
+    }
+
+    private openVideo(selected: IFolderContent){
+        const playVideo = ((downloadUrl: string)=>{
+            let videoArgs = new VideoArgs(downloadUrl, true);
+            this._view.showPopupVideo(videoArgs);
+        }).bind(this);
+        this.folderContentService.performOnFileDonwloadLink(selected.Name, selected.Path, playVideo);
+    }
+
+    private isVideo(filename) : boolean {
+        var ext = this.getExtension(filename);
+        switch (ext.toLowerCase()) {
+        case 'm4v':
+        case 'avi':
+        case 'mpg':
+        case 'mp4':
+            return true;
+        }
+        return false;
+    }
+
+    private getExtension(filename) {
+        var parts = filename.split('.');
+        return parts[parts.length - 1];
     }
 }

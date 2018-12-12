@@ -11,12 +11,14 @@ import { SelectableGrid } from "../../selectable-grid/selectalbe-grid.component/
 import { FolderContentNavBar } from "../../folder-content-nav-bar/folder-content-nav-bar";
 import { ISelecableProperties } from "../../Model/ISelecableProperties";
 import { IContexMenuCoordinates } from "../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
-import { EnterFolderArgs } from "../../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
 import { IFolderContent } from "../../Model/IFolderContent";
 import { IUploadArgs } from "../../upload-form.component/iupload-args";
 import { FolderContentInputArgs } from "../../helper-classes/folder-content-input-box-args";
 import { FolderContentMessageBoxArgs } from "../../helper-classes/folder-content-message-box-args";
 import { ContexMenuType } from "../../helper-classes/contex-menu-type";
+import { VideoArgs } from "../../helper-classes/video-args";
+import { DoubleClickEventArgs } from "../../selectable-grid/selectalbe-grid.component/select-able.component/enterFolderArgs";
+import { folderContentType } from "../../Model/folderContentType";
 
 
 @Component({
@@ -78,6 +80,8 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
     messageBoxOnButton2Click: (result: DialogResult) => void;
     contexMenuType: ContexMenuType;
     selectedFolderContentItem: IFolderContent;
+    needToShowPopupVideo: boolean;
+    videoUrl: string;
 
     ngOnInit(): void {
         if (!this.controler.canActive()) {
@@ -120,9 +124,24 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
         this.showContexMenu = true;
     }
 
-    dbClickEnterFolder(args: EnterFolderArgs) {
+    selectableDoubleClickEvent(args: DoubleClickEventArgs) {
+        if(args.type === folderContentType.folder){
+            this.dbClickEnterFolder(args);
+        }
+        if(args.type === folderContentType.file){
+            this.dbClickOpenFile(args);
+        }
+    }
+
+    dbClickEnterFolder(args: DoubleClickEventArgs) {
         this.clearNavBarSearchText();
+        if(args === null || args === undefined) return;
         this.controler.updateFolderContent(args.Name, args.Path, 1);
+    }
+
+    dbClickOpenFile(args: DoubleClickEventArgs){
+        if(args === null || args === undefined || !this.controler.canOpenFile(args.Name, args.type)) return;
+        this.controler.openFile(args.Name, args.Path);
     }
 
     onrightClick(event: IContexMenuCoordinates) {
@@ -319,5 +338,19 @@ export class FolderContentContainter implements IFolderContentContainerView, OnI
 
     updateViewOnOperation(){
         this.controler.updateFolderContentWithCurrentPage();
+    }
+
+    changeNeedToShowVideo(show: boolean){
+        this.needToShowPopupVideo = show;
+    }
+
+    showVideo(videoArgs: VideoArgs){
+        this.videoUrl = videoArgs.videoUrl;
+        this.needToShowPopupVideo = videoArgs.showPopupVideo;
+    }
+
+    onCloseVideo(){
+        console.log("hello");
+        this.needToShowPopupVideo = false;
     }
 }

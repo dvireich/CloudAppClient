@@ -12,6 +12,7 @@ import { IFolderContentContexMenuView } from "../folder-content-contex-menu.cont
 import { FolderContentContexMenuControler } from "../folder-content-contex-menu.controler/folder-content-contex-menu.controler";
 import { DialogResult } from "../../../Common/messagebox.component/messageboxResult";
 import { ContexMenuType } from "../../helper-classes/contex-menu-type";
+import { VideoArgs } from "../../helper-classes/video-args";
 
 @Component({
     selector: 'folder-content-contex-menu',
@@ -38,6 +39,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
     }
 
     @Output() needToShowUploadBox: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() changePopupVideo: EventEmitter<VideoArgs> = new EventEmitter<VideoArgs>();
     @Output() needToShowInputBox: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() needToLoadingLayer: EventEmitter<boolean> = new EventEmitter<boolean>();
     @Output() clearNavBarSearchText: EventEmitter<void> = new EventEmitter<void>();
@@ -47,6 +49,14 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
 
     constructor(private controler: FolderContentContexMenuControler) {
         controler.initializeView(this);
+    }
+
+    showPopupVideo(VideoArgs: VideoArgs){
+        this.changePopupVideo.emit(VideoArgs);
+    }
+
+    onOpenContexMenuClick(){
+        this.controler.openFile(this.selectedFolderContentItem)
     }
 
     onDeleteContexMenuClick() {
@@ -174,21 +184,28 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
         let pasteToEvent = new ContexMentuItem();
         pasteToEvent.onClick = this.onPasteContexMenuClick.bind(this);
         pasteToEvent.name = "Paste";
-        pasteToEvent.needToshow = (() => { return (this.isFolder() && this.canPaste()); }).bind(this);
+        pasteToEvent.needToshow = this.canPasteToFolder.bind(this);
         pasteToEvent.showAllways = false;
         pasteToEvent.styleClasses = ["glyphicon", "glyphicon-paste"];
 
         let enterToEvent = new ContexMentuItem();
         enterToEvent.onClick = this.enterFolder.bind(this);
         enterToEvent.name = "Enter";
-        enterToEvent.needToshow = this.isFolder.bind(this);;
+        enterToEvent.needToshow = this.isFolderType.bind(this);;
         enterToEvent.showAllways = false;
         enterToEvent.styleClasses = ["glyphicon", "glyphicon-level-up"];
+
+        let openToEvent = new ContexMentuItem();
+        openToEvent.onClick = this.onOpenContexMenuClick.bind(this);
+        openToEvent.name = "Open";
+        openToEvent.needToshow = this.canOpenFile.bind(this);
+        openToEvent.showAllways = false;
+        openToEvent.styleClasses = ["glyphicon", "glyphicon-open-file"];
 
         let downloadToEvent = new ContexMentuItem();
         downloadToEvent.onClick = this.onDownloadFileClick.bind(this);
         downloadToEvent.name = "Download";
-        downloadToEvent.needToshow = (() => { return (!this.isFolder()); }).bind(this);
+        downloadToEvent.needToshow = this.isFileType.bind(this);
         downloadToEvent.showAllways = false;
         downloadToEvent.styleClasses = ["glyphicon", "glyphicon-cloud-download"];
 
@@ -199,6 +216,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
             cutToEvent,
             pasteToEvent,
             downloadToEvent,
+            openToEvent,
             enterToEvent];
     }
 
@@ -270,11 +288,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
         return changeSortToEvent;
     }
 
-    private isFolder(): boolean {
-        if (this.selectedFolderContentItem === null || this.selectedFolderContentItem === undefined) return false;
-
-        return this.selectedFolderContentItem.Type === folderContentType.folder;
-    }
+    
 
     showMessage(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: (result: DialogResult) => void) {
         let args = new FolderContentMessageBoxArgs(message, type, buttons, caption, cont);
@@ -283,5 +297,21 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
 
     showLoadingLayer(show: boolean){
         this.needToLoadingLayer.emit(show);
+    }
+
+    isFolderType(){
+        return this.controler.isFolder(this.selectedFolderContentItem);
+    }
+
+    isFileType(){
+        return !this.isFolderType();
+    }
+
+    canOpenFile(){
+        return this.controler.canOpenFile(this.selectedFolderContentItem);
+    }
+
+    canPasteToFolder(){
+        return this.isFolderType() && this.canPaste();
     }
 }

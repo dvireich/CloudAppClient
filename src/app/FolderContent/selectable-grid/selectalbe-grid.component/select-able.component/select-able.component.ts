@@ -1,9 +1,9 @@
 import { Component, Input, AfterViewInit, EventEmitter, Output } from "@angular/core";
 import { folderContentType } from "../../../Model/folderContentType";
-import { EnterFolderArgs } from "./enterFolderArgs";
 import { ISelecableProperties } from "../../../Model/ISelecableProperties";
 import { SelecableProperties } from "../../../Model/selecableProperties";
 import { IContexMenuCoordinates } from "../../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
+import { DoubleClickEventArgs } from "./enterFolderArgs";
 
 
 
@@ -26,7 +26,7 @@ export class SelectableComponent implements AfterViewInit {
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyParentIgnoreOnRightClick: EventEmitter<void> = new EventEmitter<void>();
     @Output() ShowContexMenu: EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
-    @Output() EnterFolderByDbClick: EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
+    @Output() DoubleClick: EventEmitter<DoubleClickEventArgs> = new EventEmitter<DoubleClickEventArgs>();
     @Output() SelectionChanged: EventEmitter<ISelecableProperties> = new EventEmitter<ISelecableProperties>();
     color: string = "LightGrey";
     notSelected: boolean = true;
@@ -61,11 +61,11 @@ export class SelectableComponent implements AfterViewInit {
     }
 
     onDbClick() {
-        if (this.type === folderContentType.file) return;
-        let args = new EnterFolderArgs();
+        let args = new DoubleClickEventArgs();
         args.Name = this.text;
         args.Path = this.path;
-        this.EnterFolderByDbClick.emit(args);
+        args.type = this.type;
+        this.DoubleClick.emit(args);
     }
 
     private select(applyIgnoreDisableSelection: boolean = true) {

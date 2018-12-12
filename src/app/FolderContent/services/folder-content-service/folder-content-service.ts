@@ -22,8 +22,8 @@ import { FileObj } from "../../Model/FileObj";
 export class FolderContnentService {
 
   constructor(
-    private http: HttpClient, 
-    private folderContentFileHelper: FolderContentFileParserHelper, 
+    private http: HttpClient,
+    private folderContentFileHelper: FolderContentFileParserHelper,
     private authenticationService: AuthenticationService) {
   }
 
@@ -35,8 +35,8 @@ export class FolderContnentService {
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    //this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -130,7 +130,7 @@ export class FolderContnentService {
         this.rquestIdToProgress.set(requestId, uploadData);
         this.onCreateUpload();
         let createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
-        let onUploadError = (message: string) =>{
+        let onUploadError = (message: string) => {
           onError(message);
           this.clearUpload(requestId);
         };
@@ -147,9 +147,9 @@ export class FolderContnentService {
           let onRead = this.updateFile(requestId, fileName, path, fileType, file, onUploadError);
           this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
         },
-          error =>{
+          error => {
             onUploadError(error);
-          }) 
+          })
       },
       error => onError(error));
   }
@@ -286,7 +286,7 @@ export class FolderContnentService {
       catchError(this.handleError))
   }
 
-  GetNumberOfElementsOnPage(name: string, path: string, searchMode : boolean) {
+  GetNumberOfElementsOnPage(name: string, path: string, searchMode: boolean) {
     let numberOfElementsPerPageUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfElementsOnPage`;
 
     return this.http.post(numberOfElementsPerPageUrl, { Name: name, Path: path, SearchMode: searchMode }, { responseType: 'text' }).pipe(
@@ -306,15 +306,17 @@ export class FolderContnentService {
       catchError(this.handleError))
   }
 
-  updateFolderMetadata(name: string, path: string, sortType: sortType, numOfElementOnPage: number){
-    let updateFolderMetadataUrl =  `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
-    return this.http.post(updateFolderMetadataUrl, 
-      { Name: name, 
-        Path: path, 
-        SortType: sortType, 
-        NumberOfPagesPerPage: numOfElementOnPage}).pipe(
-      catchError(this.handleError)
-    );
+  updateFolderMetadata(name: string, path: string, sortType: sortType, numOfElementOnPage: number) {
+    let updateFolderMetadataUrl = `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
+    return this.http.post(updateFolderMetadataUrl,
+      {
+        Name: name,
+        Path: path,
+        SortType: sortType,
+        NumberOfPagesPerPage: numOfElementOnPage
+      }).pipe(
+        catchError(this.handleError)
+      );
   }
 
   getFolder(name: string, path: string, page: number): Observable<IFolder> {
@@ -344,6 +346,10 @@ export class FolderContnentService {
   }
 
   downloadFile(name: string, path: string) {
+    this.performOnFileDonwloadLink(name, path, (downloadUrl: string) => window.open(downloadUrl))
+  }
+
+  performOnFileDonwloadLink(name: string, path: string, action: (downloadUrl: string) => void) {
     let getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFileRequestId`;
     this.http.post(getFileRequestIdUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
       map(xml => {
@@ -363,7 +369,7 @@ export class FolderContnentService {
         requestId => {
           if (requestId < 0) return;
           let downloadFileUrl = `${this.FolderContentRepositoryUrl}/GetFile/requestId="${requestId}"`;
-          window.open(downloadFileUrl);
+          action(downloadFileUrl);
         }
       )
   }

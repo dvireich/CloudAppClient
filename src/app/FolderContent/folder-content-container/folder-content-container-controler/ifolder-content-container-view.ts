@@ -3,6 +3,7 @@ import { DialogResult } from "../../../Common/messagebox.component/messageboxRes
 import { sortType } from "../../Model/sortType";
 import { MessageBoxType } from "../../../Common/messagebox.component/messageBoxType";
 import { MessageBoxButton } from "../../../Common/messagebox.component/messageBoxButtons";
+import { VideoArgs } from "../../helper-classes/video-args";
 
 export interface IFolderContentContainerView{
     listOfFileFolderNames: IFolder;
@@ -18,6 +19,7 @@ export interface IFolderContentContainerView{
     
 
     updateNumberOfElementsOnPageOptions: ()=>void;
+    showVideo: (videoArgs: VideoArgs) => void;
     updateRefreshButtonState: ()=>void;
     showMessage: (
         message: string, 

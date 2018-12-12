@@ -10,6 +10,7 @@ import { IFolder } from "../../Model/IFolder";
 import { folderContentType } from "../../Model/folderContentType";
 import { FolderObj } from "../../Model/FolderObj";
 import { IUploadArgs } from "../../upload-form.component/iupload-args";
+import { VideoArgs } from "../../helper-classes/video-args";
 
 
 @Injectable({
@@ -240,5 +241,44 @@ export class FolderContentContainerControler {
                 this._view.loading = false;
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in update", () => { })
             });
+    }
+
+    public openFile(name: string, path: string){
+        if(this.isVideo(name)){
+            this.openVideo(name, path);
+        }
+    }
+
+    public canOpenFile(name: string, type: folderContentType){
+        return !this.isFolder(type) && this.isVideo(name);
+    }
+    
+    public isFolder(type: folderContentType): boolean {
+        return type === folderContentType.folder;
+    }
+
+    private openVideo(name: string, path: string){
+        const playVideo = ((downloadUrl: string)=>{
+            let videoArgs = new VideoArgs(downloadUrl, true);
+            this._view.showVideo(videoArgs);
+        }).bind(this);
+        this.folderContentService.performOnFileDonwloadLink(name, path, playVideo);
+    }
+
+    private isVideo(filename) : boolean {
+        var ext = this.getExtension(filename);
+        switch (ext.toLowerCase()) {
+        case 'm4v':
+        case 'avi':
+        case 'mpg':
+        case 'mp4':
+            return true;
+        }
+        return false;
+    }
+
+    private getExtension(filename) {
+        var parts = filename.split('.');
+        return parts[parts.length - 1];
     }
 }

@@ -3,11 +3,11 @@ import { IFolderContent } from "../../Model/IFolderContent";
 import { SelectableComponent } from "./select-able.component/select-able.component";
 import { IFolder } from "../../Model/IFolder";
 import { ISelecableProperties } from "../../Model/ISelecableProperties";
-import { EnterFolderArgs } from "./select-able.component/enterFolderArgs";
 import { FolderObj } from "../../Model/FolderObj";
 import { folderContentType } from "../../Model/folderContentType";
 import { FileObj } from "../../Model/FileObj";
 import { IContexMenuCoordinates } from "../../../Common/multi-level-contex-menu/contex-menu.component/icontex-menu-coordinates";
+import { DoubleClickEventArgs } from "./select-able.component/enterFolderArgs";
 
 
 @Component({
@@ -35,7 +35,7 @@ export class SelectableGrid implements AfterViewInit {
     @Output() ApplyIgnoreDisableSelection: EventEmitter<void> = new EventEmitter<void>();
     @Output() ApplyParentIgnoreOnRightClick: EventEmitter<void> = new EventEmitter<void>();
     @Output() ShowContexMenu: EventEmitter<IContexMenuCoordinates> = new EventEmitter<IContexMenuCoordinates>();
-    @Output() EnterFolderByDbClick: EventEmitter<EnterFolderArgs> = new EventEmitter<EnterFolderArgs>();
+    @Output() DoubleClick: EventEmitter<DoubleClickEventArgs> = new EventEmitter<DoubleClickEventArgs>();
 
 
     private InitializeListOfListsOfNames() {
@@ -98,8 +98,8 @@ export class SelectableGrid implements AfterViewInit {
         this.ShowContexMenu.emit(contexMenuCoordinates);
     }
 
-    onEnterFolderByDbClick(args: EnterFolderArgs){
-        this.EnterFolderByDbClick.emit(args);
+    doubleClickEvent(args: DoubleClickEventArgs){
+        this.DoubleClick.emit(args);
     }
 
 }

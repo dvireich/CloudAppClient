@@ -11,12 +11,21 @@ import { Loader } from './loader.component/loader.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { MultiLevelContexMenuModule } from './multi-level-contex-menu/multi-level-contex-menu.module';
 import { DragAndDropFilesComponent } from './drag-drop.component/drag-drop.component';
+import {VgCoreModule} from 'videogular2/core';
+import {VgControlsModule} from 'videogular2/controls';
+import {VgOverlayPlayModule} from 'videogular2/overlay-play';
+import {VgBufferingModule} from 'videogular2/buffering';
+import { PopupVideo } from './popup-video.component/popup-video.component';
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    AngularDraggableModule
+    AngularDraggableModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ],
   declarations: [
     MessageBox,
@@ -26,7 +35,8 @@ import { DragAndDropFilesComponent } from './drag-drop.component/drag-drop.compo
     PagingNav,
     TakePipe,
     Loader,
-    DragAndDropFilesComponent
+    DragAndDropFilesComponent,
+    PopupVideo
   ],
   exports: [
     MultiLevelContexMenuModule,
@@ -41,7 +51,8 @@ import { DragAndDropFilesComponent } from './drag-drop.component/drag-drop.compo
     ReactiveFormsModule,
     Loader,
     AngularDraggableModule,
-    DragAndDropFilesComponent
+    DragAndDropFilesComponent,
+    PopupVideo
   ]
 })
 export class SharedModule { }
