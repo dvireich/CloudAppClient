@@ -92,7 +92,7 @@
                                                             <input-box [placeHolder] = "inputBoxPlaceHolder"
                                                                        [header] = "inputBoxHeader"
                                                                        [okButtonName] = "inputBoxOkButtonName"
-                                                                       [onCancel] = "inputBoxOnCancel.bind(this)"
+                                                                       (onCancel) = "inputBoxOnCancel()"
                                                                        (onSubmit) = "inputBoxOnSubmitEvent($event)"></input-box>
                                                     </div>
                                                     <div *ngIf = 'needToShowMessageBox'>

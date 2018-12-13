@@ -130,7 +130,7 @@ export class FolderContentContexMenuControler{
             },
             error => {
                 this._view.showLoadingLayer(false);
-                this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder", () => { });
+                this._view.showMessage(<any>error, MessageBoxType.Error, MessageBoxButton.Ok, "Error: Create new folder content", () => { });
             })
     }
 

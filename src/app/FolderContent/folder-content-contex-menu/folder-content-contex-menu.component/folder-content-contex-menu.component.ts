@@ -68,7 +68,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
     }
 
     onRenameContexMenuClick() {
-        let args = new FolderContentInputArgs("Enter the new name...", "Rename", "Rename", this.inputBoxRename(this.selectedFolderContentItem), this.inputBoxOnCancel, () => { });
+        let args = new FolderContentInputArgs("Enter the new name...", "Rename", "Rename", this.inputBoxRename(this.selectedFolderContentItem).bind(this), this.inputBoxOnCancel.bind(this), () => { });
         this.showInputBox.emit(args);
     }
 

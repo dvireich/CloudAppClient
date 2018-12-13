@@ -17,8 +17,7 @@ export class Inputbox implements AfterViewInit{
     @Input() caption: string = "Caption";
     @Input() okButtonName: string = "Ok";
     @Input() cancelButtonName: string = "Cancel";
-    @Input() onCancel: ()=>void;
-
+    @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
     @Output() onSubmit : EventEmitter<string> = new EventEmitter<string>();
 
     @ViewChild('TextInput') TextInput: ElementRef;
@@ -45,5 +44,9 @@ export class Inputbox implements AfterViewInit{
         if(this.okButtonDisabled) return;
 
         this.submit(this.inputText);
+    }
+
+    onCancelClickEvent(){
+        this.onCancel.emit();
     }
 }

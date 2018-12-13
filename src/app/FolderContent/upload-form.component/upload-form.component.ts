@@ -17,6 +17,8 @@ export class UploadForm {
   @Output() onCancel: EventEmitter<void> = new EventEmitter<void>();
   @Output() onSubmit: EventEmitter<IUploadArgs> = new EventEmitter<IUploadArgs>();
 
+  fileName:string;
+  shortFileName: string;
 
   constructor(private fb: FormBuilder) {
     this.createForm();
@@ -27,11 +29,15 @@ export class UploadForm {
       name: ['', Validators.required],
       avatar: null
     });
+    this.fileName = "No file chosen";
+    this.updateShortFileName();
   }
 
   onFileChange(event) {
     if (event.target.files && event.target.files.length > 0) {
       let file = event.target.files[0];
+      this.fileName = file.name;
+      this.updateShortFileName();
       this.form.get('avatar').setValue({
         filename: file.name,
         filetype: file.type,
@@ -64,6 +70,8 @@ export class UploadForm {
   clearFile() {
     this.form.get('avatar').setValue(null);
     this.fileInput.nativeElement.value = '';
+    this.fileName = "No file chosen";
+    this.updateShortFileName();
   }
 
   cancel(){
@@ -76,5 +84,9 @@ export class UploadForm {
            this.fileInput.nativeElement.value !== null &&
            this.fileInput.nativeElement.value.length > 0 &&
            this.form.value.avatar !== null);
+  }
+
+  updateShortFileName(){
+    this.shortFileName = this.fileName.length > 30 ? `${this.fileName.slice(0,30)}...` : this.fileName;
   }
 }

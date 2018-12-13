@@ -12,8 +12,8 @@
         <div class="panel-body">
           <input #TextInput type="text" [(ngModel)]="inputText" [placeholder]='placeHolder' (keyup.enter)='onEnterDown()' required><br>
           <div class="row">
-            <button type="button" (click)='onCancel()'>{{cancelButtonName}}</button>
-            <button type="button" [disabled]='okButtonDisabled' [style.cursor]='okButtonDisabled ? "not-allowed" : "pointer"' (click)='submit(inputText)'>
+            <button class="btn btn-default"  (click)='onCancelClickEvent()'>{{cancelButtonName}}</button>
+            <button class="btn btn-default" [disabled]='okButtonDisabled' [style.cursor]='okButtonDisabled ? "not-allowed" : "pointer"' (click)='submit(inputText)'>
               {{okButtonName}}</button>
           </div>
         </div>

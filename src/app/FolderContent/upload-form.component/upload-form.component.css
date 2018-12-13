@@ -7,6 +7,10 @@ input[type=text]{
     box-sizing: border-box;
 }
 
+input[type=file]{
+    display: none;
+}
+
 .container {
     padding: 32px;
     position:fixed;
@@ -23,7 +27,7 @@ float_right{
     float: left;
 }
 
-.button {
+button {
     background-color: rgba(152, 156, 156, 0.486);
     color: black;
     margin: 8px 0;
@@ -32,6 +36,10 @@ float_right{
     float: right;
     margin-top: 5px;
     margin-right: 5px;
+}
+
+button:hover {
+    opacity: 0.8;
 }
 
 .disable_text_highlighting {
