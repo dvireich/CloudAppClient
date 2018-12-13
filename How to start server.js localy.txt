@@ -1,0 +1,3 @@
+Use "npm install pm2@latest -g"
+Use "pm2 start server.js"
+In order to stop use: "pm2 stop all"
