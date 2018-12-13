@@ -10,14 +10,12 @@
           </h3>
         </div>
         <div class="panel-body">
-          <form>
           <input #TextInput type="text" name="inputText" [(ngModel)]="inputText" [placeholder]='placeHolder' (keyup.enter)='onEnterDown()' required>
           <div class="form-group">
             <button class="btn btn-default" name="cancel"  (click)='onCancelClickEvent()'>{{cancelButtonName}}</button>
             <button class="btn btn-default" name="ok" [disabled]='okButtonDisabled' [style.cursor]='okButtonDisabled ? "not-allowed" : "pointer"' (click)='submit(inputText)' style=" margin-right: 5px">
               {{okButtonName}}</button>
           </div>
-        </form>
         </div>
       </div>
     </div>
