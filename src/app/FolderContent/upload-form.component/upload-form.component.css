@@ -35,7 +35,6 @@ button {
     width: 100px; 
     float: right;
     margin-top: 5px;
-    margin-right: 5px;
 }
 
 button:hover {

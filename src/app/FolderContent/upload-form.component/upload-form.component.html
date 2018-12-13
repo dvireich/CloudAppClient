@@ -17,14 +17,14 @@
               <input type="text" class="form-control" id="name" placeholder="Enter file new name..." formControlName="name">
             </div>
             <div class="form-group">
-              <div class="form-group">
+              <div class="row">
                 <input type="file" id="avatar" (change)="onFileChange($event)" #fileInput>
-                <span class="btn btn-primary" (click)="fileInput.click()">Choose file</span>
-                <span [title]="fileName" style="margin-left: 10px">{{shortFileName}}</span>
+                <div class="col-md-3"><span class="btn btn-primary" (click)="fileInput.click()">Choose file</span></div>
+                <div class="col-md-9"><label  [title]="fileName" style="margin-left: 10px; margin-top: 5px;">{{shortFileName}}</label></div>
               </div>
               <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
-              <button type="button" class="btn btn-default" (click)="clearFile()">Clear file</button>
-              <button type="submit" class="btn btn-default" [disabled]="(form.invalid || disableAddButon)" [style.cursor]='(form.invalid || disableAddButon) ? "not-allowed" : "pointer"'>Add</button>
+              <button type="button" class="btn btn-default" (click)="clearFile()" style="margin-right: 12px;">Clear file</button>
+              <button type="submit" class="btn btn-default" [disabled]="(form.invalid || disableAddButon)" [style.cursor]='(form.invalid || disableAddButon) ? "not-allowed" : "pointer"' style="margin-right: 12px;">Add</button>
             </div>
           </form>
         </div>
