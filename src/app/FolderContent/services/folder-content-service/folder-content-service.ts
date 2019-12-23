@@ -368,32 +368,25 @@ export class FolderContnentService {
   }
 
   downloadFile(name: string, path: string) {
-    this.performOnFileDonwloadLink(name, path, (downloadUrl: string) => window.open(downloadUrl))
+    this.performOnFileDonwloadLink(name, path, (downloadUrl: string) => window.open(downloadUrl));
   }
 
   performOnFileDonwloadLink(name: string, path: string, action: (downloadUrl: string) => void) {
-    let getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFileRequestId`;
-    this.http.post(getFileRequestIdUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
-      map(xml => {
-        let requestId = -1;
-        let parser = new xml2js.Parser();
-        parser.parseString(xml, (error, result) => {
-          if (error) {
-            this.handleError(error);
-
-          } else {
-            requestId = +result['int']['_'];
-          }
-        });
-        return requestId;
-      }),
+    const getFileRequestIdUrl = `${this.FolderContentRepositoryUrl}/GetFile`;
+    this.http.post(
+      getFileRequestIdUrl,
+      { Name: name, Path: path },
+      { responseType: 'arraybuffer' }).pipe(
       catchError(this.handleError)).subscribe(
-        requestId => {
-          if (requestId < 0) return;
-          let downloadFileUrl = `${this.FolderContentRepositoryUrl}/GetFile/requestId="${requestId}"`;
-          action(downloadFileUrl);
+        stream => {
+          const blob = new Blob([stream], { type: 'application/octet-stream' , });
+          const element = document.createElement('a');
+          element.href = URL.createObjectURL(blob);
+          element.download = name;
+          document.body.appendChild(element);
+          element.click();
         }
-      )
+      );
   }
 
   createFolder(name: string, path: string) {
