@@ -20,7 +20,7 @@ import { VideoArgs } from "../../helper-classes/video-args";
     styleUrls: ['folder-content-contex-menu.component.css']
 })
 export class FolderContentContexMenu implements IFolderContentContexMenuView {
-    
+
     @Input() selectedFolderContentItem: IFolderContent;
     @Input() showContexMenu: boolean;
     @Input() numberOfElementsOnPage: number;
@@ -28,13 +28,13 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
     @Input() currentPath: string;
     @Input() x: number;
     @Input() y: number;
-    
+
     @Input() public set contexMenuType(type: ContexMenuType) {
         if(type === ContexMenuType.folderContentContexMenu){
             this.contexMenuItems = this.getContexMentuItemsForFolderContentRClick();
         }
         else if(type === ContexMenuType.emptySpaceClickContexMenu){
-            this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick(); 
+            this.contexMenuItems = this.getContexMentuItemsForFolderContentContainerRClick();
         }
     }
 
@@ -119,7 +119,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
 
     enterFolder() {
         this.clearNavBarSearchText.emit();
-        this.controler.enterFolder(this.selectedFolderContentItem.Name, this.selectedFolderContentItem.Path, 1);
+        this.controler.enterFolder(this.selectedFolderContentItem.Name, this.selectedFolderContentItem.RelativePath, 1);
     }
 
     inputBoxCreateNewFolder(folderName: string) {
@@ -288,7 +288,7 @@ export class FolderContentContexMenu implements IFolderContentContexMenuView {
         return changeSortToEvent;
     }
 
-    
+
 
     showMessage(message: string, type: MessageBoxType, buttons: MessageBoxButton, caption: string, cont: (result: DialogResult) => void) {
         let args = new FolderContentMessageBoxArgs(message, type, buttons, caption, cont);

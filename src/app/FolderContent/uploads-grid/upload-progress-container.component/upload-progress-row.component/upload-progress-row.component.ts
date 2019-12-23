@@ -31,10 +31,13 @@ export class UploadProgressRow implements OnDestroy {
 
     onProgress() {
         let currentElementArray = this.folderContentService.getUploadProgress().filter(
-            element => element.requestId === this._uploadData.requestId);
+            element =>
+              element.fileName === this._uploadData.fileName &&
+              element.path === this._uploadData.path);
 
         if (currentElementArray.length !== 1) {
-            console.log(`For request id: ${this._uploadData.requestId} there is more than 1 elements or 0 elements: ${currentElementArray}`)
+            console.log(`For request id: ${this._uploadData.path}_${this._uploadData.fileName}
+            there is more than 1 elements or 0 elements: ${currentElementArray}`);
         }
 
         if (currentElementArray[0].progress < 100) return;
@@ -50,13 +53,18 @@ export class UploadProgressRow implements OnDestroy {
     buttonName: string = "Cancel";
 
     onButtonClick() {
-        if(this.buttonName === "Cancel"){
-            this.folderContentService.cancelUpload(this._uploadData.requestId);
+        if(this.buttonName === 'Cancel'){
+            this.folderContentService.cancelUpload(
+              this._uploadData.fileName,
+              this._uploadData.path);
         }
 
-        if(this.buttonName === "Clear"){
-            this.folderContentService.clearUpload(this._uploadData.requestId);
-        } 
+        if (this.buttonName === 'Clear') {
+
+            this.folderContentService.clearUpload(
+              this._uploadData.fileName,
+              this._uploadData.path);
+        };
     }
 
     fixNameToShow(value: string): string{

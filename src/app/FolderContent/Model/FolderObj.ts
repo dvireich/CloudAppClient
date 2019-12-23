@@ -5,27 +5,27 @@ import { folderContentType } from "./folderContentType";
 import { sortType } from "./sortType";
 
 
-export class FolderObj extends FolderContent implements IFolder{
+export class FolderObj extends FolderContent implements IFolder {
 
-    Content : IFolderContent[] = new Array<IFolderContent>();  
+    CurrentContentPage: IFolderContent[] = new Array<IFolderContent>();
     SortType: sortType;
-    
-    constructor(){
+
+    constructor() {
         super();
         this.Type = folderContentType.folder;
     }
-    
-    equals(other : any) : boolean{
+
+    equals(other: any): boolean {
         return other instanceof FolderObj &&
                super.equals(other) &&
-               this.compareContent(other.Content);
+               this.compareContent(other.CurrentContentPage);
     }
 
     private compareContent(other: IFolderContent[]): boolean{
-        if(this.Content.length != other.length) return false;
+        if(this.CurrentContentPage.length != other.length) return false;
 
-        for(let i : number = 0; i < this.Content.length; i ++){
-            let thisElement = this.Content[i];
+        for(let i: number = 0; i < this.CurrentContentPage.length; i ++){
+            let thisElement = this.CurrentContentPage[i];
             let otherElement = other[i];
 
             if(!thisElement.equals(otherElement)) return false;

@@ -18,11 +18,11 @@ export class PagingNav {
     updateVisiblePageNumbers() {
         let arrayOfIncreasingNumbers = this.fillPipe.transform(this._numberOfPages);
         if(this.currentPage + 5 > this._numberOfPages){
-            let start = this._numberOfPages -5 < 0 ? 0 : this._numberOfPages -5;
+            const start = this._numberOfPages - 5 < 0 ? 0 : this._numberOfPages - 5;
             this.visiblePageNumbers = arrayOfIncreasingNumbers.slice(start, this._numberOfPages);
         }
-        else{
-            this.visiblePageNumbers = arrayOfIncreasingNumbers.slice(this.currentPage -1, this.currentPage + 4);
+        else {
+            this.visiblePageNumbers = arrayOfIncreasingNumbers.slice(this.currentPage - 1, this.currentPage + 4);
         }
     }
 
@@ -45,6 +45,7 @@ export class PagingNav {
 
     onNextPage() {
         if( this.currentPage === this.numberOfPages) return;
+
         this.currentPage = this.currentPage === this.numberOfPages ? this.currentPage : this.currentPage + 1;
         this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
@@ -52,12 +53,13 @@ export class PagingNav {
 
     onPrevPage() {
         if(this.currentPage === 1) return;
+
         this.currentPage = this.currentPage === 1 ? this.currentPage : this.currentPage - 1;
         this.pageChange.emit(this.currentPage);
         this.updateVisiblePageNumbers();
     }
 
-    visiblePageNumbersContainsNumbers(...numbers: number[]) : boolean{
+    visiblePageNumbersContainsNumbers(...numbers: number[]): boolean{
         return this.visiblePageNumbers.some(num => numbers.includes(num));
     }
 }

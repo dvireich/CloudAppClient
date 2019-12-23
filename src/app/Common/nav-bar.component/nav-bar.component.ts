@@ -14,28 +14,29 @@ export class NavagationBar {
     visiblePathBreaks: IPathBreak[];
 
     @Input()
-    set pathBreaks(value :IPathBreak[]) {
+    set pathBreaks(value: IPathBreak[]) {
         this._pathBreaks = value;
         this.updateVisiblePathBreaks();
         this.checkIfNeedToDisableBackButton();
 
-    } 
+    }
     @Input() disableRefresh: boolean = false;
     @Output() PathBreakClick: EventEmitter<string> = new EventEmitter<string>();
 
     onPathBreakClick(pathBreakIndex: number) {
-        if(pathBreakIndex === null || pathBreakIndex === undefined){
+        if(pathBreakIndex === null || pathBreakIndex === undefined) {
             if(this.visiblePathBreaks.length === 1) return;
-            pathBreakIndex = this.visiblePathBreaks.length-2;
+
+            pathBreakIndex = this.visiblePathBreaks.length - 2;
         }
-        let fullPath = this.visiblePathBreaks[pathBreakIndex].path === '' || this.visiblePathBreaks[pathBreakIndex].path === undefined ?
+        const fullPath = this.visiblePathBreaks[pathBreakIndex].path === '' || this.visiblePathBreaks[pathBreakIndex].path === undefined ?
         this.visiblePathBreaks[pathBreakIndex].pathBreak :
-        `${this.visiblePathBreaks[pathBreakIndex].path}/${this.visiblePathBreaks[pathBreakIndex].pathBreak}`       
+        `${this.visiblePathBreaks[pathBreakIndex].path}\\${this.visiblePathBreaks[pathBreakIndex].pathBreak}`;
         this.PathBreakClick.emit(fullPath);
     }
 
-    checkIfNeedToDisableBackButton(){
-        if(this._pathBreaks === null || 
+    checkIfNeedToDisableBackButton() {
+        if(this._pathBreaks === null ||
             this._pathBreaks === undefined ||
             this._pathBreaks.length < 2) {
             this.backButtonDisabled = true;
@@ -47,9 +48,9 @@ export class NavagationBar {
 
     updateVisiblePathBreaks(){
         this.visiblePathBreaks = [];
-        if(this._pathBreaks.length > 6){
-            let last5 = this._pathBreaks.reverse().slice(0,5).reverse();
-            let first = this._pathBreaks.reverse()[0];
+        if(this._pathBreaks.length > 6) {
+            const last5 = this._pathBreaks.reverse().slice(0, 5).reverse();
+            const first = this._pathBreaks.reverse()[0];
             this.visiblePathBreaks.push(first);
             this.visiblePathBreaks.push(new PathBreak("...", "..."));
             last5.forEach(element => this.visiblePathBreaks.push(element));
@@ -63,7 +64,6 @@ export class NavagationBar {
             return str.slice(0, 7) + "...";
         }
 
-        return str;  
+        return str;
     }
-
 }

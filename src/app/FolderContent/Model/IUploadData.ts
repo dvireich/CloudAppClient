@@ -1,5 +1,5 @@
-export interface IUploadData{
+export interface IUploadData {
     fileName: string;
-    requestId: number;
+    path: string;
     progress: number;
 }

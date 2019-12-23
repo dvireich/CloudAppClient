@@ -1,16 +1,16 @@
 <table>
     <tr *ngFor ='let listOfNames of listOfListsOfNames'>
         <td *ngFor='let item of listOfNames'>
-                <select-able 
-                (RegisterInParent)="addChildComponent($event)" 
-                (UnSelectAll)="clearSelection($event)" 
+                <select-able
+                (RegisterInParent)="addChildComponent($event)"
+                (UnSelectAll)="clearSelection($event)"
                 (ApplyIgnoreDisableSelection)="onApplyIgnoreDisableSelection($event)"
                 (ApplyParentIgnoreOnRightClick)="onSetIgnoreOnRightClick($event)"
                 (ShowContexMenu) ="onShowContexMenu($event)"
                 (DoubleClick) ="doubleClickEvent($event)"
                 (SelectionChanged) ="onSelectionChanged($event)"
                 [text]='item.Name'
-                [path]='item.Path'
+                [path]='item.RelativePath'
                 [creationTime]='item.CreationTime'
                 [modificationTime]='item.ModificationTime'
                 [size]='item.Size'

@@ -8,19 +8,19 @@ import { Observable, throwError } from 'rxjs';
   providedIn: "root"
 })
 export class AuthenticationService {
-  //private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
-  private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
+  private folderContentAuthenticationUrl = "http://localhost/CloudAppServer/Authentication";
+  //private folderContentAuthenticationUrl = "http://d-drive.ddns.net/CloudAppServer/Authentication";
 
   constructor(private http: HttpClient) {
   }
   registerUser(name: string, password: string, recoveryQuestion: string, recoveryAnswer: string,  onError: (message: string) => void) {
     let authenticationRegisterUrl = `${this.folderContentAuthenticationUrl}/Register`;
-    return this.http.post(authenticationRegisterUrl, { UserName: name, Password: password, SecurityQuestion: recoveryQuestion, SecurityAnswer: recoveryAnswer }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+    return this.http.post(authenticationRegisterUrl, { UserName: name, Password: password, SecurityQuestion: recoveryQuestion, SecurityAnswer: recoveryAnswer }).pipe(catchError(this.handleErrorWithErrorHandler(onError)));
   }
 
   login(userName: string, password: string, onError: (message: string) => void) {
     let authenticateUrl = `${this.folderContentAuthenticationUrl}/Authenticate/username=${userName}&password=${password}`;
-    return this.http.get<string>(authenticateUrl).pipe(catchError(this.hanldeErrorWithErrorHandler(onError)));
+    return this.http.get<string>(authenticateUrl).pipe(catchError(this.handleErrorWithErrorHandler(onError)));
   }
 
   getSecurityQuestion(userName: string) : Observable<string>{
@@ -75,7 +75,7 @@ export class AuthenticationService {
     return throwError(errorMessage);
   }
 
-  private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
+  private handleErrorWithErrorHandler(errorHandler: (message: string) => void) {
     return (err: HttpErrorResponse) => {
       console.log(err);
       let errorMessage = '';
@@ -98,7 +98,7 @@ export class AuthenticationService {
         });
       }
       console.error("hanldeErrorWithErrorHandler " + errorMessage);
-      errorHanlder(errorMessage);
+      errorHandler(errorMessage);
       return throwError(errorMessage);
     }
   }

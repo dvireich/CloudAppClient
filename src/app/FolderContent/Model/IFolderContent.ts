@@ -2,7 +2,7 @@ import { folderContentType } from "./folderContentType";
 
 export interface IFolderContent{
     Name: string;
-    Path: string;
+    RelativePath: string;
     Type: folderContentType;
     CreationTime: string
     ModificationTime: string

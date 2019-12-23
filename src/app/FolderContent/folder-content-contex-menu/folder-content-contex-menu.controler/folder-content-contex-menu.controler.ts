@@ -22,7 +22,7 @@ export class FolderContentContexMenuControler{
 
     private _view: IFolderContentContexMenuView;
     constructor(
-        private folderContentService: FolderContnentService, 
+        private folderContentService: FolderContnentService,
         private clipboard: FolderContentClipBoard,
         private folderContentContainerControler: FolderContentContainerControler){
     }
@@ -30,14 +30,17 @@ export class FolderContentContexMenuControler{
     public initializeView(view: IFolderContentContexMenuView) {
         this._view = view;
     }
-    
+
     public deleteFolderContent(selected: IFolderContent) {
         this._view.showMessage("Are you sure you want delete?", MessageBoxType.Question, MessageBoxButton.YesNo, "Delete", (result: DialogResult) => {
-            console.log(result);
-            if (result === DialogResult.No) return;
+
+            if (result === DialogResult.No) {
+               return ;
+              }
+
             this._view.showLoadingLayer(true);
             if (selected.Type === folderContentType.folder) {
-                this.folderContentService.deleteFolder(selected.Name, selected.Path, this._view.currentPage).subscribe(
+                this.folderContentService.deleteFolder(selected.Name, selected.RelativePath, this._view.currentPage).subscribe(
                     data => this.updateFolderContentWithCurrentPage(),
                     error => {
                         this._view.showLoadingLayer(false);
@@ -46,7 +49,7 @@ export class FolderContentContexMenuControler{
                 );
             }
             if (selected.Type === folderContentType.file) {
-                this.folderContentService.deleteFile(selected.Name, selected.Path, this._view.currentPage).subscribe(
+                this.folderContentService.deleteFile(selected.Name, selected.RelativePath, this._view.currentPage).subscribe(
                     data => this.updateFolderContentWithCurrentPage(),
                     error => {
                         this._view.showLoadingLayer(false);
@@ -67,7 +70,7 @@ export class FolderContentContexMenuControler{
 
     public downloadFile(selected: IFolderContent) {
         this._view.showLoadingLayer(true);
-        this.folderContentService.downloadFile(selected.Name, selected.Path);
+        this.folderContentService.downloadFile(selected.Name, selected.RelativePath);
         this._view.showLoadingLayer(false);
     }
 
@@ -84,7 +87,11 @@ export class FolderContentContexMenuControler{
 
     public rename(selected: IFolderContent, newName: string) {
         this._view.showLoadingLayer(true);
-        let resp = this.folderContentService.renameFolderContent(selected.Name, selected.Path, selected.Type, newName);
+        let resp = this.folderContentService.renameFolderContent(
+          selected.Name,
+          selected.RelativePath,
+          selected.Type,
+          newName);
         resp.subscribe(
             data => this.updateFolderContentWithCurrentPage(),
             error => {
@@ -94,14 +101,14 @@ export class FolderContentContexMenuControler{
     }
 
     public paste(copyTo: IFolderContent) {
-        let letClipBoardOperation = this.clipboard.popClipBoardOperation();
-        let objTocopy = this.clipboard.popClipBoardObj();
+        const letClipBoardOperation = this.clipboard.popClipBoardOperation();
+        const objTocopy = this.clipboard.popClipBoardObj();
 
         if (copyTo === null || copyTo === undefined) {
             copyTo = this.getCurrentFolder();
         }
 
-        if (this.folderContentService.createPath(copyTo.Name, copyTo.Path) === objTocopy.Path) return;
+        if (this.folderContentService.createPath(copyTo.Name, copyTo.RelativePath) === objTocopy.RelativePath) return;
 
         let respOfCopy = this.folderContentService.copy(objTocopy, <IFolder>copyTo);
         this._view.showLoadingLayer(true);
@@ -111,10 +118,13 @@ export class FolderContentContexMenuControler{
 
                     let respOfDelete: Observable<object>;
                     if (objTocopy.Type == folderContentType.folder) {
-                        respOfDelete = this.folderContentService.deleteFolder(objTocopy.Name, objTocopy.Path, this._view.currentPage);
+                        respOfDelete = this.folderContentService.deleteFolder(
+                          objTocopy.Name,
+                          objTocopy.RelativePath,
+                          this._view.currentPage);
                     }
                     if (objTocopy.Type == folderContentType.file) {
-                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.Path, this._view.currentPage);
+                        respOfDelete = this.folderContentService.deleteFile(objTocopy.Name, objTocopy.RelativePath, this._view.currentPage);
                     }
 
                     respOfDelete.subscribe(data => this.updateFolderContentWithCurrentPage(),
@@ -156,7 +166,7 @@ export class FolderContentContexMenuControler{
             this.clipboard.popClipBoardOperation() !== undefined &&
             clipboardObj !== null &&
             clipboardObj !== undefined &&
-            //Or we have selected or we do not have and we paste in the containing folder
+            // Or we have selected or we do not have and we paste in the containing folder
             ((selected !== null &&
                 selected !== undefined &&
                 !clipboardObj.equals(selected))
@@ -168,7 +178,11 @@ export class FolderContentContexMenuControler{
     public updateCurrentFolderMetadata(sortType: sortType, numOfElementOnPage: number) {
         this._view.showLoadingLayer(true);
         let currentFolder = this.getCurrentFolder();
-        this.folderContentService.updateFolderMetadata(currentFolder.Name, currentFolder.Path, sortType, numOfElementOnPage).subscribe(
+        this.folderContentService.updateFolderMetadata(
+          currentFolder.Name,
+          currentFolder.RelativePath,
+          sortType,
+          numOfElementOnPage).subscribe(
             success => {
                 this.updateFolderContentWithCurrentPage();
             },
@@ -195,7 +209,7 @@ export class FolderContentContexMenuControler{
     public canOpenFile(selected: IFolderContent){
         return !this.isFolder(selected) && this.isVideo(selected.Name);
     }
-    
+
     public isFolder(selected: IFolderContent): boolean {
         if (selected === null || selected === undefined) return false;
 
@@ -207,7 +221,7 @@ export class FolderContentContexMenuControler{
             let videoArgs = new VideoArgs(downloadUrl, true);
             this._view.showPopupVideo(videoArgs);
         }).bind(this);
-        this.folderContentService.performOnFileDonwloadLink(selected.Name, selected.Path, playVideo);
+        this.folderContentService.performOnFileDonwloadLink(selected.Name, selected.RelativePath, playVideo);
     }
 
     private isVideo(filename) : boolean {

@@ -5,16 +5,16 @@ import { IFolderContent } from "../../Model/IFolderContent";
 import { VideoArgs } from "../../helper-classes/video-args";
 
 export interface IFolderContentContexMenuView{
-    
+
     currentPage: number;
     currentPath: string;
 
     showLoadingLayer: (show: boolean) => void;
     showPopupVideo: (videoArgs: VideoArgs) => void;
     showMessage: (
-        message: string, 
-        type: MessageBoxType, 
-        buttons: MessageBoxButton, 
-        caption: string, 
-        cont: (reslut: DialogResult) => void) => void
+        message: string,
+        type: MessageBoxType,
+        buttons: MessageBoxButton,
+        caption: string,
+        cont: (reslut: DialogResult) => void) => void;
 }

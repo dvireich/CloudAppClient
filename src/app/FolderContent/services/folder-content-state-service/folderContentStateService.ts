@@ -22,16 +22,14 @@ export class FolderContentStateService {
         if (this.currentFolder === null || this.currentFolder === undefined) {
             return new FolderState("home", "", 1);
         }
-        return new FolderState(this.currentFolder.Name, this.currentFolder.Path, this.currentPage);
+        return new FolderState(this.currentFolder.Name, this.currentFolder.RelativePath, this.currentPage);
     }
 
     setUploadContainerState(uploadContainerState: IUploadContainerState) {
         this.uploadContainerState = uploadContainerState;
     }
 
-    restoreUploadContainerState(): IUploadContainerState{
+    restoreUploadContainerState(): IUploadContainerState {
         return this.uploadContainerState;
     }
-
-
 }

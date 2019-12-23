@@ -28,15 +28,15 @@ export class FolderContnentService {
   }
 
   private FolderContentRepositoryUrl: string = null;
-  private rquestIdToProgress: Map<number, IUploadData> = new Map<number, IUploadData>();
+  private rquestIdToProgress: Map<string, IUploadData> = new Map<string, IUploadData>();
   private subscribersChangeInUploadProgressToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersCreateUploadToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersFinishUploadToAction: Map<object, () => void> = new Map<object, () => void>();
   private subscribersPageChangedToAction: Map<object, (page: number) => void> = new Map<object, (page: number) => void>();
 
   initializeFolderContentUrl(id: string) {
-    //this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
-    this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
+    this.FolderContentRepositoryUrl = `http://localhost/CloudAppServer/${id}/FolderContent`;
+    // this.FolderContentRepositoryUrl = `http://d-drive.ddns.net/CloudAppServer/${id}/FolderContent`;
   }
 
   isInitialized(): boolean {
@@ -100,100 +100,104 @@ export class FolderContnentService {
     this.subscribersChangeInUploadProgressToAction.delete(subscriber);
   }
 
-  private getReuestId(): Observable<number> {
-    let requestIdUrl = `${this.FolderContentRepositoryUrl}/RequestId`;
-    return this.http.get<number>(requestIdUrl).pipe(catchError(this.handleError))
-  }
-
   splitString(string, size, multiline) {
-    var matchAllToken = (multiline == true) ? '[^]' : '.';
-    var re = new RegExp(matchAllToken + '{1,' + size + '}', 'g');
+    let matchAllToken = (multiline == true) ? '[^]' : '.';
+    let re = new RegExp(matchAllToken + '{1,' + size + '}', 'g');
     let result = string.match(re);
     return result === null ? [''] : result;
   }
 
   substringFirstCommnaFormString(value: string): string {
     if (value === "data:") return '';
-    let firstComma = value.indexOf(',');
+    const firstComma = value.indexOf(',');
     return value.substring(firstComma + 1);
   }
 
   pingToServer() {
-    let pingUrl = `${this.FolderContentRepositoryUrl}/ping`
+    const pingUrl = `${this.FolderContentRepositoryUrl}/ping`;
     return this.http.get<boolean>(pingUrl);
   }
 
-  createFile(fileName: string, path: string, fileType: string, size: number, file: any, cont: () => void, onError: (message: string) => void) {
-    return this.getReuestId().pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(
-      requestId => {
-        let uploadData = new UploadData(fileName, requestId, 0);
-        this.rquestIdToProgress.set(requestId, uploadData);
-        this.onCreateUpload();
-        let createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
-        let onUploadError = (message: string) => {
-          onError(message);
-          this.clearUpload(requestId);
-        };
-        this.http.post(createFileUrl, {
-          Name: fileName,
-          Path: path,
-          FileType: fileType,
-          NewValue: '',
-          RequestId: requestId,
-          Size: size,
-          Sent: 0
-        }).pipe(catchError(this.hanldeErrorWithErrorHandler(onUploadError))).subscribe(data => {
-          let onUploadFinish = this.onUploadFinish(requestId, cont);
-          let onRead = this.updateFile(requestId, fileName, path, fileType, file, onUploadError);
-          this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
-        },
-          error => {
-            onUploadError(error);
-          })
-      },
-      error => onError(error));
-  }
+  createFile(
+    fileName: string,
+    path: string,
+    fileType: string,
+    size: number,
+    file: any,
+    cont: () => void,
+    onError: (message: string) => void) {
+    const uploadData = new UploadData(fileName, path, 0);
+    const requestId = `${path}_${fileName}`;
+    this.rquestIdToProgress.set(requestId, uploadData);
+    this.onCreateUpload();
+    const createFileUrl = `${this.FolderContentRepositoryUrl}/CreateFile`;
 
-  private onUploadFinish(requestId: number, cont: () => void) {
-    //Return a callback for the file parser helper to perform when upload is finish
-    return () => {
-      let uploadData = this.rquestIdToProgress.get(requestId);
+    const onUploadError = (message: string) => {
+      onError(message);
+      this.clearUpload(fileName, path);
+    };
+
+    const onUploadFinish = () => {
+      this.finishUpload(fileName, path);
+
+      const uploadData = this.rquestIdToProgress.get(requestId);
+
       if (uploadData !== null && uploadData !== undefined) {
         uploadData.progress = 100;
         this.onUploadProgressUpdate();
       }
-      this.onFinishUpload()
+      this.onFinishUpload();
       cont();
-    }
+    };
+
+    this.http.post(createFileUrl, {
+      Name: fileName,
+      Path: path,
+      FileType: fileType,
+      NewValue: '',
+      Size: size,
+      Sent: 0
+    }).pipe(catchError(this.handleErrorWithErrorHandler(onUploadError))).subscribe(data => {
+      const onRead = this.updateFile(requestId, fileName, path, fileType, file, onUploadError);
+      this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
+    },
+      error => {
+        onUploadError(error);
+      });
   }
-  private updateFile(requestId: number, fileName: string, path: string, fileType: string, file: any, onError: (message: string) => void) {
-    //Return a callback for the file parser helper to perform when parser read another chunk of data
+
+  private updateFile(requestId: string , fileName: string, path: string, fileType: string, file: any, onError: (message: string) => void) {
+    // Return a callback for the file parser helper to perform when parser read another chunk of data
     return (parserResult: string, readSoFar: number, cont: () => void) => {
-      let uploadData = this.rquestIdToProgress.get(requestId);
-      if (uploadData === null || uploadData === undefined) return;
+      const uploadData = this.rquestIdToProgress.get(requestId);
+
+      if (uploadData === null || uploadData === undefined) { return; }
 
       uploadData.progress = readSoFar > 0 ? Math.floor((readSoFar / file.size) * 100) : 100;
       this.onUploadProgressUpdate();
 
-      let updateFileUrl = `${this.FolderContentRepositoryUrl}/UpdateFileContent`;
+      const updateFileUrl = `${this.FolderContentRepositoryUrl}/UpdateFileContent`;
       this.http.post(updateFileUrl, {
         Name: fileName,
         Path: path,
         FileType: fileType,
         NewValue: this.substringFirstCommnaFormString(parserResult),
-        RequestId: requestId,
         Sent: readSoFar,
         Size: file.size
-      }).pipe(catchError(this.hanldeErrorWithErrorHandler(onError))).subscribe(data => {
-        cont()
+      }).pipe(catchError(this.handleErrorWithErrorHandler(onError))).subscribe(data => {
+        cont();
       },
-        error => onError(error))
-    }
+        error => onError(error));
+    };
   }
 
-  clearUpload(requestId: number): void {
-    let clearUploadUrl = `${this.FolderContentRepositoryUrl}/ClearUpload`;
-    this.http.post(clearUploadUrl, requestId).pipe(
+  clearUpload(fileName: string, path: string): void {
+    const clearUploadUrl = `${this.FolderContentRepositoryUrl}/ClearUpload`;
+    const requestId = `${path}_${fileName}`;
+    this.http.post(clearUploadUrl, {
+      Name: fileName,
+      Path: path
+    }).pipe(
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);
@@ -201,40 +205,58 @@ export class FolderContnentService {
     });
   }
 
-  cancelUpload(requestId: number): void {
-    let cancelUploadUrl = `${this.FolderContentRepositoryUrl}/CancelUpload`;
-    this.http.post(cancelUploadUrl, requestId).pipe(
+  finishUpload(fileName: string, path: string): void {
+    const clearUploadUrl = `${this.FolderContentRepositoryUrl}/FinishUpload`;
+    const requestId = `${path}_${fileName}`;
+    this.http.post(clearUploadUrl, {
+      Name: fileName,
+      Path: path
+    }).pipe(
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);
+    });
+  }
+
+  cancelUpload(fileName: string, path: string): void {
+    const cancelUploadUrl = `${this.FolderContentRepositoryUrl}/CancelUpload`;
+    const requestId = `${path}_${fileName}`;
+    this.rquestIdToProgress.delete(requestId);
+
+    this.http.post(cancelUploadUrl, {
+      Name: fileName,
+      Path: path
+    }).pipe(
+      catchError(this.handleError)
+    ).subscribe(data => {
       this.onCreateUpload();
     });
   }
 
 
   deleteFolder(name: string, path: string, page: number) {
-    let deleteFolderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
+    const deleteFolderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
     return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1, Page: page }).pipe(
       catchError(this.handleError)
     );
   }
 
   deleteFile(name: string, path: string, page: number) {
-    let deleteFileUrl = `${this.FolderContentRepositoryUrl}/DeleteFile`;
+    const deleteFileUrl = `${this.FolderContentRepositoryUrl}/DeleteFile`;
     return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0, Page: page }).pipe(
       catchError(this.handleError)
     );
   }
 
   renameFolderContent(name: string, path: string, type: folderContentType, newName: string) {
-    let renameUrl = `${this.FolderContentRepositoryUrl}/Rename`;
+    const renameUrl = `${this.FolderContentRepositoryUrl}/Rename`;
     return this.http.post(renameUrl, { Name: name, Path: path, Type: type, NewName: newName }).pipe(
       catchError(this.handleError)
     );
   }
 
   logout() {
-    let logoutUrl = `${this.FolderContentRepositoryUrl}/Logout`;
+    const logoutUrl = `${this.FolderContentRepositoryUrl}/Logout`;
     this.http.get<string>(logoutUrl).subscribe(logout => logout);
     this.FolderContentRepositoryUrl = null;
     this.authenticationService.deleteFromLocalStorageUserNameAndPassword();
@@ -242,32 +264,32 @@ export class FolderContnentService {
   }
 
   UpdateNumberOfPagesForFolder(name: string, path: string, searchMode: boolean): void {
-    let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfPages`;
+    const numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetNumberOfPages`;
 
     this.http.post(numberOfPagesUrl, { Name: name, Path: path, SearchMode: searchMode }, { responseType: 'text' }).pipe(
       map(xml => {
         let numberOfPages = 1;
-        let parser = new xml2js.Parser();
+        const parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
           if (error) {
             this.handleError(error);
 
           } else {
-            numberOfPages = +result['int']['_'];
+            numberOfPages = +result['long']['_'];
           }
         });
         return numberOfPages;
       }),
       catchError(this.handleError)).subscribe(
         pageNum => {
-          if (pageNum < 0) return;
-          this.onPageChange(pageNum)
+          if (pageNum < 0) { return; }
+          this.onPageChange(pageNum);
         }
       )
   }
 
   GetSortForFolder(name: string, path: string) {
-    let numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetSortType`;
+    const numberOfPagesUrl = `${this.FolderContentRepositoryUrl}/GetSortType`;
 
     return this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
       map(xml => {
@@ -320,11 +342,11 @@ export class FolderContnentService {
   }
 
   getFolder(name: string, path: string, page: number): Observable<IFolder> {
-    let folderUrl = `${this.FolderContentRepositoryUrl}/GetPage`;
+    const folderUrl = `${this.FolderContentRepositoryUrl}/GetPage`;
     return this.http.post(folderUrl, { Name: name, Path: path, Page: page }, { responseType: 'text' }).pipe(
       map(xml => {
-        let jsonStr = "";
-        let parser = new xml2js.Parser();
+        let jsonStr = '';
+        const parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
           if (error) {
             this.handleError(error);
@@ -333,15 +355,15 @@ export class FolderContnentService {
             jsonStr = result['string']['_'];
           }
         });
-        let ifolder = <IFolder>JSON.parse(jsonStr);
-        if (ifolder.Content === undefined || ifolder.Content === null) {
-          ifolder.Content = new Array<FolderContent>();
+        const ifolder = <IFolder>JSON.parse(jsonStr);
+        if (ifolder.CurrentContentPage === undefined || ifolder.CurrentContentPage === null) {
+          ifolder.CurrentContentPage = new Array<FolderContent>();
         }
 
-        ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
+        ifolder.CurrentContentPage = ifolder.CurrentContentPage.map(this.mapToAppropriateFolderContentObj);
         return ifolder;
       }),
-      tap(data => data),//console.log('All: ' + JSON.stringify(data))),
+      tap(data => data), // console.log('All: ' + JSON.stringify(data))),
       catchError(this.handleError));
   }
 
@@ -396,11 +418,11 @@ export class FolderContnentService {
           }
         });
         let ifolder = <IFolder>JSON.parse(jsonStr);
-        if (ifolder.Content === undefined || ifolder.Content === null) {
-          ifolder.Content = new Array<FolderContent>();
+        if (ifolder.CurrentContentPage === undefined || ifolder.CurrentContentPage === null) {
+          ifolder.CurrentContentPage = new Array<FolderContent>();
         }
 
-        ifolder.Content = ifolder.Content.map(this.mapToAppropriateFolderContentObj);
+        ifolder.CurrentContentPage = ifolder.CurrentContentPage.map(this.mapToAppropriateFolderContentObj);
         return ifolder;
       }),
       tap(data => data),//console.log('All: ' + JSON.stringify(data))),
@@ -412,10 +434,10 @@ export class FolderContnentService {
     let copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
     return this.http.post(copyFolderUrl, {
       FolderContentName: folderContentToCopy.Name,
-      FolderContentPath: folderContentToCopy.Path,
+      FolderContentPath: folderContentToCopy.RelativePath,
       FolderContentType: folderContentToCopy.Type,
       CopyToName: folderToCopyTo.Name,
-      CopyToPath: folderToCopyTo.Path
+      CopyToPath: folderToCopyTo.RelativePath
     }).pipe(
       catchError(this.handleError)
     );
@@ -424,47 +446,55 @@ export class FolderContnentService {
   createPath(name: string, path: string) {
     return (path === undefined || path === null || path === '') ?
       name :
-      `${name}/${path}`;
+      `${name}\\${path}`;
   }
 
-  getContaningFolderPathFromPath(path: string): string {
-    //base case
-    if (path === 'home/') return '';
-    //other cases
-    let splitted = path.split('/');
-    let contaningFolderPathArray = splitted.slice(0, splitted.length - 1);
-    let contaningFolderPath = contaningFolderPathArray.reduce((prev, currVal) => {
+  getContainingFolderPathFromPath(path: string): string {
+    // base case
+    if (path === 'home\\') {
+      return ''
+    }
+
+    // other cases
+    const splitted = path.split('\\');
+    const contaningFolderPathArray = splitted.slice(0, splitted.length - 1);
+    const contaningFolderPath = contaningFolderPathArray.reduce((prev, currVal) => {
       if (prev === '') {
         return currVal;
       }
-      return prev + '/' + currVal;
+
+      return prev + '\\' + currVal;
     }, "");
+
     return contaningFolderPath;
   }
 
-  getContaningFolderNameFromPath(path: string): string {
-    //base case
-    if (path === 'home/' || path === '') return 'home';
-    //other cases
-    let splitted = path.split('/');
-    let contaningFolderName = splitted.reverse().shift();
+  getContainingFolderNameFromPath(path: string): string {
+    // base case
+    if (path === 'home\\' || path === '') {
+      return 'home';
+    }
+
+    // other cases
+    const splitted = path.split('\\');
+    const contaningFolderName = splitted.reverse().shift();
     return contaningFolderName;
   }
 
   private mapToAppropriateFolderContentObj(element: IFolderContent) {
-    let name = element.Name;
-    let path = element.Path;
-    let type = element.Type;
-    let creationTime = element.CreationTime;
-    let modificationTime = element.ModificationTime;
+    const name = element.Name;
+    const path = element.RelativePath;
+    const type = element.Type;
+    const creationTime = element.CreationTime;
+    const modificationTime = element.ModificationTime;
 
     if (type === folderContentType.file) {
-      let elementFile = element as IFile;
-      let size = +elementFile.Size;
-      let sizeInMb = Math.floor(size / (1024 * 1024));
-      let file = new FileObj();
+      const elementFile = element as IFile;
+      const size = +elementFile.Size;
+      const sizeInMb = Math.floor(size / (1024 * 1024));
+      const file = new FileObj();
       file.Name = name;
-      file.Path = path;
+      file.RelativePath = path;
       file.CreationTime = creationTime;
       file.ModificationTime = modificationTime;
       file.Size = `${sizeInMb} MB`;
@@ -475,7 +505,7 @@ export class FolderContnentService {
       let folder = new FolderObj();
       let elementFolder = element as IFolder;
       folder.Name = name;
-      folder.Path = path;
+      folder.RelativePath = path;
       folder.CreationTime = creationTime;
       folder.ModificationTime = modificationTime;
       folder.SortType = elementFolder.SortType;
@@ -507,7 +537,7 @@ export class FolderContnentService {
     return throwError(errorMessage);
   }
 
-  private hanldeErrorWithErrorHandler(errorHanlder: (message: string) => void) {
+  private handleErrorWithErrorHandler(errorHandler: (message: string) => void) {
     return (err: HttpErrorResponse) => {
       console.log(err);
       let errorMessage = '';
@@ -530,7 +560,7 @@ export class FolderContnentService {
         });
       }
       console.error("hanldeErrorWithErrorHandler " + errorMessage);
-      errorHanlder(errorMessage);
+      errorHandler(errorMessage);
       return throwError(errorMessage);
     }
   }

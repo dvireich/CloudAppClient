@@ -42,10 +42,10 @@ export class SelectableGrid implements AfterViewInit {
         this.listOfListsOfNames = [];
         for (let i: number = 0; this._listOfFileFolderNames !== null &&
             this._listOfFileFolderNames !== undefined &&
-            i < this._listOfFileFolderNames.Content.length; i = i + this.maxColumns) {
+            i < this._listOfFileFolderNames.CurrentContentPage.length; i = i + this.maxColumns) {
             let tmpArray: IFolderContent[] = new Array<IFolderContent>();
-            for (let j: number = 0; j < this.maxColumns && i + j < this._listOfFileFolderNames.Content.length; j++) {
-                tmpArray.push(this._listOfFileFolderNames.Content[i + j])
+            for (let j: number = 0; j < this.maxColumns && i + j < this._listOfFileFolderNames.CurrentContentPage.length; j++) {
+                tmpArray.push(this._listOfFileFolderNames.CurrentContentPage[i + j])
             }
             this.listOfListsOfNames.push(tmpArray);
         }
@@ -62,6 +62,7 @@ export class SelectableGrid implements AfterViewInit {
             selectedNames.forEach(element => console.log(element.text + " is selected!"));
             throw new Error('There is more than 1 selected items! This is not allowed');
         }
+
         if (selectedNames.length === 0) return null;
 
         let folderContentObject: IFolderContent;
@@ -72,7 +73,7 @@ export class SelectableGrid implements AfterViewInit {
             folderContentObject = new FolderObj();
         }
         folderContentObject.Name = selectedNames[0].text;
-        folderContentObject.Path = selectedNames[0].path;
+        folderContentObject.RelativePath = selectedNames[0].path;
         return folderContentObject;
     }
 

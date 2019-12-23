@@ -10,22 +10,20 @@ export interface IFolderContentContainerView{
     currentPage: number;
     currentPath: string;
     navBarPath: string;
-    //Message box
+    // Message box
     messageBoxResult: DialogResult;
     messageBoxText: string;
     loading: boolean;
     currentSortType: sortType;
     numberOfElementsOnPage: number;
-    
 
-    updateNumberOfElementsOnPageOptions: ()=>void;
+    updateNumberOfElementsOnPageOptions: () => void;
     showVideo: (videoArgs: VideoArgs) => void;
-    updateRefreshButtonState: ()=>void;
+    updateRefreshButtonState: () => void;
     showMessage: (
-        message: string, 
-        type: MessageBoxType, 
-        buttons: MessageBoxButton, 
-        caption: string, 
-        cont: () => void) => void
-
+        message: string,
+        type: MessageBoxType,
+        buttons: MessageBoxButton,
+        caption: string,
+        cont: () => void) => void;
 }

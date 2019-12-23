@@ -25,7 +25,7 @@ export class FolderContentContainerControler {
 
         folderContentService.subscriberToFinishUploadToAction(this, this.updateFolderContentWithCurrentPage.bind(this));
     }
-    //Public methods:
+    // Public methods:
 
     public initializeView(view: IFolderContentContainerView) {
         this._view = view;
@@ -37,7 +37,7 @@ export class FolderContentContainerControler {
 
     public updateFolderContent(folderName: string, folderPath: string, pageNum: number): void {
         this._view.loading = true;
-        let cancelLoading = ()=> {this._view.loading = false;};
+        const cancelLoading = () => {this._view.loading = false; };
         this.UpdateSortForFolder(folderName, folderPath, pageNum,
             () => {
                 this.updateFolder(folderName, folderPath, pageNum, this._view.currentSortType,
@@ -46,6 +46,7 @@ export class FolderContentContainerControler {
                         this.folderContentService.UpdateNumberOfPagesForFolder(folderName, folderPath, this.isSearchResult());
                         this._view.updateRefreshButtonState();
                         this._view.currentPath = this.getCurrentPath();
+                        console.log(this._view.currentPath);
                     },
                     cancelLoading);
             },
@@ -56,12 +57,12 @@ export class FolderContentContainerControler {
         this.folderContentService.GetSortForFolder(folderName, folderPath).subscribe(
             sortType => {
                 this._view.currentSortType = sortType;
-                if (onSuccess !== null && onSuccess != undefined) {
+                if (onSuccess !== null && onSuccess !== undefined) {
                     onSuccess();
                 }
             },
             error => {
-                if (onError !== null && onError != undefined) {
+                if (onError !== null && onError !== undefined) {
                     onError();
                 }
                 this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get sort type", () => { })
@@ -72,22 +73,35 @@ export class FolderContentContainerControler {
         this.folderContentService.GetNumberOfElementsOnPage(folderName, folderPath, this.isSearchResult()).subscribe(
             numberOfElementOnPage => {
                 this._view.numberOfElementsOnPage = numberOfElementOnPage;
-                if (onSuccess !== null && onSuccess != undefined) {
+                if (onSuccess !== null && onSuccess !== undefined) {
                     onSuccess();
                 }
             },
             error => {
-                if (onError !== null && onError != undefined) {
+                if (onError !== null && onError !== undefined) {
                     onError();
                 }
-                this._view.showMessage(error, MessageBoxType.Error, MessageBoxButton.Ok, "Error in get number of elements on page", () => { })
+
+                this._view.showMessage(
+                  error,
+                  MessageBoxType.Error,
+                  MessageBoxButton.Ok,
+                  'Error in get number of elements on page',
+                  () => { });
             });
     }
 
-    private updateFolder(folderName: string, folderPath: string, pageNum: number, sortType: sortType, onSuccess: () => void, onError: () => void): void {
+    private updateFolder(
+      folderName: string,
+      folderPath: string,
+      pageNum: number,
+      sortType: sortType,
+      onSuccess: () => void,
+      onError: () => void): void {
         this.folderContentService.getFolder(folderName, folderPath, pageNum).subscribe(
             folder => {
                 this.sortFolderContent(sortType, folder);
+                console.log(folder);
                 this._view.listOfFileFolderNames = folder;
                 this._view.navBarPath = this.getCurrentPath();
                 this._view.updateNumberOfElementsOnPageOptions();
@@ -121,19 +135,19 @@ export class FolderContentContainerControler {
 
     public updateThisFolderContentAfterOperation(pageNum: number) {
         if (this.isSearchResult()) {
-            let searchString = this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath());
+            const searchString = this.folderContentService.getContainingFolderPathFromPath(this.getCurrentPath());
             this.search(searchString, pageNum);
             return;
         }
 
-        this.updateFolderContent(this.folderContentService.getContaningFolderNameFromPath(this.getCurrentPath()),
-            this.folderContentService.getContaningFolderPathFromPath(this.getCurrentPath()),
+        this.updateFolderContent(this.folderContentService.getContainingFolderNameFromPath(this.getCurrentPath()),
+            this.folderContentService.getContainingFolderPathFromPath(this.getCurrentPath()),
             pageNum);
     }
 
     public goToPath(path: string) {
-        let folderName = this.folderContentService.getContaningFolderNameFromPath(path);
-        let folderPath = this.folderContentService.getContaningFolderPathFromPath(path);
+        const folderName = this.folderContentService.getContainingFolderNameFromPath(path);
+        const folderPath = this.folderContentService.getContainingFolderPathFromPath(path);
         this._view.currentPage = 1;
         this.updateFolderContent(folderName, folderPath, 1);
     }
@@ -153,11 +167,16 @@ export class FolderContentContainerControler {
     }
 
     public getCurrentPath(): string {
-        if (this._view.listOfFileFolderNames == undefined) {
-            return 'home/';
+      const folderName = this._view.listOfFileFolderNames.Name;
+      const folderPath = this._view.listOfFileFolderNames.RelativePath;
+
+        if (folderPath === undefined ||
+            folderName === 'home\\' ||
+            folderPath === '') {
+            return 'home\\';
         }
-        if (this._view.listOfFileFolderNames.Path === '') return this._view.listOfFileFolderNames.Name;
-        return `${this._view.listOfFileFolderNames.Path}/${this._view.listOfFileFolderNames.Name}`;
+
+        return `${folderPath}\\${folderName}`;
     }
 
     public isSearchResult(): boolean {
@@ -167,10 +186,9 @@ export class FolderContentContainerControler {
         return this._view.listOfFileFolderNames.Type === folderContentType.folderPageResult;
     }
 
-    //Private methods:
-
+    // Private methods:
     private sortFolderContent(sort: sortType, folder: IFolder): void {
-        let list = folder.Content;
+        let list = folder.CurrentContentPage;
         if (list === null || list === undefined) return;
 
         list.sort((fc1: IFolderContent, fc2: IFolderContent) => {
@@ -191,25 +209,25 @@ export class FolderContentContainerControler {
                 if (fc1.Type < fc2.Type) return -1;
             }
             return 0;
-        })
+        });
     }
 
     public getCurrentFolder(): IFolder {
-        let result = new FolderObj();
-        if (this._view.listOfFileFolderNames == undefined) {
+        const result = new FolderObj();
+        if (this._view.listOfFileFolderNames === undefined) {
             result.Name = 'home';
-            result.Path = '';
-            result.Content = new Array<IFolderContent>();
+            result.RelativePath = '';
+            result.CurrentContentPage = new Array<IFolderContent>();
         }
-        else if (this._view.listOfFileFolderNames.Path === '') {
+        else if (this._view.listOfFileFolderNames.RelativePath === '') {
             result.Name = this._view.listOfFileFolderNames.Name;
-            result.Path = '';
-            result.Content = new Array<IFolderContent>();
+            result.RelativePath = '';
+            result.CurrentContentPage = new Array<IFolderContent>();
         }
         else {
             result.Name = this._view.listOfFileFolderNames.Name;
-            result.Path = this._view.listOfFileFolderNames.Path;
-            result.Content = new Array<IFolderContent>();
+            result.RelativePath = this._view.listOfFileFolderNames.RelativePath;
+            result.CurrentContentPage = new Array<IFolderContent>();
         }
 
         return result;
@@ -233,7 +251,11 @@ export class FolderContentContainerControler {
     public updateCurrentFolderMetadata(sortType: sortType, numOfElementOnPage: number) {
         this._view.loading = true;
         let currentFolder = this.getCurrentFolder();
-        this.folderContentService.updateFolderMetadata(currentFolder.Name, currentFolder.Path, sortType, numOfElementOnPage).subscribe(
+        this.folderContentService.updateFolderMetadata(
+          currentFolder.Name,
+          currentFolder.RelativePath,
+          sortType,
+          numOfElementOnPage).subscribe(
             success => {
                 this.updateFolderContentWithCurrentPage();
             },
@@ -252,7 +274,7 @@ export class FolderContentContainerControler {
     public canOpenFile(name: string, type: folderContentType){
         return !this.isFolder(type) && this.isVideo(name);
     }
-    
+
     public isFolder(type: folderContentType): boolean {
         return type === folderContentType.folder;
     }

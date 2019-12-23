@@ -115,7 +115,9 @@ export class FolderContentLoginContoler {
                     this.router.navigate(['/workspace']);
                 }
             },
-            error => this.waitForServiceToInitialize());
+            error => {
+                setTimeout(()=>{ this.waitForServiceToInitialize() }, 4000)
+            });
     }
 
     private ignoreError(){
