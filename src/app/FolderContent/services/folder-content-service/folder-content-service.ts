@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, tap, map } from 'rxjs/operators';
+import { Observable, throwError, interval, of } from 'rxjs';
+import { catchError, tap, map, retryWhen, flatMap } from 'rxjs/operators';
 import xml2js from "xml2js";
 import { FolderContentFileParserHelper } from "./folder-content-file-parser-helper";
 import { AuthenticationService } from "../authentication-service/authentication-service";
@@ -157,7 +157,9 @@ export class FolderContnentService {
       NewValue: '',
       Size: size,
       Sent: 0
-    }).pipe(catchError(this.handleErrorWithErrorHandler(onUploadError))).subscribe(data => {
+    }).pipe(
+      this.retry(),
+      catchError(this.handleErrorWithErrorHandler(onUploadError))).subscribe(data => {
       const onRead = this.updateFile(requestId, fileName, path, fileType, file, onUploadError);
       this.folderContentFileHelper.parseFile(file, onRead, onUploadFinish, onUploadError);
     },
@@ -184,7 +186,9 @@ export class FolderContnentService {
         NewValue: this.substringFirstCommnaFormString(parserResult),
         Sent: readSoFar,
         Size: file.size
-      }).pipe(catchError(this.handleErrorWithErrorHandler(onError))).subscribe(data => {
+      }).pipe(
+        this.retry(),
+        catchError(this.handleErrorWithErrorHandler(onError))).subscribe(data => {
         cont();
       },
         error => onError(error));
@@ -198,6 +202,7 @@ export class FolderContnentService {
       Name: fileName,
       Path: path
     }).pipe(
+      this.retry(),
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);
@@ -212,6 +217,7 @@ export class FolderContnentService {
       Name: fileName,
       Path: path
     }).pipe(
+      this.retry(),
       catchError(this.handleError)
     ).subscribe(data => {
       this.rquestIdToProgress.delete(requestId);
@@ -227,6 +233,7 @@ export class FolderContnentService {
       Name: fileName,
       Path: path
     }).pipe(
+      this.retry(),
       catchError(this.handleError)
     ).subscribe(data => {
       this.onCreateUpload();
@@ -237,6 +244,7 @@ export class FolderContnentService {
   deleteFolder(name: string, path: string, page: number) {
     const deleteFolderUrl = `${this.FolderContentRepositoryUrl}/DeleteFolder`;
     return this.http.post(deleteFolderUrl, { Name: name, Path: path, Type: 1, Page: page }).pipe(
+      this.retry(),
       catchError(this.handleError)
     );
   }
@@ -244,6 +252,7 @@ export class FolderContnentService {
   deleteFile(name: string, path: string, page: number) {
     const deleteFileUrl = `${this.FolderContentRepositoryUrl}/DeleteFile`;
     return this.http.post(deleteFileUrl, { Name: name, Path: path, Type: 0, Page: page }).pipe(
+      this.retry(),
       catchError(this.handleError)
     );
   }
@@ -251,6 +260,7 @@ export class FolderContnentService {
   renameFolderContent(name: string, path: string, type: folderContentType, newName: string) {
     const renameUrl = `${this.FolderContentRepositoryUrl}/Rename`;
     return this.http.post(renameUrl, { Name: name, Path: path, Type: type, NewName: newName }).pipe(
+      this.retry(),
       catchError(this.handleError)
     );
   }
@@ -280,6 +290,7 @@ export class FolderContnentService {
         });
         return numberOfPages;
       }),
+      this.retry(),
       catchError(this.handleError)).subscribe(
         pageNum => {
           if (pageNum < 0) { return; }
@@ -294,7 +305,7 @@ export class FolderContnentService {
     return this.http.post(numberOfPagesUrl, { Name: name, Path: path }, { responseType: 'text' }).pipe(
       map(xml => {
         let sortType: sortType = 0;
-        let parser = new xml2js.Parser();
+        const parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
           if (error) {
             this.handleError(error);
@@ -305,6 +316,7 @@ export class FolderContnentService {
         });
         return sortType;
       }),
+      this.retry(),
       catchError(this.handleError))
   }
 
@@ -313,8 +325,8 @@ export class FolderContnentService {
 
     return this.http.post(numberOfElementsPerPageUrl, { Name: name, Path: path, SearchMode: searchMode }, { responseType: 'text' }).pipe(
       map(xml => {
-        let numberOfElementsPerPage: number = 0;
-        let parser = new xml2js.Parser();
+        let numberOfElementsPerPage = 0;
+        const parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
           if (error) {
             this.handleError(error);
@@ -325,11 +337,12 @@ export class FolderContnentService {
         });
         return numberOfElementsPerPage;
       }),
+      this.retry(),
       catchError(this.handleError))
   }
 
   updateFolderMetadata(name: string, path: string, sortType: sortType, numOfElementOnPage: number) {
-    let updateFolderMetadataUrl = `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
+    const updateFolderMetadataUrl = `${this.FolderContentRepositoryUrl}/UpdateFolderMetadata`;
     return this.http.post(updateFolderMetadataUrl,
       {
         Name: name,
@@ -337,6 +350,7 @@ export class FolderContnentService {
         SortType: sortType,
         NumberOfPagesPerPage: numOfElementOnPage
       }).pipe(
+        this.retry(),
         catchError(this.handleError)
       );
   }
@@ -364,6 +378,7 @@ export class FolderContnentService {
         return ifolder;
       }),
       tap(data => data), // console.log('All: ' + JSON.stringify(data))),
+      this.retry(),
       catchError(this.handleError));
   }
 
@@ -377,6 +392,7 @@ export class FolderContnentService {
       getFileRequestIdUrl,
       { Name: name, Path: path },
       { responseType: 'arraybuffer' }).pipe(
+        this.retry(),
       catchError(this.handleError)).subscribe(
         stream => {
           const blob = new Blob([stream], { type: 'application/octet-stream' , });
@@ -390,18 +406,19 @@ export class FolderContnentService {
   }
 
   createFolder(name: string, path: string) {
-    let createFolderUrl = `${this.FolderContentRepositoryUrl}/CreateFolder`;
+    const createFolderUrl = `${this.FolderContentRepositoryUrl}/CreateFolder`;
     return this.http.post(createFolderUrl, { Name: name, Path: path }).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
+      this.retry()
     );
   }
 
   search(name: string, page: number): Observable<IFolder> {
-    let searchUrl = `${this.FolderContentRepositoryUrl}/Search`;
+    const searchUrl = `${this.FolderContentRepositoryUrl}/Search`;
     return this.http.post(searchUrl, { Name: name, Page: page }, { responseType: 'text' }).pipe(
       map(xml => {
         let jsonStr = "";
-        let parser = new xml2js.Parser();
+        const parser = new xml2js.Parser();
         parser.parseString(xml, (error, result) => {
           if (error) {
             this.handleError(error);
@@ -419,12 +436,13 @@ export class FolderContnentService {
         return ifolder;
       }),
       tap(data => data),//console.log('All: ' + JSON.stringify(data))),
+      this.retry(),
       catchError(this.handleError));
   }
 
 
   copy(folderContentToCopy: IFolderContent, folderToCopyTo: IFolder) {
-    let copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
+    const copyFolderUrl = `${this.FolderContentRepositoryUrl}/Copy`;
     return this.http.post(copyFolderUrl, {
       FolderContentName: folderContentToCopy.Name,
       FolderContentPath: folderContentToCopy.RelativePath,
@@ -432,7 +450,8 @@ export class FolderContnentService {
       CopyToName: folderToCopyTo.Name,
       CopyToPath: folderToCopyTo.RelativePath
     }).pipe(
-      catchError(this.handleError)
+      catchError(this.handleError),
+      this.retry()
     );
   }
 
@@ -556,5 +575,11 @@ export class FolderContnentService {
       errorHandler(errorMessage);
       return throwError(errorMessage);
     }
+  }
+
+  private retry<T>(maxRetry: number = 5, delayMs: number = 500) {
+    return (src: Observable<T>) => src.pipe(retryWhen(error => {
+      return interval(delayMs).pipe(flatMap(count => count === maxRetry ? throwError(error) : of(count)));
+    }));
   }
 }
